@@ -104,8 +104,6 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
               setModalEjercicio(false);
             }}>
               <Image style={{width:50,height:50}} source={require('../assets/img/volver.png')}></Image>
-              {/* <Icon name="arrow-back-circle" size={40} color="#eefa07" /> */}
-              {/* <Text style={{color:'#fff',textAlign:'center'}}>Volver</Text> */}
 
             </Pressable>
           </View>
@@ -136,12 +134,6 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
           <Text style={styles.tituloDetalle}>Detalle</Text>
           <Text style={styles.label}>
             Series: <Text style={styles.valor}>{ejercicioActualizado.series}</Text>
-          </Text>
-          <Text style={styles.label}>
-            Repeticiones: <Text style={styles.valor}>{ejercicioActualizado.repeticiones}</Text>
-          </Text>
-          <Text style={styles.label}>
-            Peso: <Text style={styles.valor}>{ejercicioActualizado.peso} kg</Text>
           </Text>
           <Text style={styles.label}>
             Descanso: <Text style={styles.valor}>{ejercicioActualizado.descanso} Min</Text>

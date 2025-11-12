@@ -1,22 +1,20 @@
 import { useEffect, useState } from "react";
 import { Pressable, Text, TextInput, View, StyleSheet, Image, ScrollView, Alert } from "react-native";
-import ejercicios from "../helpers/ejercicios";
+import listadoEjercicios from "../helpers/ejercicios";
 import { Picker } from "@react-native-picker/picker";
-import Icon from 'react-native-vector-icons/Ionicons'; // o MaterialIcons si preferís
  
 const FormEjercicio = ({nuevaRutina, setNuevaRutina, setModalFormEjercicio, ejercicioSeleccionado, setEjercicioSeleccionado}) => {
-  const listadoEjercicios = ejercicios;
+
   const [ejerciciosFiltrados, setEjerciciosFiltrados] = useState([]);
+  const [timpoEstimado, setTiempoEstimado] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [errores, setErrores] = useState("");
-  const [ejercicio, setEjercicio] = useState({
+
+  const [ejercicioNuevo, setEjercicioNuevo] = useState({
     id: Date.now(),
-    nombre: "",
+    ejercicio:{},
     series: "",
-    repeticiones: "",
-    peso: "",
     descanso: "",
-    idEjercicio:"",
     seriesRealizadas:0
   });
 
@@ -24,16 +22,15 @@ const FormEjercicio = ({nuevaRutina, setNuevaRutina, setModalFormEjercicio, ejer
     if (ejercicioSeleccionado) {
       const seleccionado = nuevaRutina.ejercicios.find(e => e.id === ejercicioSeleccionado);
       if (seleccionado) {
-        setEjercicio(seleccionado);
-        const categoria = listadoEjercicios.find(
-          e => e.idEjercicio === seleccionado.idEjercicio
+        setEjercicioNuevo({ ...seleccionado });
+        const categoria = listadoEjercicios.find(e => e.idEjercicio === seleccionado.ejercicio.idEjercicio
         )?.categoria;
         if (categoria) {
           setSelectedCategory(categoria);
         }
       }
     }
-  }, [ejercicioSeleccionado]);
+  },[ejercicioSeleccionado]);
 
   useEffect(() => {
     if (selectedCategory) {
@@ -51,9 +48,11 @@ const FormEjercicio = ({nuevaRutina, setNuevaRutina, setModalFormEjercicio, ejer
       'Desea eliminar el ejercicio?',
       [{text:'Cancelar'}, {text:'Ok, Elimnar', onPress:()=>{
         setNuevaRutina({
-            ...nuevaRutina,
-            ejercicios: nuevaRutina.ejercicios.filter(e => e.id !== ejercicio.id)
-        })
+          ...nuevaRutina,
+          ejercicios: nuevaRutina.ejercicios.filter(e => e.id !== ejercicioSeleccionado)
+        });
+
+        setEjercicioSeleccionado(null); 
         setModalFormEjercicio(false);
       }}]
     )
@@ -61,59 +60,47 @@ const FormEjercicio = ({nuevaRutina, setNuevaRutina, setModalFormEjercicio, ejer
   };
 
   const validarFormulario = () => {   
-    if (!selectedCategory) {
-        setErrores("Debe seleccionar una categoría.");
-        return false;
-    };
-    if (!ejercicio.idEjercicio) {
-        setErrores("Debe seleccionar un ejercicio.");
-        return false;
-    };
-    if (
-        !ejercicio.series || ejercicio.series <= 0 ||
-        !ejercicio.repeticiones || ejercicio.repeticiones <= 0 ||
-        !ejercicio.peso || ejercicio.peso <= 0 ||
-        !ejercicio.descanso || ejercicio.descanso <= 0
-    ) {
-        setErrores("Todos los campos deben ser mayores a cero.");
-        return false;
-    };
-    setErrores("");
-    return true;
+    if (!selectedCategory) return "Debe seleccionar una categoría.";
+    if (!ejercicioNuevo.ejercicio.idEjercicio) return "Debe seleccionar un ejercicio.";
+    if (!ejercicioNuevo.series || ejercicioNuevo.series <= 0 ||
+        !ejercicioNuevo.descanso || ejercicioNuevo.descanso <= 0)
+      return "Todos los campos deben ser mayores a cero.";
+    return "";
   };
 
   const handleChange = (campo, valor) => {
-    if(campo === 'nombre')  {
-      setEjercicio(prev => ({
-            ...prev,
-            [campo]: valor
-      }));
-    } else {
-      setEjercicio(prev => ({
+      setEjercicioNuevo(prev => ({
             ...prev,
             [campo]: valor === "" ? "" : Number(valor),
       }));
-    }
   };
 
   const handleGuardar = () => {
-    if (validarFormulario()) {
-      if(ejercicioSeleccionado){
-        setNuevaRutina({
-          ...nuevaRutina,
-          ejercicios: nuevaRutina.ejercicios.map(e => e.id !== ejercicioSeleccionado ? e : ejercicio)
-        })
-      } else {
-        setNuevaRutina({
-              ...nuevaRutina,
-              ejercicios: [...nuevaRutina.ejercicios, ejercicio],
-          });
-      }   
-      setModalFormEjercicio(false);
-      setEjercicioSeleccionado(null)
-    } else {
-      alert(errores)
+    const error = validarFormulario();
+
+    if (error) {
+      setErrores(error);
+      alert(error);
+      return;
     }
+    
+    if(ejercicioSeleccionado){
+      setNuevaRutina({
+        ...nuevaRutina,
+        ejercicios: nuevaRutina.ejercicios.map(e => e.id !== ejercicioSeleccionado ? e : ejercicioNuevo)
+      })
+    } else {
+      setNuevaRutina({
+        ...nuevaRutina,
+        ejercicios: [
+          ...nuevaRutina.ejercicios,
+          { ...ejercicioNuevo, id: Date.now() }
+        ],
+      });
+
+    }   
+    setModalFormEjercicio(false);
+    setEjercicioSeleccionado(null)
   };
 
   return (
@@ -127,8 +114,6 @@ const FormEjercicio = ({nuevaRutina, setNuevaRutina, setModalFormEjercicio, ejer
           }}
         >
           <Image style={{width:50,height:50}} source={require('../assets/img/volver.png')}></Image>
-          {/* <Icon name="arrow-back-circle" size={40} color="#eefa07" /> */}
-          {/* <Text style={{color:'#fff',textAlign:'center'}}>Cancelar</Text> */}
         </Pressable>
         {
           ejercicioSeleccionado ?
@@ -137,19 +122,15 @@ const FormEjercicio = ({nuevaRutina, setNuevaRutina, setModalFormEjercicio, ejer
               }}>
               
               <Image style={{width:50,height:50}} source={require('../assets/img/eliminar.png')}></Image>
-              {/* <Icon name="trash" size={35} color="#ff4c4c" /> */}
-              {/* <Text style={{color:'#fff',textAlign:'center'}}>Eliminar</Text> */}
             </Pressable>
           :null
         }
         <Pressable style={[styles.iconButton,{alignItems:'center'}]} onPress={handleGuardar}>
                         <Image style={{width:60,height:60}} source={require('../assets/img/guardar.png')}></Image>
-
-          {/* <Icon name="save-sharp" size={35} color="#43d112" /> */}
-          {/* <Text style={{color:'#fff',textAlign:'center'}}>Guardar</Text> */}
         </Pressable>
       </View>
       <Text style={styles.titulo}>Personalizar Ejercicio</Text>
+      <Text style={styles.titulo}>Tiempo Estimado { timpoEstimado } Segundos</Text>
       <View style={styles.seccion}>
         <Text style={styles.label}>Categoría</Text>
         <View style={styles.pickerWrapper}>
@@ -179,18 +160,18 @@ const FormEjercicio = ({nuevaRutina, setNuevaRutina, setModalFormEjercicio, ejer
         <Text style={styles.label}>Ejercicio</Text>
         <View style={styles.pickerWrapper}>
           <Picker
-            selectedValue={ejercicio.nombre}
+            selectedValue={ejercicioNuevo.ejercicio?.nombre || ""}
             dropdownIconColor="#fff"
             onValueChange={valor => {
               const ejercicioSeleccionado = ejerciciosFiltrados.find(e => e.nombre === valor);
               if (ejercicioSeleccionado) {
-                setEjercicio(prev => ({
+                setEjercicioNuevo(prev => ({
                   ...prev,
-                  idEjercicio: ejercicioSeleccionado.idEjercicio,
+                  ejercicio: ejercicioSeleccionado,
                   nombre: ejercicioSeleccionado.nombre
                 }));
               } else {
-                setEjercicio(prev => ({
+                setEjercicioNuevo(prev => ({
                   ...prev,
                   id: "",
                   nombre: ""
@@ -214,30 +195,16 @@ const FormEjercicio = ({nuevaRutina, setNuevaRutina, setModalFormEjercicio, ejer
       <View style={styles.seccion}>
         <Text style={styles.label}>Series</Text>
         <TextInput
-          value={ejercicio.series.toString()}
+          value={ejercicioNuevo.series.toString()}
           style={styles.input}
           keyboardType="numeric"
           onChangeText={v => handleChange("series", v)}
-          />
-        <Text style={styles.label}>Repeticiones</Text>
-        <TextInput
-          value={ejercicio.repeticiones.toString()}
-          style={styles.input}
-          keyboardType="numeric"
-          onChangeText={v => handleChange("repeticiones", v)}
-          />
-        <Text style={styles.label}>Peso Estimado (Kgs)</Text>
-        <TextInput
-          value={ejercicio.peso.toString()}
-          style={styles.input}
-          keyboardType="numeric"
-          onChangeText={v => handleChange("peso", v)}
           />
         <Text style={styles.label}>Descanso</Text>
         <View style={styles.pickerWrapper}>
           <Picker
             style={styles.picker}
-            selectedValue={ejercicio.descanso.toString()}
+            selectedValue={ejercicioNuevo.descanso.toString()}
             dropdownIconColor="#fff"
             onValueChange={v => handleChange("descanso", v)}
           >

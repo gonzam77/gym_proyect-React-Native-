@@ -22,7 +22,6 @@ const DetalleRutina = (
   const dispatch = useDispatch();
   const [ejercicio, setEjercicio] = useState({});
   const [modalEjercicio, setModalEjercicio] = useState(false);
-  // const [ejerciciosIniciados, setEjerciciosIniciados] = useState();
 
   const eliminarRutina = (id)=>{
     dispatch({
@@ -32,8 +31,6 @@ const DetalleRutina = (
     setRutinaSeleccionada({});
     setModalDetalle(false);
   }
-
-  
 
   const reiniciarRutina = ()=>{
     const rutinaReiniciada = 
@@ -60,7 +57,6 @@ const DetalleRutina = (
   useEffect(()=>{  
   },[rutinaActualizada])
   
-    
   return (
     <View style={styles.container}>
       <View style={styles.botonera}>
@@ -72,8 +68,6 @@ const DetalleRutina = (
             }}
         >
             <Image style={styles.iconos} source={require('../assets/img/volver.png')}></Image>
-            {/* <Icon name="arrow-back-circle" size={40} color="#eefa07" /> */}
-            {/* <Text style={{color:'#fff',textAlign:'center'}}>Volver</Text> */}
         </Pressable>
 
         <Pressable
@@ -83,9 +77,6 @@ const DetalleRutina = (
           }}
         >
             <Image style={{ width:55, height:55 }} source={require('../assets/img/editar.png')}></Image>
-
-          {/* <Icon name="create" size={40} color="#43d112" /> */}
-          {/* <Text style={{color:'#fff',textAlign:'center'}}>Editar</Text> */}
         </Pressable>
         <Pressable 
           onPress={()=>{
@@ -99,11 +90,6 @@ const DetalleRutina = (
                 },
               ]);
           }}
-          // style={{
-          //   position:'absolute',
-          //   right:30,
-          //   bottom:30,
-          // }}
         >
           <Image style={{width:45,height:45, alignSelf:'center'}} source={require('../assets/img/reiniciar.png')}></Image>
         </Pressable>
@@ -123,8 +109,6 @@ const DetalleRutina = (
           }}
         >
           <Image style={styles.iconos} source={require('../assets/img/eliminar.png')}></Image>
-          {/* <Icon name="trash" size={35} color="#ff4c4c" /> */}
-          {/* <Text style={{color:'#fff',textAlign:'center'}}>Eliminar</Text> */}
         </Pressable>
       </View>
       <View>
@@ -150,7 +134,7 @@ const DetalleRutina = (
                 <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
                   <View style={{maxWidth:280}}>
                     <Text style={styles.ejercicioNombre}>{e.nombre}</Text>
-                    <Text style={styles.ejercicioDetalle}>{e.series} series x {e.repeticiones} reps</Text>
+                    <Text style={styles.ejercicioDetalle}>{e.series} series</Text>
                     {e.seriesRealizadas >= e.series ? <Text style={{color:'#f57c04'}}>FINALIZADO</Text> : null}
                   </View>
                   <Icon name="chevron-forward-outline" color={'#fff'} size={25} />
@@ -162,8 +146,6 @@ const DetalleRutina = (
         
       </ScrollView>
       
-      
-
       <Modal
         visible={modalFormRutina}
         animationType="slide"
