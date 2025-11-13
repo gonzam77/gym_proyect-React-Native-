@@ -147,7 +147,7 @@ const FormEjercicio = ({nuevaRutina, setNuevaRutina, setModalFormEjercicio, ejer
                 const valorSinAcentos = c
                 .toLowerCase()
                 .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, ""); // elimina los acentos
+                .replace(/[\u0300-\u036f]/g, ""); 
                 return (
                     <Picker.Item key={valorSinAcentos} label={c} value={valorSinAcentos} />
                 );

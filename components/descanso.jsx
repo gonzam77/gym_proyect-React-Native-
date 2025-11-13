@@ -2,12 +2,10 @@ import { Pressable, StyleSheet, Text, View, Image } from "react-native";
 import { useState, useRef, useEffect } from "react";
 import BackgroundTimer from 'react-native-background-timer';
 import Sound from 'react-native-sound';
-import Icon from 'react-native-vector-icons/Ionicons'; // o MaterialIcons si preferís
+import Icon from 'react-native-vector-icons/Ionicons'; 
 import PushNotification from "react-native-push-notification";
 import { styles } from '../styles/descansoStyles';
 
-
-// Habilitar reproducción en Android (opcional, pero recomendado)
 Sound.setCategory('Playback');
 
 const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
@@ -31,9 +29,6 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
             BackgroundTimer.clearInterval(intervaloRef.current);
             intervaloRef.current = null;
 
-            // Reproducir sonido de alarma
-            //reproducirAlarma();
-
             PushNotification.localNotification({
               channelId: "descanso-channel",
               title: "¡Descanso terminado!",
@@ -54,15 +49,12 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
       }, 1000);
     }
 
-
     return () => {
-      // 🧹 Detener intervalo
       if (intervaloRef.current !== null) {
         BackgroundTimer.clearInterval(intervaloRef.current);
         intervaloRef.current = null;
       }
 
-      // 🧹 Detener alarma si sigue sonando
       if (alarmaRef.current) {
         alarmaRef.current.stop(() => {
           alarmaRef.current?.release?.();
@@ -134,7 +126,6 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
           }}
         >
           <Image style={{width:80,height:80}} source={require('../assets/img/stop.png')}></Image>
-          {/* <Icon name="stop-outline" size={55} color="#000" /> */}
         </Pressable>
 
       }

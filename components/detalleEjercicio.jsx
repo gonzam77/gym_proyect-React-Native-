@@ -4,7 +4,6 @@ import Descanso from "./descanso";
 import { useDispatch, useSelector } from "react-redux";
 import { styles } from '../styles/detalleEjercicioStyles';
 
-
 const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) => {
   
   const [modalDescanso, setModalDescanso] = useState(false);
@@ -41,7 +40,7 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
     
     let loop;
 
-    fadeAnim.setValue(0); // arrancar desde cero
+    fadeAnim.setValue(0); 
 
     loop = Animated.loop(
       Animated.sequence([
@@ -61,7 +60,7 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
     loop.start();
 
     return () => {
-      if (loop) loop.stop(); // detener si el componente se desmonta o cambia el estado
+      if (loop) loop.stop(); 
     };
 
   }, [ejercicioActualizado.estado, estado]);
@@ -166,8 +165,6 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
                 }}>
                   <Image style={{width:50,height:50}} source={require('../assets/img/volver.png')}></Image>
 
-                  {/* <Icon name="arrow-back-circle" size={40} color="#eefa07" /> */}
-                  {/* <Text style={{color:'#fff', textAlign:'center'}}>Salir</Text> */}
                 </Pressable>
                 <Pressable style={[styles.iconButton,{alignItems:'center'}]} onPress={()=>{
                   Alert.alert(
@@ -184,8 +181,6 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
                     ]);
                 }}>
                   <Image style={{width:50,height:50}} source={require('../assets/img/reiniciar.png')}></Image>
-                  {/* <Icon name="refresh-circle-outline" size={40} color="#43d112" /> */}
-                  {/* <Text style={{color:'#fff', textAlign:'center'}}>Reiniciar</Text> */}
                 </Pressable>
               </View>
             </View>
@@ -204,8 +199,6 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
                     transform: [{ scale: scaleAnim }],
                   }
                 ]} source={require('../assets/img/play.png')} />
-                {/* <IconPlay name="play-circle-outline" size={70} color="#43d112" /> */}
-                {/* <Text style={{color:'#fff',textAlign:'center'}}>Comenzar</Text> */}
               </Pressable>
             </View>
           )

@@ -90,8 +90,6 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
         setModalFormEjercicio(true);
     }
 
-
-
     const handleGuardar = () => {
         if (!nuevaRutina.nombre.trim()) {
             Alert.alert('Error', 'El nombre de la rutina es obligatorio.');
@@ -99,7 +97,6 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
         }
 
         if (rutinaSeleccionada?.id) {
-            // Actualizar rutina existente
             dispatch({
                 type: 'rutinas/setRutinas',
                 payload: rutinas.map(rutina => 
@@ -108,7 +105,6 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
             });
             setRutinaSeleccionada(nuevaRutina);
         } else {
-            // Agregar nueva rutina con id único
             dispatch(agregarRutina({ ...nuevaRutina, id: Date.now() }));
         }
 
@@ -130,7 +126,6 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
         
     };
 
-  
     return (
         <View style={styles.container}>
             <ScrollView 
@@ -151,8 +146,6 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
                             }}
                         >
                             <Image style={{width:50,height:50}} source={require('../assets/img/volver.png')}></Image>
-                            {/* <Icon name="arrow-back-circle" size={40} color="#eefa07"></Icon> */}
-                            {/* <Text style={{color:'#fff',textAlign:'center'}}>Cancelar</Text> */}
                         </Pressable>
                         <Pressable 
                             style={[styles.iconButton,{alignItems:'center'}]}
@@ -161,8 +154,6 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
                             }}
                         >
                             <Image style={{width:60,height:60}} source={require('../assets/img/guardar.png')}></Image>
-                            {/* <Icon name="save-sharp" size={35} color="#43d112" ></Icon> */}
-                                {/* <Text style={{color:'#fff',textAlign:'center'}}>Guardar</Text> */}
                         </Pressable>
                     </View>
                     
@@ -173,7 +164,6 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
                     <Text style={styles.tiempo}>
                         Tiempo Estimado: {formatearTiempo(tiempoEstimado)}
                     </Text>
-
 
                     <View style={styles.form}>
                         <Text style={styles.label}>Nombre de la rutina</Text>
@@ -192,7 +182,6 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
                                     setModalFormEjercicio(true)
                                 }}
                             >
-                                {/* <Icon name="barbell-sharp" size={30} color="#43d112" /> */}
                                 <Animated.Image style={
                                     {
                                         width:80,
@@ -200,9 +189,7 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
                                         transform: [{ scale: scaleAnim }]
                                     }} source={require('../assets/img/ejercicio.png')} />
 
-
                             </Pressable>
-                                {/* <Text style={{color:'#fff',textAlign:'center', marginTop:5}}>Agregar</Text> */}
                         </View>
                     </View>
                     <View style={styles.listaEjercicios}>

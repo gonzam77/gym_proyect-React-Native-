@@ -21,9 +21,6 @@ const DetalleRutina = (
     state.rutinas.rutinas.find(r => r.id === rutinaSeleccionada?.id)
   );
 
-  console.log('rutina', rutinaActualizada);
-  
-  
   const dispatch = useDispatch();
   const [ejercicio, setEjercicio] = useState({});
   const [modalEjercicio, setModalEjercicio] = useState(false);
@@ -36,7 +33,6 @@ const DetalleRutina = (
     setRutinaSeleccionada({});
     setModalDetalle(false);
   };
-
 
   const reiniciarRutina = ()=>{
     const rutinaReiniciada = 
@@ -177,8 +173,6 @@ const DetalleRutina = (
           rutinaSeleccionada={rutinaActualizada}
         />
       </Modal>
-      
-      
 
     </View>
   )
