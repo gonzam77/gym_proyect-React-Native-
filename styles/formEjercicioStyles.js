@@ -1,15 +1,16 @@
 import { StyleSheet } from "react-native";
+import {colores} from './colores';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: colores.fondo,
     padding: 20,
   },
   titulo: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#43d112",
+    color: colores.textoPrincipal,
     marginBottom: 25,
     textAlign: "center",
   },
@@ -17,7 +18,7 @@ export const styles = StyleSheet.create({
     marginBottom: 20,
   },
   label: {
-    color: "#eefa07",
+    color: colores.secundario,
     fontSize: 16,
     fontWeight: "600",
     marginBottom: 5,
@@ -46,7 +47,7 @@ export const styles = StyleSheet.create({
   },
   iconButton: {
     marginHorizontal: 10,
-    backgroundColor: "#1a1a1a",
+    backgroundColor: colores.fondo,
     borderRadius: 50,
     elevation: 5,
   },

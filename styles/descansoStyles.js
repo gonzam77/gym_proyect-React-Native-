@@ -1,26 +1,27 @@
 import { StyleSheet } from "react-native";
+import {colores} from './colores';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: colores.fondo,
     alignItems: "center",
     padding: 20,
   },
   titulo: {
     fontSize: 36,
     fontWeight: "900",
-    color: "#43d112",
+    color: colores.textoPrincipal,
     marginVertical: 40,
     textAlign: "center",
   },
   tiempo: {
     fontSize: 50,
-    color: "#ffffff",
+    color: colores.secundario,
     fontWeight: "bold",
   },
   btn: {
-    backgroundColor: "#43d112",
+    backgroundColor: colores.detalle,
     borderRadius: 30,
     paddingVertical: 12,
     paddingHorizontal: 30,
@@ -28,7 +29,7 @@ export const styles = StyleSheet.create({
   },
   btnTexto: {
     fontSize: 18,
-    color: "#000",
+    color: colores.fondo,
     fontWeight: "bold",
     textAlign: "center",
   },
@@ -42,22 +43,28 @@ export const styles = StyleSheet.create({
   contenedor: {
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#000000',
+    backgroundColor: colores.fondo,
     marginBottom:30,
     borderRadius:10,
-    borderColor:'#43d112',
+    borderColor:colores.detalle,
     borderWidth:2,
     padding:20
   },
+  titulo1: {
+    fontSize: 28,
+    color: colores.secundario,
+    marginBottom: 20,
+    fontWeight: 'bold',
+  },
   titulo2: {
     fontSize: 28,
-    color: '#eefa07',
+    color: colores.terciario,
     marginBottom: 20,
     fontWeight: 'bold',
   },
   tiempo: {
     fontSize: 48,
-    color: '#ffffff',
+    color: colores.principal,
     marginBottom: 40,
   },
   botones: {

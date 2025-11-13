@@ -1,9 +1,10 @@
 import { StyleSheet } from "react-native";
+import { colores } from './colores';
 
 export const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#000',
+        backgroundColor: colores.fondo,
         padding: 20,
     },
     scroll:{
@@ -14,14 +15,14 @@ export const styles = StyleSheet.create({
     titulo: {
         fontSize: 30,
         fontWeight: "900",
-        color: "#43d112",
+        color: colores.textoPrincipal,
         textAlign: "center",
         marginVertical: 15,
     },
     tiempo: {
         fontSize: 20,
         fontWeight: "600",
-        color: "#2f95f5ff",
+        color: colores.terciario,
         textAlign: "center",
         marginVertical: 10,
     },
@@ -29,7 +30,7 @@ export const styles = StyleSheet.create({
         marginVertical: 10,
     },
     label: {
-        color: "#eefa07",
+        color: colores.secundario,
         fontSize: 18,
         fontWeight: "700",
         marginBottom: 5,
@@ -57,24 +58,24 @@ export const styles = StyleSheet.create({
         marginVertical: 15,
         elevation: 10,
         borderBottomWidth: 2,
-        borderBottomColor: '#43d112',
+        borderBottomColor: colores.detalle,
         borderRightWidth: 2,
-        borderRightColor: '#43d112',
+        borderRightColor: colores.detalle,
     },
     ejercicioNombre: {
-        color: "#fff",
+        color: colores.principal,
         fontSize: 18,
         fontWeight: "700",
         marginBottom: 5,
     },
     ejercicioDetalle: {
-        color: "#eefa07",
+        color: colores.secundario,
         fontSize: 16,
         fontWeight: "600",
     },
     iconButton: {
         marginHorizontal: 10,
-        backgroundColor: "#1a1a1a",
+        backgroundColor: colores.fondo,
         borderRadius: 50,
         elevation: 5,
     },

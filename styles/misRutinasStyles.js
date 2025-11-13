@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import {colores} from './colores';
 
 export const styles = StyleSheet.create({
   container: {
@@ -16,34 +17,33 @@ export const styles = StyleSheet.create({
   },  
   leyendaTexto: {
     textAlign: 'center',
-    color: '#eefa07',
+    color: colores.secundario,
     fontSize: 20,
     fontWeight: '900',
   },
   entrenamiento: {
     marginHorizontal: 15,
     marginVertical: 12,
-    backgroundColor: '#111111',
+    backgroundColor: colores.fondo,
     borderRadius: 20,
     padding: 15,
     paddingVertical:25,
     elevation: 10,
     borderBottomWidth: 2,
-    borderBottomColor: '#43d112',
+    borderBottomColor: colores.detalle,
     borderRightWidth: 2,
-    borderRightColor: '#43d112',
+    borderRightColor: colores.detalle,
     opacity:0.95
   },
   dia: {
-    color: '#99df99ff',
+    color: colores.textoPrincipal,
     fontSize: 26,
     fontWeight: '600',
   },
   tiempo: {
     fontSize: 20,
     fontWeight: "250",
-    // color: "#2f95f5ff",
-    color: "#fff",
+    color: colores.terciario,
     textAlign: "center"
   },
   nombre: {

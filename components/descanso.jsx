@@ -83,7 +83,7 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
     <View style={styles.container}>
       <Image style={styles.image} source={require('../assets/img/descanso.png')} />
       <Text style={styles.titulo}>DESCANSO</Text>
-      <Text style={styles.titulo2}>Series realizadas {serie} de {ejercicio.series}</Text>
+      <Text style={styles.titulo1}>Series realizadas {serie} de {ejercicio.series}</Text>
 
       <View style={styles.contenedor}>
         <Text style={styles.titulo2}>Tiempo Restante</Text>

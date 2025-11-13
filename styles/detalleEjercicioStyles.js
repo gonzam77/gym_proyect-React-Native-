@@ -1,48 +1,49 @@
 import { StyleSheet } from "react-native";
+import {colores} from './colores';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: colores.fondo,
     padding: 20,
     justifyContent: "start",
   },
   titulo: {
-    color: "#43d112",
+    color: colores.principal,
     fontSize: 28,
     fontWeight: "900",
     textAlign: "center",
     marginVertical: 30,
   },
   infoBox: {
-    backgroundColor: "#111111",
+    backgroundColor: colores.fondo,
     borderRadius: 15,
     padding: 20,
     marginBottom: 30,
     elevation: 10,
     borderBottomWidth: 4,
-    borderBottomColor: '#43d112',
+    borderBottomColor: colores.detalle,
     borderRightWidth: 4,
-    borderRightColor: '#43d112',
+    borderRightColor: colores.detalle,
   },
   tituloDetalle:{
     textAlign:'center',
     fontSize:25,
     fontWeight:'700',
-    color:"#43d112",
+    color:colores.textoPrincipal,
   },
   label: {
     fontSize: 18,
-    color: "#eefa07",
+    color: colores.secundario,
     fontWeight: "700",
     marginBottom: 10,
   },
   valor: {
-    color: "#fff",
+    color: colores.principal,
     fontWeight: "600",
   },
   btn: {
-    backgroundColor: "#43d112",
+    backgroundColor: colores.detalle,
     borderRadius: 30,
     paddingVertical: 12,
     paddingHorizontal: 30,
@@ -52,10 +53,10 @@ export const styles = StyleSheet.create({
 
   },
   btnVolver: {
-    backgroundColor: "#eefa07",
+    backgroundColor: colores.secundario,
     borderTopStartRadius:30,
     borderBottomStartRadius:30,
-    borderColor:'#43d112',
+    borderColor:colores.detalle,
     paddingVertical: 12,
     paddingHorizontal: 20,
     alignSelf: "center",
@@ -64,7 +65,7 @@ export const styles = StyleSheet.create({
     marginRight:5
   },
   btnDescanso: {
-    backgroundColor: '#eefa07',
+    backgroundColor: colores.secundario,
     borderRadius: 30,
     paddingVertical: 12,
     paddingHorizontal: 30,
@@ -74,7 +75,7 @@ export const styles = StyleSheet.create({
   },
   btnTexto: {
     fontSize:18,
-    color: "#000",
+    color: colores.fondo,
     fontWeight: "900",
     textAlign: "center",
   },
@@ -84,7 +85,7 @@ export const styles = StyleSheet.create({
   },
   iconButton: {
     marginHorizontal: 10,
-    backgroundColor: "#1a1a1a",
+    backgroundColor: colores.fondo,
     borderRadius: 50,
     elevation: 5,
   },

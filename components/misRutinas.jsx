@@ -80,11 +80,11 @@ const MisRutinas = () => {
     <View style={styles.container}>
       <View style={{flexDirection:'row', justifyContent:'space-between', marginHorizontal:30, paddingTop:30}}>
         <View>
-          <Text style={{fontSize:40, color:'#fff', fontWeight:'800', }}>
-            A DARLO
+          <Text style={{fontSize:30, color:'#fff', fontWeight:'800', }}>
+            B i e n v e n i d o
           </Text>
           <Text style={{fontSize:45, color:'#fff', fontWeight:'800', }}>
-            TODO ! ! ! 
+            Gonza 
           </Text>
         </View>
         <View>

@@ -1,9 +1,10 @@
 import { StyleSheet } from "react-native";
+import { colores } from './colores'
 
 export const styles = StyleSheet.create({
   container: {
   flex: 1,
-  backgroundColor:'#000',
+  backgroundColor:colores.fondo,
   paddingHorizontal: 20,
   paddingTop:30,
 },
@@ -17,13 +18,13 @@ iconos:{
 titulo: {
   fontSize: 35,
   fontWeight: "700",
-  color: "#43d112",
+  color: colores.principal,
   textAlign: "center",
 },
 tiempo: {
   fontSize: 20,
   fontWeight: "600",
-  color: "#2f95f5ff",
+  color: colores.terciario,
   textAlign: "center",
   marginVertical: 10,
 },
@@ -31,31 +32,31 @@ listaEjercicios:{
   marginVertical:30
 },
 ejercicioItem: {
-  backgroundColor: "#111111",
+  backgroundColor: colores.fondo,
   borderRadius: 10,
   padding: 15,
   marginBottom: 15,
   elevation: 10,
   borderBottomWidth: 2,
-  borderBottomColor: '#43d112',
+  borderBottomColor: colores.detalle,
   borderRightWidth: 2,
-  borderRightColor: '#43d112',
+  borderRightColor: colores.detalle,
   opacity:1
 },
 ejercicioNombre: {
-  color: "#fff",
+  color: colores.principal,
   fontSize: 18,
   fontWeight: "700",
   marginBottom: 5,
 },
 ejercicioDetalle: {
-  color: "#eefa07",
+  color: colores.secundario,
   fontSize: 16,
   fontWeight: "600",
 },  
 iconButton: {
   marginHorizontal: 10,
-  backgroundColor: "#1a1a1a",
+  backgroundColor: colores.fondo,
   borderRadius: 50,
   elevation: 5,
 },
