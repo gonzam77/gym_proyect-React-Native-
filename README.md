@@ -106,3 +106,19 @@ cd android
 <!-- instalar en dispositivo (sobreescribe la app) -->
 
 adb -s ZN3223Q45V install -r android/app/build/outputs/apk/release/app-release.apk
+
+
+<!-- Estructura de commits --> 
+
+-feat(rutinas): 
+    agregar temporizador de descanso entre series
+-fix(api): 
+    corregir error al enviar coordenadas vacías
+-refactor(ui): 
+    simplificar componente de detalle de ejercicio
+-style: 
+    mejorar formato del archivo de estilos
+-docs: 
+    actualizar instrucciones de instalación
+-chore: 
+    actualizar dependencias de React Native
