@@ -5,6 +5,8 @@ import DetalleRutina from "./detalleRutina";
 import Icon from 'react-native-vector-icons/Ionicons'; // o MaterialIcons si preferís
 import { useSelector } from "react-redux";
 import { PermissionsAndroid, Platform } from "react-native";
+import formatearTiempo from '../helpers/formatearTiempo';
+import { styles } from '../styles/misRutinasStyles';
 
 async function requestNotificationPermission() {
   if (Platform.OS === "android" && Platform.Version >= 33) {
@@ -37,14 +39,6 @@ const MisRutinas = () => {
       toValue: 0.90,
       useNativeDriver: true,
     }).start();
-  };
-
-  const formatearTiempo = (segundos) => {
-    const horas = Math.floor(segundos / 3600);
-    const minutos = Math.floor((segundos % 3600) / 60);
-    const seg = segundos % 60;
-
-    return `${horas > 0 ? `${horas}h ` : ''}${minutos}m ${seg.toString().padStart(2, '0')}s`;
   };
 
   const presionarOut = () => {
@@ -164,66 +158,4 @@ const MisRutinas = () => {
   );
 };
 
-export default MisRutinas;
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: 'transparent', // importante para que se vea el fondo
-    flex:1
-  },
-  scroll:{
-    backgroundColor:'transparent',
-    paddingVertical:50,
-    flexGrow:1
-  },
-  agregar:{
-    width:80,
-    height:80
-  },  
-  leyendaTexto: {
-    textAlign: 'center',
-    color: '#eefa07',
-    fontSize: 20,
-    fontWeight: '900',
-  },
-  entrenamiento: {
-    marginHorizontal: 15,
-    marginVertical: 12,
-    backgroundColor: '#111111',
-    borderRadius: 20,
-    padding: 15,
-    paddingVertical:25,
-    elevation: 10,
-    borderBottomWidth: 2,
-    borderBottomColor: '#43d112',
-    borderRightWidth: 2,
-    borderRightColor: '#43d112',
-    opacity:0.95
-  },
-  dia: {
-    color: '#43d112',
-    fontSize: 26,
-    fontWeight: '600',
-  },
-  tiempo: {
-    fontSize: 20,
-    fontWeight: "600",
-    color: "#2f95f5ff",
-    textAlign: "center"
-  },
-  nombre: {
-    fontSize: 26,
-    fontWeight: '600',
-  },
-  image:{
-    height:100,
-    width:100,
-    borderRadius:50
-  },
-  btnCircular: {
-    position:'absolute',
-    right:30,
-    bottom:30,
-  },
-});
- 
+export default MisRutinas; 
