@@ -39,6 +39,14 @@ const MisRutinas = () => {
     }).start();
   };
 
+  const formatearTiempo = (segundos) => {
+    const horas = Math.floor(segundos / 3600);
+    const minutos = Math.floor((segundos % 3600) / 60);
+    const seg = segundos % 60;
+
+    return `${horas > 0 ? `${horas}h ` : ''}${minutos}m ${seg.toString().padStart(2, '0')}s`;
+  };
+
   const presionarOut = () => {
     Animated.spring(scaleAnim, {
       toValue: 1,
@@ -52,7 +60,7 @@ const MisRutinas = () => {
     requestNotificationPermission();
   },[rutinas])
  
-  const EntrenamientoItem = ({ dia, nombre, id }) => (
+  const EntrenamientoItem = ({ dia, nombre, id, tiempo }) => (
     <Pressable onPress={()=>{
         const selectedRutina = rutinas.find(e=>e.id===id)
         setRutinaSeleccionada(selectedRutina)
@@ -62,6 +70,11 @@ const MisRutinas = () => {
           <View style={{maxWidth:280}}>
             <Text style={styles.dia}>
               {dia}: <Text style={styles.nombre}>{nombre}</Text>
+            </Text>
+          </View>
+          <View>
+            <Text style={styles.tiempo}>
+              {formatearTiempo(tiempo)}
             </Text>
           </View>
           <Icon name="chevron-forward-outline" color={'#fff'} size={25}></Icon>
@@ -102,6 +115,7 @@ const MisRutinas = () => {
             nombre={e?.nombre}
             id={e?.id}
             key={e?.id}
+            tiempo={e?.tiempo}
             />
           ))
         }
@@ -176,7 +190,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 15,
     marginVertical: 12,
     backgroundColor: '#111111',
-    // backgroundColor: '#111111',
     borderRadius: 20,
     padding: 15,
     paddingVertical:25,
@@ -192,7 +205,13 @@ const styles = StyleSheet.create({
     fontSize: 26,
     fontWeight: '600',
   },
- nombre: {
+  tiempo: {
+    fontSize: 20,
+    fontWeight: "600",
+    color: "#2f95f5ff",
+    textAlign: "center"
+  },
+  nombre: {
     fontSize: 26,
     fontWeight: '600',
   },

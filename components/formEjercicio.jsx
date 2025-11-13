@@ -6,7 +6,6 @@ import { Picker } from "@react-native-picker/picker";
 const FormEjercicio = ({nuevaRutina, setNuevaRutina, setModalFormEjercicio, ejercicioSeleccionado, setEjercicioSeleccionado}) => {
 
   const [ejerciciosFiltrados, setEjerciciosFiltrados] = useState([]);
-  const [timpoEstimado, setTiempoEstimado] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [errores, setErrores] = useState("");
 
@@ -130,7 +129,6 @@ const FormEjercicio = ({nuevaRutina, setNuevaRutina, setModalFormEjercicio, ejer
         </Pressable>
       </View>
       <Text style={styles.titulo}>Personalizar Ejercicio</Text>
-      <Text style={styles.titulo}>Tiempo Estimado { timpoEstimado } Segundos</Text>
       <View style={styles.seccion}>
         <Text style={styles.label}>Categoría</Text>
         <View style={styles.pickerWrapper}>

@@ -15,14 +15,38 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
     
     const [modalFormEjercicio, setModalFormEjercicio] = useState(false);
     const [ejercicioSeleccionado, setEjercicioSeleccionado] = useState();
+    const [tiempoEstimado, setTiempoEstimado] = useState(0);
+    
     const [nuevaRutina, setNuevaRutina] = useState({
         id: '',
         nombre:'',
         ejercicios:[],
-        estado: 0
+        estado: 0,
+        tiempo: 0
     })
 
-     useEffect(() => {
+    useEffect(() => {
+        if (nuevaRutina.ejercicios.length > 0) {
+            const tiempoTotalSegundos = nuevaRutina.ejercicios.reduce((acumulador, e) => {
+            const tiempoSeries = e.ejercicio.tiempoEjecucion * e.series;
+            const tiempoDescanso = e.descanso * e.series * 60;
+            return acumulador + tiempoSeries + tiempoDescanso;
+            }, 0);
+
+            setTiempoEstimado(tiempoTotalSegundos);
+        } else {
+            setTiempoEstimado(0);
+        }
+    }, [nuevaRutina.ejercicios]);
+
+    useEffect(()=>{
+        setNuevaRutina({
+            ...nuevaRutina,
+            tiempo: tiempoEstimado
+        });
+    },[tiempoEstimado])
+
+    useEffect(() => {
         if (rutinaSeleccionada?.id) {
             setNuevaRutina(rutinaSeleccionada);
         } else {
@@ -30,10 +54,19 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
                 id: '',
                 nombre: '',
                 ejercicios: [],
-                estado: 0
+                estado: 0,
+                tiempo:0
             });
         }
     }, [rutinaSeleccionada]);
+
+    const formatearTiempo = (segundos) => {
+        const horas = Math.floor(segundos / 3600);
+        const minutos = Math.floor((segundos % 3600) / 60);
+        const seg = segundos % 60;
+
+        return `${horas > 0 ? `${horas}h ` : ''}${minutos}m ${seg.toString().padStart(2, '0')}s`;
+    };
 
     const presionarIn = () => {
         Animated.spring(scaleAnim, {
@@ -62,6 +95,7 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
         setEjercicioSeleccionado(id);
         setModalFormEjercicio(true);
     }
+
 
 
     const handleGuardar = () => {
@@ -141,7 +175,12 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
                     <Text style={styles.titulo}>
                         {rutinaSeleccionada?.id ? 'Editar Rutina' : 'Nueva Rutina'}
                     </Text>
-                    
+
+                    <Text style={styles.tiempo}>
+                        Tiempo Estimado: {formatearTiempo(tiempoEstimado)}
+                    </Text>
+
+
                     <View style={styles.form}>
                         <Text style={styles.label}>Nombre de la rutina</Text>
                         <TextInput
@@ -178,7 +217,7 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
                                 <Pressable key={e.id} style={styles.ejercicioItem} onPress={()=>{editarEjercicio(e.id)}}>
                                         <View style={{maxWidth:300}}>
                                             <Text style={styles.ejercicioNombre}>{e.nombre}</Text>
-                                            <Text style={styles.ejercicioDetalle}>{e.series} series x {e.repeticiones} reps</Text>
+                                            <Text style={styles.ejercicioDetalle}>{e.series} series </Text>
                                         </View>
                                         <View>
                                             <Icon  name="chevron-forward-outline" size={30} color="#fff" />
@@ -231,6 +270,13 @@ const styles = StyleSheet.create({
         color: "#43d112",
         textAlign: "center",
         marginVertical: 15,
+    },
+    tiempo: {
+        fontSize: 20,
+        fontWeight: "600",
+        color: "#2f95f5ff",
+        textAlign: "center",
+        marginVertical: 10,
     },
     form: {
         marginVertical: 10,
