@@ -53,7 +53,7 @@ const MisRutinas = () => {
     requestNotificationPermission();
   },[rutinas])
  
-  const EntrenamientoItem = ({ dia, nombre, id, tiempo }) => (
+  const EntrenamientoItem = ({ nombre, id, tiempo }) => (
     <Pressable onPress={()=>{
         const selectedRutina = rutinas.find(e=>e.id===id)
         setRutinaSeleccionada(selectedRutina)
@@ -65,7 +65,7 @@ const MisRutinas = () => {
           
             <View style={{maxWidth:280}}>
               <Text style={styles.dia}>
-                {dia}: <Text style={styles.nombre}>{nombre}</Text>
+                <Text style={styles.nombre}>{nombre}</Text>
               </Text>
             </View>
             
@@ -112,7 +112,6 @@ const MisRutinas = () => {
         {
           rutinas?.map((e, index) => (
             <EntrenamientoItem
-            dia={`DIA ${index + 1}`}
             nombre={e?.nombre}
             id={e?.id}
             key={e?.id}
