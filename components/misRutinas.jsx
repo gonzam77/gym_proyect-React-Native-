@@ -60,17 +60,25 @@ const MisRutinas = () => {
         setModalDetalle(true)
       }} style={styles.entrenamiento}>
         <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
-          <View style={{maxWidth:280}}>
-            <Text style={styles.dia}>
-              {dia}: <Text style={styles.nombre}>{nombre}</Text>
-            </Text>
+
+          <View styel="display:flex; flex-direction:column;">
+          
+            <View style={{maxWidth:280}}>
+              <Text style={styles.dia}>
+                {dia}: <Text style={styles.nombre}>{nombre}</Text>
+              </Text>
+            </View>
+            
+            <View style={styles.tiempoContenedor}>
+              <Text style={styles.tiempo}>
+                {formatearTiempo(tiempo)}
+              </Text>
+            </View>
+
           </View>
-          <View>
-            <Text style={styles.tiempo}>
-              {formatearTiempo(tiempo)}
-            </Text>
-          </View>
+
           <Icon name="chevron-forward-outline" color={'#fff'} size={25}></Icon>
+
         </View>
     </Pressable>
   );

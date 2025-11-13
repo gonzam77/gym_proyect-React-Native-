@@ -44,8 +44,12 @@ export const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "250",
     color: colores.terciario,
-    textAlign: "center"
+    textAlign: "start"
   },
+  tiempoContenedor:{
+    marginLeft:"5",
+    marginTop:"5"
+  },  
   nombre: {
     fontSize: 26,
     fontWeight: '600',
