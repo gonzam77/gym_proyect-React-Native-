@@ -26,7 +26,6 @@ async function requestNotificationPermission() {
 const MisRutinas = () => {
 
   const rutinas = useSelector(state => state.rutinas.rutinas);
-  console.log('rutinas', rutinas);
   
   const [modalFormRutina, setModalFormRutina] = useState(false);
   const [modalDetalle, setModalDetalle] = useState(false);
