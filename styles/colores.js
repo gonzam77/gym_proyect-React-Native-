@@ -5,5 +5,5 @@ export const colores = {
   principal: "#fff",
   secundario: "#eefa07",
   terciario: "#00E0FF",
-  advertencia: "#f57c04",
+  advertencia: "#FF6B00",
 };

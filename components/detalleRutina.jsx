@@ -140,7 +140,7 @@ const DetalleRutina = (
                   <View style={{maxWidth:280}}>
                     <Text style={styles.ejercicioNombre}>{e.nombre}</Text>
                     <Text style={styles.ejercicioDetalle}>{e.series} series</Text>
-                    {e.seriesRealizadas >= e.series ? <Text style={{color:'#f57c04'}}>FINALIZADO</Text> : null}
+                    {e.seriesRealizadas >= e.series ? <Text style={styles.finalizado}>FINALIZADO</Text> : null}
                   </View>
                   <Icon name="chevron-forward-outline" color={'#fff'} size={25} />
                 </View>  

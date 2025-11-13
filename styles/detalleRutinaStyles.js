@@ -11,6 +11,9 @@ export const styles = StyleSheet.create({
 scroll: {
   flex: 1,
 },
+finalizado: {
+  color: colores.advertencia
+},  
 iconos:{
   width:50,
   height:50

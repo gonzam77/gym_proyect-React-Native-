@@ -15,6 +15,9 @@ export const styles = StyleSheet.create({
     textAlign: "center",
     marginVertical: 30,
   },
+  finalizado :{
+    color:colores.advertencia
+  },
   infoBox: {
     backgroundColor: colores.fondo,
     borderRadius: 15,

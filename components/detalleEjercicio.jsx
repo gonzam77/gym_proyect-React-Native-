@@ -115,7 +115,7 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
           ejercicioActualizado?.series === serie && (
             <Animated.Text style={{
               opacity: fadeAnim,
-              color: '#fb7702',
+              color: '#FF6B00',
               textAlign: 'center',
               fontSize: 24,
               fontWeight: '900',
