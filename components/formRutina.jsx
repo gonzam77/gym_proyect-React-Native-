@@ -171,7 +171,7 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
                         style={styles.input}
                         value={nuevaRutina.nombre}
                         onChangeText={(valor)=>{handleChange('nombre',valor)}}
-                        placeholder="Ej: Pecho, piernas, fullbody..."
+                        placeholder="Ej: Pecho, Piernas, Fullbody..."
                         placeholderTextColor="#888"
                         />
                         <View style={[styles.botonera,{flexDirection:'column'}]}>

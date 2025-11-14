@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   rutinas: [],
+  usuario:{},
 };
 
 const rutinasSlice = createSlice({
@@ -40,6 +41,9 @@ const rutinasSlice = createSlice({
       if (rutina) {
         rutina.ejercicios = rutina.ejercicios.filter(e => e.id !== idEjercicio);
       }
+    },
+    guardarUsuario:(state,action) => {
+      state.usuario = action.payload;
     }
   }
 });
@@ -50,7 +54,8 @@ export const {
   eliminarRutina,
   agregarEjercicio,
   modificarEjercicio,
-  eliminarEjercicio
+  eliminarEjercicio,
+  guardarUsuario
 } = rutinasSlice.actions;
 
 export default rutinasSlice.reducer;
