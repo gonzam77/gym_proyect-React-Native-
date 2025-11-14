@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { View, Text, Pressable, TextInput, StyleSheet } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { guardarUsuario } from "../store/rutinasSlice";
+import { colores } from "../styles/colores";
 
 const login = ({setLogin})=>{
 
@@ -58,16 +59,34 @@ export default login;
 
 const styles = StyleSheet.create({
     container:{
-
+        display:'flex',
+        backgroundColor: '#000',
+        flex:1,
     },
     label:{
-
+        fontSize:30,
+        color:"#fff",
+        textAlign:'center',
+        marginTop:50,
     },
     input:{
-
+        backgroundColor:'#fff',
+        color:'#000',
+        margin:20,
+        borderRadius:5,
+        fontSize:15,
+    },
+    btn:{
+        backgroundColor:colores.detalle,
+        margin:20,
+        borderRadius:5,
     },
     btnTexto:{
-
+        fontSize:15,
+        padding:10,
+        textAlign:'center',
+        fontWeight:600,
+        color:colores.principal,
     }
 
 })
