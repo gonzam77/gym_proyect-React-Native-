@@ -37,9 +37,9 @@ const MisRutinas = () => {
 
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
-  // useEffect(()=>{
-  //   if(usuario.nombre) setRegistrado(true);
-  // },[])
+  useEffect(()=>{
+    if(usuario?.nombre?.lenght === 0 || !usuario.nombre) setLogin(true);
+  },[usuario])
 
   useEffect(()=>{
     requestNotificationPermission();

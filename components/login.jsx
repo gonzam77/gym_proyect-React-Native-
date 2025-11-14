@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, Text, Pressable, TextInput, StyleSheet } from "react-native";
+import { View, Text, Pressable, TextInput, StyleSheet, Alert } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { guardarUsuario } from "../store/rutinasSlice";
 import { colores } from "../styles/colores";
@@ -15,15 +15,21 @@ const login = ({setLogin})=>{
 
     useEffect(()=>{
         if(usarioRegistrado.nombre) setUsuario(usarioRegistrado);
-    },[usarioRegistrado])
+    },[usarioRegistrado]);
+
+    const validacion = ()=>{
+        if(usuario.nombre.length === 0 || !usuario.nombre){
+            Alert.alert('Debe ingresar un nombre válido.');
+        } else {
+            guardar();
+        }
+    };
 
     const handleChange = (campo, value)=>{
-        if(value){
             setUsuario({
                 ...usuario,
                 [campo]: value
             });
-        }
     };
 
     const guardar = () => {
@@ -43,7 +49,7 @@ const login = ({setLogin})=>{
             ></TextInput>
             <Pressable
                 style={styles.btn}
-                onPress={guardar}
+                onPress={validacion}
             >
                 <Text style={styles.btnTexto}>
                     GUARDAR
