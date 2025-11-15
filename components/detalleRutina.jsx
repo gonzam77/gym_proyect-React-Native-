@@ -6,6 +6,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { useDispatch, useSelector } from "react-redux";
 import formatearTiempo from '../helpers/formatearTiempo';
 import { styles } from '../styles/detalleRutinaStyles';
+import { eliminarRutina } from "../store/appSlice";
 
 const DetalleRutina = (
   {
@@ -26,10 +27,7 @@ const DetalleRutina = (
   const [modalEjercicio, setModalEjercicio] = useState(false);
 
   const eliminarRutina = (id)=>{
-    dispatch({
-      type: 'rutinas/eliminarRutina',
-      payload: id
-    });
+    dispatch(eliminarRutina(id));
     setRutinaSeleccionada({});
     setModalDetalle(false);
   };
@@ -51,7 +49,7 @@ const DetalleRutina = (
     })
     
     dispatch({
-      type:'rutinas/setRutinas',
+      type:'app/setRutinas',
       payload: rutinasActualizadas
     })
   }

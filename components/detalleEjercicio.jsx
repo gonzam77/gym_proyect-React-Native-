@@ -27,7 +27,7 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
 
   useEffect(()=>{
     dispatch({
-      type: 'rutinas/modificarEjercicio',
+      type: 'app/modificarEjercicio',
       payload:{
         idEjercicio: ejercicioActualizado.id,
         idRutina: rutinaSeleccionada.id,
