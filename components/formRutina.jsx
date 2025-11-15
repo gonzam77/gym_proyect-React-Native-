@@ -98,7 +98,7 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
 
         if (rutinaSeleccionada?.id) {
             dispatch({
-                type: 'rutinas/setRutinas',
+                type: 'app/setRutinas',
                 payload: rutinas.map(rutina => 
                     rutina.id === rutinaSeleccionada.id ? nuevaRutina : rutina
                 )

@@ -26,7 +26,7 @@ const DetalleRutina = (
   const [ejercicio, setEjercicio] = useState({});
   const [modalEjercicio, setModalEjercicio] = useState(false);
 
-  const eliminarRutina = (id)=>{
+  const handleEliminarRutina  = (id)=>{
     dispatch(eliminarRutina(id));
     setRutinaSeleccionada({});
     setModalDetalle(false);
@@ -102,7 +102,7 @@ const DetalleRutina = (
               {
                 text: "Ok, Eliminar",
                 onPress: () => {
-                  eliminarRutina(rutinaActualizada.id);
+                  handleEliminarRutina(rutinaActualizada.id);
                 },
               },
             ]);
