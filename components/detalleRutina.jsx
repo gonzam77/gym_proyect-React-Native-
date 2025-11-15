@@ -16,9 +16,9 @@ const DetalleRutina = (
     setModalDetalle
   })=>{  
     
-  const rutinas = useSelector(state => state.rutinas.rutinas);
+  const rutinas = useSelector(state => state.app.rutinas);
   const rutinaActualizada = useSelector(state =>
-    state.rutinas.rutinas.find(r => r.id === rutinaSeleccionada?.id)
+    state.app.rutinas.find(r => r.id === rutinaSeleccionada?.id)
   );
 
   const dispatch = useDispatch();

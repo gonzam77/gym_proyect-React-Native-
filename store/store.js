@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import rutinasReducer from './rutinasSlice';
+import appReducer from './appSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   persistStore,
@@ -15,14 +15,14 @@ import {
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['rutinas'],
+  whitelist: ['rutinas', 'usuario'],
 };
 
-const persistedReducer = persistReducer(persistConfig, rutinasReducer);
+const persistedReducer = persistReducer(persistConfig, appReducer);
 
 export const store = configureStore({
   reducer: {
-    rutinas: persistedReducer
+    app: persistedReducer
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

@@ -16,7 +16,7 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
   const dispatch = useDispatch();
 
   const ejercicioActualizado = useSelector(state=> 
-    state.rutinas.rutinas.find(r=>
+    state.app.rutinas.find(r=>
       r.id===rutinaSeleccionada.id)).ejercicios.find(e=>
         e.id===ejercicio.id);
 

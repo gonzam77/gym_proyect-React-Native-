@@ -5,8 +5,8 @@ const initialState = {
   usuario:{},
 };
 
-const rutinasSlice = createSlice({
-  name: 'rutinas',
+const appSlice = createSlice({
+  name: 'app',
   initialState,
   reducers: {
     setRutinas: (state, action) => {
@@ -56,6 +56,6 @@ export const {
   modificarEjercicio,
   eliminarEjercicio,
   guardarUsuario
-} = rutinasSlice.actions;
+} = appSlice.actions;
 
-export default rutinasSlice.reducer;
+export default appSlice.reducer;
