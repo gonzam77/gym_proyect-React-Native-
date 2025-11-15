@@ -65,15 +65,14 @@ export default login;
 
 const styles = StyleSheet.create({
     container:{
-        display:'flex',
         backgroundColor: '#000',
         flex:1,
+        justifyContent:'center'
     },
     label:{
         fontSize:30,
         color:"#fff",
         textAlign:'center',
-        marginTop:50,
     },
     input:{
         backgroundColor:'#fff',
