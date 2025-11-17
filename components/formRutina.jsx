@@ -16,6 +16,7 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
     const scaleAnim = useRef(new Animated.Value(1)).current;
     
     const [modalFormEjercicio, setModalFormEjercicio] = useState(false);
+    const [estaDeshabilitado, setEstaDeshabilitado] = useState(false);
     const [ejercicioSeleccionado, setEjercicioSeleccionado] = useState();
     const [tiempoEstimado, setTiempoEstimado] = useState(0);
     
@@ -117,7 +118,9 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
                 estado: 0
             });
             setModalFormRutina(false);
+            setEstaDeshabilitado(false);
         }, 2000);
+
         
     };
 
@@ -142,9 +145,11 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
                         >
                             <Image style={{width:50,height:50}} source={require('../assets/img/volver.png')}></Image>
                         </Pressable>
-                        <Pressable 
+                        <Pressable
+                            disabled={estaDeshabilitado}
                             style={[styles.iconButton,{alignItems:'center'}]}
                             onPress={()=>{
+                                setEstaDeshabilitado(true);
                                 handleGuardar();
                             }}
                         >
