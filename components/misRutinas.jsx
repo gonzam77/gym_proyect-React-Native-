@@ -1,13 +1,13 @@
+import { PermissionsAndroid, Platform } from "react-native";
 import { useEffect, useRef, useState } from "react";
 import { View, Text, Pressable, ScrollView, Modal, Image, Animated } from "react-native";
+import { useSelector } from "react-redux";
+import { styles } from '../styles/misRutinasStyles';
+import Icon from 'react-native-vector-icons/Ionicons';
+import formatearTiempo from '../helpers/formatearTiempo';
 import FormRutina from "./formRutina";
 import DetalleRutina from "./detalleRutina";
 import Login from './login';
-import Icon from 'react-native-vector-icons/Ionicons';
-import { useSelector } from "react-redux";
-import { PermissionsAndroid, Platform } from "react-native";
-import formatearTiempo from '../helpers/formatearTiempo';
-import { styles } from '../styles/misRutinasStyles';
 
 async function requestNotificationPermission() {
 
@@ -27,8 +27,8 @@ async function requestNotificationPermission() {
 
 const MisRutinas = () => {
 
-  const rutinas = useSelector(state => state.app.rutinas);
-  const usuario = useSelector(state => state.app.usuario);  
+  const rutinas = useSelector(state => state.rutinas.rutinas);
+  const usuario = useSelector(state => state.usuario.usuario);  
   
   const [login, setLogin] = useState(false);
   const [modalFormRutina, setModalFormRutina] = useState(false);
@@ -38,12 +38,12 @@ const MisRutinas = () => {
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(()=>{
-    if(usuario?.nombre?.lenght === 0 || !usuario.nombre) setLogin(true);
+    if(!usuario?.nombre?.trim()) setLogin(true);
   },[usuario])
 
   useEffect(()=>{
     requestNotificationPermission();
-  },[rutinas]);
+  },[]);
 
   const EntrenamientoItem = ({ nombre, id, tiempo }) => (
     <Pressable onPress={()=>{
@@ -53,7 +53,7 @@ const MisRutinas = () => {
       }} style={styles.entrenamiento}>
         <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
 
-          <View styel="display:flex; flex-direction:column;">
+          <View style="display:flex; flex-direction:column;">
           
             <View style={{maxWidth:280}}>
               <Text style={styles.dia}>
@@ -103,7 +103,7 @@ const MisRutinas = () => {
               B i e n v e n i d o
             </Text>
             <Text style={{fontSize:45, color:'#fff', fontWeight:'800', }}>
-              {usuario.nombre} 
+              {usuario?.nombre || ''} 
             </Text>
           </View>
         </Pressable>

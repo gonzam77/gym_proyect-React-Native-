@@ -1,5 +1,4 @@
 import { configureStore } from '@reduxjs/toolkit';
-import appReducer from './appSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   persistStore,
@@ -11,6 +10,7 @@ import {
   PURGE,
   REGISTER
 } from 'redux-persist';
+import rootReducer from './rootReducer';
 
 const persistConfig = {
   key: 'root',
@@ -18,12 +18,10 @@ const persistConfig = {
   whitelist: ['rutinas', 'usuario'],
 };
 
-const persistedReducer = persistReducer(persistConfig, appReducer);
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
-  reducer: {
-    app: persistedReducer
-  },
+  reducer: persistedReducer,
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
       serializableCheck: {

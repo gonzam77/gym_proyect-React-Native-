@@ -4,13 +4,13 @@ import FormEjercicio from "./formEjercicio";
 import Toast from "react-native-toast-message";
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useDispatch, useSelector } from "react-redux";
-import { agregarRutina } from '../store/appSlice';
+import { agregarRutina, setRutinas } from '../store/rutinasSlice';
 import formatearTiempo from '../helpers/formatearTiempo';
 import { styles } from '../styles/formRutinaStyles';
 
 const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSeleccionada}) => {
     
-    const rutinas = useSelector(state=> state.app.rutinas);
+    const rutinas = useSelector(state=> state.rutinas.rutinas);
     const dispatch = useDispatch();
 
     const scaleAnim = useRef(new Animated.Value(1)).current;
@@ -97,12 +97,7 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
         }
 
         if (rutinaSeleccionada?.id) {
-            dispatch({
-                type: 'app/setRutinas',
-                payload: rutinas.map(rutina => 
-                    rutina.id === rutinaSeleccionada.id ? nuevaRutina : rutina
-                )
-            });
+            dispatch(setRutinas(nuevaRutina))
             setRutinaSeleccionada(nuevaRutina);
         } else {
             dispatch(agregarRutina({ ...nuevaRutina, id: Date.now() }));

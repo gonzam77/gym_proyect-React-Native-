@@ -1,8 +1,10 @@
 import { useEffect, useState, useRef } from "react";
-import { Modal, Pressable, Text, View, StyleSheet, ScrollView, Image, Animated, Alert } from "react-native";
-import Descanso from "./descanso";
+import { Modal, Pressable, Text, View, ScrollView, Image, Animated, Alert } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { styles } from '../styles/detalleEjercicioStyles';
+import Descanso from "./descanso";
+import { modificarEjercicio } from '../store/rutinasSlice';
+
 
 const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) => {
   
@@ -16,25 +18,27 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
   const dispatch = useDispatch();
 
   const ejercicioActualizado = useSelector(state=> 
-    state.app.rutinas.find(r=>
-      r.id===rutinaSeleccionada.id)).ejercicios.find(e=>
-        e.id===ejercicio.id);
+    state.rutinas.rutinas?.find(r=>
+      r.id === rutinaSeleccionada?.id)).ejercicios?.find(e=>
+        e.id === ejercicio.id);
 
 
   useEffect(()=>{
-    setSerie(ejercicioActualizado?.seriesRealizadas ?? 0);
-  },[]);
+    if(ejercicioActualizado){
+      setSerie(ejercicioActualizado?.seriesRealizadas ?? 0)
+    }
+  },[ejercicioActualizado]);
 
   useEffect(()=>{
-    dispatch({
-      type: 'app/modificarEjercicio',
-      payload:{
+    if (!ejercicioActualizado) return;
+
+    dispatch(modificarEjercicio({
         idEjercicio: ejercicioActualizado.id,
         idRutina: rutinaSeleccionada.id,
-        cambios:{seriesRealizadas: serie}
-      }
-    });
-  },[serie, estado]);
+        cambios:{ seriesRealizadas: serie }
+    }));
+  }, [serie]);
+
         
   useEffect(() => {
     
@@ -63,7 +67,7 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
       if (loop) loop.stop(); 
     };
 
-  }, [ejercicioActualizado.estado, estado]);
+  }, [estado]);
 
   const presionarIn = () => {
     Animated.spring(scaleAnim, {
@@ -84,14 +88,11 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
   const reiniciarEjercicio = ()=>{
     setEstado(false);
     setSerie(0);
-    dispatch({
-      type: 'rutinas/modificarEjercicio',
-      payload:{
+    dispatch(modificarEjercicio({
         idEjercicio: ejercicioActualizado.id,
         idRutina: rutinaSeleccionada.id,
         cambios:{estado:0, seriesRealizadas:0}
-      }
-    });
+    }));
   } 
 
   return (

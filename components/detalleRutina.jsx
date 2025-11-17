@@ -6,7 +6,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { useDispatch, useSelector } from "react-redux";
 import formatearTiempo from '../helpers/formatearTiempo';
 import { styles } from '../styles/detalleRutinaStyles';
-import { eliminarRutina } from "../store/appSlice";
+import { eliminarRutina, reiniciarRutina } from "../store/rutinasSlice";
 
 const DetalleRutina = (
   {
@@ -17,9 +17,8 @@ const DetalleRutina = (
     setModalDetalle
   })=>{  
     
-  const rutinas = useSelector(state => state.app.rutinas);
   const rutinaActualizada = useSelector(state =>
-    state.app.rutinas.find(r => r.id === rutinaSeleccionada?.id)
+    state.rutinas.rutinas.find(r => r.id === rutinaSeleccionada?.id)
   );
 
   const dispatch = useDispatch();
@@ -31,31 +30,13 @@ const DetalleRutina = (
     setRutinaSeleccionada({});
     setModalDetalle(false);
   };
-
-  const reiniciarRutina = ()=>{
-    const rutinaReiniciada = 
-    {...rutinaActualizada,
-      ejercicios: rutinaActualizada?.ejercicios?.map(e=>{
-            return(
-              { ...e,
-                seriesRealizadas: 0
-              }
-            )
-          })
-    }
-
-    const rutinasActualizadas = rutinas?.map(r =>{
-      return r.id === rutinaReiniciada.id ? rutinaReiniciada : r
-    })
-    
-    dispatch({
-      type:'app/setRutinas',
-      payload: rutinasActualizadas
-    })
-  }
   
   useEffect(()=>{  
-  },[rutinaActualizada])
+  },[rutinaActualizada]);
+
+  const handleReiniciarRutina = () =>{
+    dispatch(reiniciarRutina(rutinaActualizada));
+  }
   
   return (
     <View style={styles.container}>
@@ -85,7 +66,7 @@ const DetalleRutina = (
                 {
                   text: "Ok, Reiciciar ejercicios",
                   onPress: () => {
-                    reiniciarRutina();
+                    handleReiniciarRutina();
                   },
                 },
               ]);

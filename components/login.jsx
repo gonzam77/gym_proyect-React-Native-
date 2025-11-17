@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { View, Text, Pressable, TextInput, StyleSheet, Alert } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { guardarUsuario } from "../store/appSlice";
+import { guardarUsuario } from "../store/usuarioSlice";
 import { colores } from "../styles/colores";
 
 const login = ({setLogin})=>{
@@ -10,7 +10,7 @@ const login = ({setLogin})=>{
         nombre:""
     });
 
-    const usarioRegistrado = useSelector(state=> state.app.usuario)
+    const usarioRegistrado = useSelector(state=> state.usuario.usuario)
     const dispatch = useDispatch();
 
     useEffect(()=>{
@@ -18,7 +18,7 @@ const login = ({setLogin})=>{
     },[usarioRegistrado]);
 
     const validacion = ()=>{
-        if(usuario.nombre.length === 0 || !usuario.nombre){
+        if(!usuario.nombre?.trim()){
             Alert.alert('Debe ingresar un nombre válido.');
         } else {
             guardar();
