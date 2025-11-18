@@ -1,13 +1,12 @@
 import { PermissionsAndroid, Platform } from "react-native";
 import { useEffect, useRef, useState } from "react";
-import { View, Text, Pressable, ScrollView, Modal, Image, Animated } from "react-native";
+import { View, Text, Pressable, ScrollView, Modal, Image, Animated, ImageBackground } from "react-native";
 import { useSelector } from "react-redux";
 import { styles } from '../styles/misRutinasStyles';
 import Icon from 'react-native-vector-icons/Ionicons';
 import formatearTiempo from '../helpers/formatearTiempo';
 import FormRutina from "./formRutina";
 import DetalleRutina from "./detalleRutina";
-import Login from './login';
 
 async function requestNotificationPermission() {
 
@@ -30,7 +29,6 @@ const MisRutinas = () => {
   const rutinas = useSelector(state => state.rutinas.rutinas);
   const usuario = useSelector(state => state.usuario.usuario);  
   
-  const [login, setLogin] = useState(false);
   const [modalFormRutina, setModalFormRutina] = useState(false);
   const [modalDetalle, setModalDetalle] = useState(false);
   const [rutinaSeleccionada, setRutinaSeleccionada] = useState();
@@ -92,21 +90,23 @@ const MisRutinas = () => {
   };
   
   return (
-    
+    <ImageBackground
+          source={require('../assets/img/fondo.png')}
+          style={styles.fondo}
+          resizeMode=""
+        >
     <View style={styles.container}>
       <View style={{flexDirection:'row', justifyContent:'space-between', marginHorizontal:30, paddingTop:30}}>
-        <Pressable
-          onLongPress={()=>{setLogin(true)}}
-        >
-          <View>
-            <Text style={{fontSize:30, color:'#fff', fontWeight:'800', }}>
-              B i e n v e n i d o
-            </Text>
-            <Text style={{fontSize:45, color:'#fff', fontWeight:'800', }}>
-              {usuario?.nombre || ''} 
-            </Text>
-          </View>
-        </Pressable>
+        <View>
+          <Text style={{fontSize:30, color:'#fff', fontWeight:'800', }}>
+            B i e n v e n i d o
+          </Text>
+
+          <Text style={{fontSize:45, color:'#fff', fontWeight:'800', }}>
+            {usuario?.nombre || ''} 
+          </Text>
+        </View>
+
         <View>
           <Image style={styles.image} source={require('../assets/img/logo1.png')} />
         </View>  
@@ -161,16 +161,6 @@ const MisRutinas = () => {
       </Modal>
 
       <Modal
-        visible={login}
-        animationType="slide"
-        onRequestClose={()=>setLogin(false)}
-      >
-        <Login
-          setLogin={setLogin}
-        />
-      </Modal>
-
-      <Modal
         visible={modalFormRutina}
         animationType="slide"
         onRequestClose={() => setModalFormRutina(false)}
@@ -183,6 +173,8 @@ const MisRutinas = () => {
         />
       </Modal>
     </View>
+    </ImageBackground>
+
   );
 };
 

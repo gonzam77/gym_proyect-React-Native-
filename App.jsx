@@ -1,6 +1,4 @@
-import React from 'react';
 import {
-  View,
   SafeAreaView,
   StyleSheet,
   ImageBackground
@@ -13,13 +11,21 @@ import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { store, persistor } from './store/store';
 
+import {  NavigationContainer  } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import Ionicons from "react-native-vector-icons/Ionicons";
+
 import MisRutinas from './components/misRutinas';
+import Login from './components/login';
+import RutinasPredefinidas from './components/rutinasPredefiidas'
+
 
 PushNotification.configure({
   onNotification: function (notification) {
     console.log("Notificación recibida:", notification);
   },
-  requestPermissions: Platform.OS === 'ios', // en Android lo pedimos manualmente
+  requestPermissions: Platform.OS === 'ios',
 });
 
 PushNotification.createChannel(
@@ -28,13 +34,20 @@ PushNotification.createChannel(
     channelName: "Notificaciones de Descanso",
     importance: 4,
     vibrate: true,
-    soundName: 'default', // usa el sonido por defecto del sistema
+    soundName: 'default',
     playSound: true,
   },
   (created) => console.log(`Canal creado: ${created}`)
 );
 
-//require('../assets/sounds/alarm2.mp3')
+const RootTabs = createBottomTabNavigator({
+  screens: {
+    Home: MisRutinas,
+    Login: Login,
+    Rutinas: RutinasPredefinidas
+  },
+});
+
 
 const App = () => {
   return (
@@ -45,8 +58,56 @@ const App = () => {
           style={styles.fondo}
           resizeMode=""
         >
+          
           <SafeAreaView style={styles.container}>
-              <MisRutinas />
+          <NavigationContainer>
+            <RootTabs.Navigator
+              initialRouteName='MisRutinas'
+              screenOptions={({route})=>({
+                tabBarIcon:({focused,color, size})=>{
+                  let iconName;
+                  if(route.name === 'MisRutinas'){
+                    iconName = focused ? 'fitness' : 'fitness-outline'
+                  } else if (route.name === 'Rutinas') {
+                    iconName = focused ? 'barbell' : 'barbell-outline'
+                  } else if (route.name === 'Perfil')
+                  iconName = focused ? 'person' : 'person-outline'
+                  return <Ionicons name={iconName} size={size} color={color}/>
+                },
+                headerTitleAlign:'center',
+                  headerStyle: {
+                    backgroundColor: '#000',
+                  },
+                  headerTintColor: '#fff',
+                  headerTitleStyle: {
+                    fontWeight: 'bold',
+                  },
+              })}
+            >
+              <RootTabs.Screen
+                name='Perfil'
+                component={Login}
+                />
+              <RootTabs.Screen
+                name='MisRutinas'
+                component={MisRutinas}
+                options={{
+                  tabBarLabel:'Mis Rutinas',
+                  headerTitle: 'Mis Rutinas',
+                  headerTitleAlign:'center',
+                  headerTintColor: '#fff',
+                  headerTitleStyle: {
+                    fontWeight: 'bold',
+                  },
+    
+                }}
+              />
+              <RootTabs.Screen
+                name='Rutinas'
+                component={RutinasPredefinidas}
+              />
+            </RootTabs.Navigator>
+          </NavigationContainer>
           </SafeAreaView>
         </ImageBackground>
       </PersistGate>

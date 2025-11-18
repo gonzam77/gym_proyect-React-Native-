@@ -3,8 +3,11 @@ import {colores} from './colores';
 
 export const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'transparent', // importante para que se vea el fondo
+    // backgroundColor: '#000', // importante para que se vea el fondo
     flex:1
+  },
+  fondo: {
+    flex: 1,
   },
   scroll:{
     backgroundColor:'transparent',

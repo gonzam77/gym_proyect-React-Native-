@@ -3,8 +3,11 @@ import { View, Text, Pressable, TextInput, StyleSheet, Alert } from "react-nativ
 import { useDispatch, useSelector } from "react-redux";
 import { guardarUsuario } from "../store/usuarioSlice";
 import { colores } from "../styles/colores";
+import { useNavigation } from "@react-navigation/native";
 
 const login = ({setLogin})=>{
+
+    const navigation = useNavigation();
 
     const [usuario, setUsuario] = useState({
         nombre:""
@@ -34,7 +37,8 @@ const login = ({setLogin})=>{
 
     const guardar = () => {
         dispatch(guardarUsuario(usuario));
-        setLogin(false);  
+        // setLogin(false);
+        navigation.navigate('MisRutinas')  
     };
 
     return(
