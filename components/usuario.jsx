@@ -5,7 +5,7 @@ import { guardarUsuario } from "../store/usuarioSlice";
 import { colores } from "../styles/colores";
 import { useNavigation } from "@react-navigation/native";
 
-const login = ({setLogin})=>{
+const Usuario = ()=>{
 
     const navigation = useNavigation();
 
@@ -64,7 +64,7 @@ const login = ({setLogin})=>{
 
 };
 
-export default login;
+export default Usuario;
 
 
 const styles = StyleSheet.create({

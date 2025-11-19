@@ -17,8 +17,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 import MisRutinas from './components/misRutinas';
-import Login from './components/login';
-import RutinasPredefinidas from './components/rutinasPredefiidas'
+import Usuario from './components/usuario';
+import Notas from './components/notas';
 
 
 PushNotification.configure({
@@ -42,9 +42,9 @@ PushNotification.createChannel(
 
 const RootTabs = createBottomTabNavigator({
   screens: {
+    Usuario: Usuario,
     Home: MisRutinas,
-    Login: Login,
-    Rutinas: RutinasPredefinidas
+    Notas: Notas
   },
 });
 
@@ -68,9 +68,9 @@ const App = () => {
                   let iconName;
                   if(route.name === 'MisRutinas'){
                     iconName = focused ? 'fitness' : 'fitness-outline'
-                  } else if (route.name === 'Rutinas') {
-                    iconName = focused ? 'barbell' : 'barbell-outline'
-                  } else if (route.name === 'Perfil')
+                  } else if (route.name === 'Notas') {
+                    iconName = focused ? 'create' : 'create-outline'
+                  } else if (route.name === 'Usuario')
                   iconName = focused ? 'person' : 'person-outline'
                   return <Ionicons name={iconName} size={size} color={color}/>
                 },
@@ -85,8 +85,8 @@ const App = () => {
               })}
             >
               <RootTabs.Screen
-                name='Perfil'
-                component={Login}
+                name='Usuario'
+                component={Usuario}
                 />
               <RootTabs.Screen
                 name='MisRutinas'
@@ -103,8 +103,8 @@ const App = () => {
                 }}
               />
               <RootTabs.Screen
-                name='Rutinas'
-                component={RutinasPredefinidas}
+                name='Notas'
+                component={Notas}
               />
             </RootTabs.Navigator>
           </NavigationContainer>

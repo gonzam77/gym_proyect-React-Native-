@@ -7,6 +7,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import formatearTiempo from '../helpers/formatearTiempo';
 import FormRutina from "./formRutina";
 import DetalleRutina from "./detalleRutina";
+import { useNavigation } from "@react-navigation/native";
 
 async function requestNotificationPermission() {
 
@@ -25,18 +26,20 @@ async function requestNotificationPermission() {
 }
 
 const MisRutinas = () => {
-
+  
   const rutinas = useSelector(state => state.rutinas.rutinas);
   const usuario = useSelector(state => state.usuario.usuario);  
   
   const [modalFormRutina, setModalFormRutina] = useState(false);
   const [modalDetalle, setModalDetalle] = useState(false);
   const [rutinaSeleccionada, setRutinaSeleccionada] = useState();
-
+  
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
+  const navigation = useNavigation();
+  
   useEffect(()=>{
-    if(!usuario?.nombre?.trim()) setLogin(true);
+    if(!usuario?.nombre?.trim()) navigation.navigate('Usuario');
   },[usuario])
 
   useEffect(()=>{
