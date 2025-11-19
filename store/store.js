@@ -15,7 +15,7 @@ import rootReducer from './rootReducer';
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['rutinas', 'usuario'],
+  whitelist: ['rutinas', 'usuario', 'notasHistoricas'],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
