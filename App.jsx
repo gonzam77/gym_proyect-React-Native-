@@ -12,13 +12,12 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { store, persistor } from './store/store';
 
 import {  NavigationContainer  } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-import MisRutinas from './components/misRutinas';
-import Usuario from './components/usuario';
-import Notas from './components/notas';
+import MisRutinas from './components/rutinas/misRutinas';
+import Usuario from './components/usuario/usuario';
+import Notas from './components/notas/notas';
 
 
 PushNotification.configure({

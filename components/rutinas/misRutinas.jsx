@@ -2,9 +2,9 @@ import { PermissionsAndroid, Platform } from "react-native";
 import { useEffect, useRef, useState } from "react";
 import { View, Text, Pressable, ScrollView, Modal, Image, Animated, ImageBackground } from "react-native";
 import { useSelector } from "react-redux";
-import { styles } from '../styles/misRutinasStyles';
+import { styles } from '../../styles/misRutinasStyles';
 import Icon from 'react-native-vector-icons/Ionicons';
-import formatearTiempo from '../helpers/formatearTiempo';
+import formatearTiempo from '../../helpers/formatearTiempo';
 import FormRutina from "./formRutina";
 import DetalleRutina from "./detalleRutina";
 import { useNavigation } from "@react-navigation/native";
@@ -94,7 +94,7 @@ const MisRutinas = () => {
   
   return (
     <ImageBackground
-          source={require('../assets/img/fondo.png')}
+          source={require('../../assets/img/fondo.png')}
           style={styles.fondo}
           resizeMode=""
         >
@@ -111,7 +111,7 @@ const MisRutinas = () => {
         </View>
 
         <View>
-          <Image style={styles.image} source={require('../assets/img/logo1.png')} />
+          <Image style={styles.image} source={require('../../assets/img/logo1.png')} />
         </View>  
       </View>
       
@@ -145,7 +145,7 @@ const MisRutinas = () => {
           setModalFormRutina(true);
         }}
       >
-        <Animated.Image style={[styles.agregar, {transform:[{scale: scaleAnim}]}]} source={require('../assets/img/agregar.png')} />
+        <Animated.Image style={[styles.agregar, {transform:[{scale: scaleAnim}]}]} source={require('../../assets/img/agregar.png')} />
       </Pressable>
 
       <Modal

@@ -4,9 +4,9 @@ import FormEjercicio from "./formEjercicio";
 import Toast from "react-native-toast-message";
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useDispatch, useSelector } from "react-redux";
-import { agregarRutina, setRutinas } from '../store/rutinasSlice';
-import formatearTiempo from '../helpers/formatearTiempo';
-import { styles } from '../styles/formRutinaStyles';
+import { agregarRutina, setRutinas } from '../../store/rutinasSlice';
+import formatearTiempo from '../../helpers/formatearTiempo';
+import { styles } from '../../styles/formRutinaStyles';
 
 const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSeleccionada}) => {
     
@@ -143,7 +143,7 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
                                 setModalFormRutina(false)
                             }}
                         >
-                            <Image style={{width:50,height:50}} source={require('../assets/img/volver.png')}></Image>
+                            <Image style={{width:50,height:50}} source={require('../../assets/img/volver.png')}></Image>
                         </Pressable>
                         <Pressable
                             disabled={estaDeshabilitado}
@@ -153,7 +153,7 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
                                 handleGuardar();
                             }}
                         >
-                            <Image style={{width:60,height:60}} source={require('../assets/img/guardar.png')}></Image>
+                            <Image style={{width:60,height:60}} source={require('../../assets/img/guardar.png')}></Image>
                         </Pressable>
                     </View>
                     
@@ -187,7 +187,7 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
                                         width:80,
                                         height:80,
                                         transform: [{ scale: scaleAnim }]
-                                    }} source={require('../assets/img/ejercicio.png')} />
+                                    }} source={require('../../assets/img/ejercicio.png')} />
 
                             </Pressable>
                         </View>

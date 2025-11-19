@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { View, Text, Pressable, TextInput, StyleSheet, Alert } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { guardarUsuario } from "../store/usuarioSlice";
-import { colores } from "../styles/colores";
+import { guardarUsuario } from "../../store/usuarioSlice";
+import { colores } from "../../styles/colores";
 import { useNavigation } from "@react-navigation/native";
 
 const Usuario = ()=>{

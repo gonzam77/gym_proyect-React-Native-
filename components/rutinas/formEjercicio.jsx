@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Pressable, Text, TextInput, View, StyleSheet, Image, ScrollView, Alert } from "react-native";
-import listadoEjercicios from "../helpers/ejercicios";
+import listadoEjercicios from "../../helpers/ejercicios";
 import { Picker } from "@react-native-picker/picker";
-import { styles } from '../styles/formEjercicioStyles';
+import { styles } from '../../styles/formEjercicioStyles';
  
 const FormEjercicio = ({nuevaRutina, setNuevaRutina, setModalFormEjercicio, ejercicioSeleccionado, setEjercicioSeleccionado}) => {
 
@@ -113,7 +113,7 @@ const FormEjercicio = ({nuevaRutina, setNuevaRutina, setModalFormEjercicio, ejer
             setModalFormEjercicio(false);
           }}
         >
-          <Image style={{width:50,height:50}} source={require('../assets/img/volver.png')}></Image>
+          <Image style={{width:50,height:50}} source={require('../../assets/img/volver.png')}></Image>
         </Pressable>
         {
           ejercicioSeleccionado ?
@@ -121,12 +121,12 @@ const FormEjercicio = ({nuevaRutina, setNuevaRutina, setModalFormEjercicio, ejer
               eliminarEjercicio();
               }}>
               
-              <Image style={{width:50,height:50}} source={require('../assets/img/eliminar.png')}></Image>
+              <Image style={{width:50,height:50}} source={require('../../assets/img/eliminar.png')}></Image>
             </Pressable>
           :null
         }
         <Pressable style={[styles.iconButton,{alignItems:'center'}]} onPress={handleGuardar}>
-                        <Image style={{width:60,height:60}} source={require('../assets/img/guardar.png')}></Image>
+                        <Image style={{width:60,height:60}} source={require('../../assets/img/guardar.png')}></Image>
         </Pressable>
       </View>
       <Text style={styles.titulo}>Personalizar Ejercicio</Text>

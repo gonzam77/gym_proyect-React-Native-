@@ -4,9 +4,9 @@ import FormRutina from "./formRutina";
 import DetalleEjercicio from "./detalleEjercicio";
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useDispatch, useSelector } from "react-redux";
-import formatearTiempo from '../helpers/formatearTiempo';
-import { styles } from '../styles/detalleRutinaStyles';
-import { eliminarRutina, reiniciarRutina } from "../store/rutinasSlice";
+import formatearTiempo from '../../helpers/formatearTiempo';
+import { styles } from '../../styles/detalleRutinaStyles';
+import { eliminarRutina, reiniciarRutina } from "../../store/rutinasSlice";
 
 const DetalleRutina = (
   {
@@ -48,7 +48,7 @@ const DetalleRutina = (
               setModalDetalle(false);
             }}
         >
-            <Image style={styles.iconos} source={require('../assets/img/volver.png')}></Image>
+            <Image style={styles.iconos} source={require('../../assets/img/volver.png')}></Image>
         </Pressable>
 
         <Pressable
@@ -57,7 +57,7 @@ const DetalleRutina = (
             setModalFormRutina(true);
           }}
         >
-            <Image style={{ width:55, height:55 }} source={require('../assets/img/editar.png')}></Image>
+            <Image style={{ width:55, height:55 }} source={require('../../assets/img/editar.png')}></Image>
         </Pressable>
         <Pressable 
           onPress={()=>{
@@ -72,7 +72,7 @@ const DetalleRutina = (
               ]);
           }}
         >
-          <Image style={{width:45,height:45, alignSelf:'center'}} source={require('../assets/img/reiniciar.png')}></Image>
+          <Image style={{width:45,height:45, alignSelf:'center'}} source={require('../../assets/img/reiniciar.png')}></Image>
         </Pressable>
 
         <Pressable
@@ -89,7 +89,7 @@ const DetalleRutina = (
             ]);
           }}
         >
-          <Image style={styles.iconos} source={require('../assets/img/eliminar.png')}></Image>
+          <Image style={styles.iconos} source={require('../../assets/img/eliminar.png')}></Image>
         </Pressable>
       </View>
       <View>
