@@ -41,7 +41,7 @@ const notasHistoricasSlice = createSlice({
         state.notasHistoricas.push(action.payload);
       },
       modificarNota:(state,action) => {
-        state.notasHistoricas = state.notasHistoricas.map(n => n.id === action.payload.id ? action.payload : n)
+        state.notasHistoricas = state.notasHistoricas.map(nota => nota.id === action.payload.id ? action.payload : nota)
       },
       eliminarNota: (state,action) => {
         state.notasHistoricas = state.notasHistoricas.filter(e => e.id !== action.payload.id) ;

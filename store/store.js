@@ -19,6 +19,7 @@ const persistConfig = {
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
+// AsyncStorage.clear();
 
 export const store = configureStore({
   reducer: persistedReducer,
