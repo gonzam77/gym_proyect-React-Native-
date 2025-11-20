@@ -12,7 +12,7 @@ export const BotonGuardar = ({ onPress }) => {
             <Image style={{width:60,height:60}} source={require('../../assets/img/guardar.png')}></Image>
         </Pressable>
     )
-}
+};
 
 export const BotonEditar = ({ onPress }) => {
     return (
@@ -23,7 +23,7 @@ export const BotonEditar = ({ onPress }) => {
             <Image style={{ width:56, height:56 }} source={require('../../assets/img/editar.png')}></Image>
         </Pressable>
     )
-}
+};
 
 export const BotonBorrar = ({ onPress }) => {
     return (
@@ -34,7 +34,7 @@ export const BotonBorrar = ({ onPress }) => {
           <Image style={styles.iconos} source={require('../../assets/img/eliminar.png')}></Image>
         </Pressable>
     )
-}
+};
 
 export const BotonReiniciar = ({ onPress }) => {
     return(
@@ -44,7 +44,7 @@ export const BotonReiniciar = ({ onPress }) => {
             <Image style={styles.iconos} source={require('../../assets/img/reiniciar.png')}></Image>
         </Pressable>
     )
-}
+};
 
 export const BotonVolver = ({ onPress }) => {
     return(
@@ -55,15 +55,26 @@ export const BotonVolver = ({ onPress }) => {
             <Image style={styles.iconos} source={require('../../assets/img/volver.png')}></Image>
         </Pressable>
     ) 
-}
+};
 
-export const BotonPlay = ({ onPressIn, onPressOut, onPress }) => {
+export const BotonStop = ({ onPress }) => {
+    return(
+        <Pressable
+            style={{ width: 80, height: 80 }}
+            onPress={onPress}
+        >
+            <Image style={{ width: 80, height: 80 }} source={require("../../assets/img/stop.png")} />
+        </Pressable>
+    ) 
+};
+
+export const BotonPlay = ({ onPress }) => {
 
     const scaleAnim = useRef(new Animated.Value(1)).current;
 
     const presionarIn = () => {
         Animated.spring(scaleAnim, {
-        toValue: 0.90,
+        toValue: 0.60,
         useNativeDriver: true,
         }).start();
     };
@@ -93,7 +104,7 @@ export const BotonPlay = ({ onPressIn, onPressOut, onPress }) => {
             ]} source={require('../../assets/img/play.png')} />
         </Pressable>
     ) 
-}
+};
 
 export const Boton = ({ onPress, children }) => {
     return (
@@ -104,4 +115,4 @@ export const Boton = ({ onPress, children }) => {
             <Text style={styles.btnTexto}>{ children } </Text>
         </Pressable>
     )
-}
+};
