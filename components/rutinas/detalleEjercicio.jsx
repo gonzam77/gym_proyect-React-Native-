@@ -1,9 +1,10 @@
 import { useEffect, useState, useRef } from "react";
-import { Modal, Pressable, Text, View, ScrollView, Image, Animated, Alert } from "react-native";
+import { Modal, Text, View, ScrollView, Animated, Alert } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { styles } from '../../styles/detalleEjercicioStyles';
 import Descanso from "./descanso";
 import { modificarEjercicio } from '../../store/rutinasSlice';
+import { Boton, BotonPlay, BotonReiniciar, BotonVolver } from "../botones/botones";
 
 
 const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) => {
@@ -12,7 +13,6 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
   const [serie, setSerie] = useState(0);
   const [estado, setEstado] = useState(false);
   
-  const scaleAnim = useRef(new Animated.Value(1)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
   
   const dispatch = useDispatch();
@@ -29,21 +29,17 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
     }
   },[ejercicioActualizado]);
 
-  useEffect(()=>{
-    if (!ejercicioActualizado) return;
-
-    dispatch(modificarEjercicio({
+  const guardarEjercicio = () => {
+    if(ejercicioActualizado)
+      dispatch(modificarEjercicio({
         idEjercicio: ejercicioActualizado.id,
         idRutina: rutinaSeleccionada.id,
-        cambios:{ seriesRealizadas: serie }
-    }));
-  }, [serie]);
-
-        
+        cambios: { seriesRealizadas: serie }
+      }));
+  }
+  
   useEffect(() => {
-    
     let loop;
-
     fadeAnim.setValue(0); 
 
     loop = Animated.loop(
@@ -69,22 +65,6 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
 
   }, [estado]);
 
-  const presionarIn = () => {
-    Animated.spring(scaleAnim, {
-      toValue: 0.90,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const presionarOut = () => {
-    Animated.spring(scaleAnim, {
-      toValue: 1,
-      friction: 3,
-      tension: 40,
-      useNativeDriver: true,
-    }).start();
-  };
-
   const reiniciarEjercicio = ()=>{
     setEstado(false);
     setSerie(0);
@@ -100,15 +80,11 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
       <ScrollView >
         {
           serie < ejercicioActualizado.series ?
-          <View style={styles.botonera}>
-            <Pressable style={styles.iconButton} onPress={()=>{
-              setModalEjercicio(false);
-            }}>
-              <Image style={{width:50,height:50}} source={require('../../assets/img/volver.png')}></Image>
-
-            </Pressable>
-          </View>
-            : null
+            <BotonVolver
+              onPress={()=>{
+                  setModalEjercicio(false);
+                }}
+            /> : null
         }
 
         <Text style={styles.titulo}>{ejercicioActualizado.nombre}</Text>
@@ -146,61 +122,47 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
           estado ? (
             <View>
               <Animated.Text style={[styles.titulo,{opacity:fadeAnim}]}>Serie {serie + 1} en curso</Animated.Text>
-              <Pressable
-                style={styles.btnDescanso}
+              <Boton
                 onPress={() => {
                   setModalDescanso(true);
                   setEstado(false);
                   setSerie(serie + 1);
                 }}
-              >
-                <Text style={styles.btnTexto}>Descanzar</Text>
-              </Pressable>
+              >Descansar</Boton>
             </View>
           ) : serie >= ejercicioActualizado.series ? ( 
             <View>
               <Text style={[styles.titulo, {color:'#fff'}]}>Felicitaciones, has terminado el ejercicio!</Text>  
               <View style={styles.botonera}>
-                <Pressable style={styles.iconButton} onPress={()=>{
-                  setModalEjercicio(false);
-                }}>
-                  <Image style={{width:50,height:50}} source={require('../../assets/img/volver.png')}></Image>
-
-                </Pressable>
-                <Pressable style={[styles.iconButton,{alignItems:'center'}]} onPress={()=>{
-                  Alert.alert(
-                    "Reiniciar", 
-                    "Desea reiniciar el ejercicio?", 
-                    [
-                      { text: "Cancelar" },
-                      {
-                        text: "Ok, Reiciciar ejercicio",
-                        onPress: () => {
-                          reiniciarEjercicio();
+                <BotonVolver
+                  onPress={()=>{
+                    guardarEjercicio();
+                    setModalEjercicio(false);
+                  }}
+                />
+                <BotonReiniciar 
+                  onPress={()=>{
+                    Alert.alert(
+                      "Reiniciar", 
+                      "Desea reiniciar el ejercicio?", 
+                      [
+                        { text: "Cancelar" },
+                        {
+                          text: "Ok, Reiciciar ejercicio",
+                          onPress: () => {
+                            reiniciarEjercicio();
+                          },
                         },
-                      },
-                    ]);
-                }}>
-                  <Image style={{width:50,height:50}} source={require('../../assets/img/reiniciar.png')}></Image>
-                </Pressable>
+                      ]);
+                  }}
+                />
               </View>
             </View>
           ):(
             <View style={styles.botonera}>
-              <Pressable
-                onPressIn={presionarIn}
-                onPressOut={presionarOut}
-                style={[styles.iconButton,{alignItems:'center'}]}
+              <BotonPlay
                 onPress={() => setEstado(true)}
-              >
-                <Animated.Image style={[
-                  {
-                    width: 70,
-                    height: 70,
-                    transform: [{ scale: scaleAnim }],
-                  }
-                ]} source={require('../../assets/img/play.png')} />
-              </Pressable>
+              />
             </View>
           )
         }

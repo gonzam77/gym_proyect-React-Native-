@@ -12,7 +12,6 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
   const intervaloRef = useRef(null);
 
   useEffect(() => {
-    // si está pausado o ya terminó, no iniciar nada
     if (!activo || segundos <= 0) return;
 
     intervaloRef.current = BackgroundTimer.setInterval(() => {
@@ -45,11 +44,11 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
   }, [activo, segundos]);
 
   // cerrar cuando llega a cero
-  useEffect(() => {
-    if (segundos === 0) {
-      setModalDescanso(false);
-    }
-  }, [segundos]);
+  // useEffect(() => {
+  //   if (segundos === 0) {
+  //     setModalDescanso(false);
+  //   }
+  // }, [segundos]);
 
   const reiniciar = () => {
     if (intervaloRef.current) {

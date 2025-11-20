@@ -1,16 +1,16 @@
 import { useEffect, useRef, useState } from "react";
-import { Pressable, Text, TextInput, View, StyleSheet, Modal, ScrollView, Alert, Image, Animated } from "react-native";
+import { Pressable, Text, TextInput, View, Modal, ScrollView, Alert, Animated } from "react-native";
 import FormEjercicio from "./formEjercicio";
 import Toast from "react-native-toast-message";
 import Icon from 'react-native-vector-icons/Ionicons';
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { agregarRutina, setRutinas } from '../../store/rutinasSlice';
 import formatearTiempo from '../../helpers/formatearTiempo';
 import { styles } from '../../styles/formRutinaStyles';
+import { BotonGuardar, BotonVolver } from "../botones/botones";
 
 const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSeleccionada}) => {
     
-    const rutinas = useSelector(state=> state.rutinas.rutinas);
     const dispatch = useDispatch();
 
     const scaleAnim = useRef(new Animated.Value(1)).current;
@@ -132,8 +132,7 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
             >
 
                     <View style={styles.botonera}>
-                        <Pressable 
-                            style={[styles.iconButton,{alignItems:'center'}]}
+                        <BotonVolver
                             onPress={()=>{
                                 setNuevaRutina({
                                     id: '',
@@ -142,19 +141,13 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
                                 });
                                 setModalFormRutina(false)
                             }}
-                        >
-                            <Image style={{width:50,height:50}} source={require('../../assets/img/volver.png')}></Image>
-                        </Pressable>
-                        <Pressable
-                            disabled={estaDeshabilitado}
-                            style={[styles.iconButton,{alignItems:'center'}]}
+                        />
+                        <BotonGuardar
                             onPress={()=>{
                                 setEstaDeshabilitado(true);
                                 handleGuardar();
                             }}
-                        >
-                            <Image style={{width:60,height:60}} source={require('../../assets/img/guardar.png')}></Image>
-                        </Pressable>
+                        />
                     </View>
                     
                     <Text style={styles.titulo}>

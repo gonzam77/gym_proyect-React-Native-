@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { Pressable, Text, TextInput, View, StyleSheet, Image, ScrollView, Alert } from "react-native";
+import { Text, TextInput, View, ScrollView, Alert } from "react-native";
 import listadoEjercicios from "../../helpers/ejercicios";
 import { Picker } from "@react-native-picker/picker";
 import { styles } from '../../styles/formEjercicioStyles';
+import { BotonBorrar, BotonVolver, BotonGuardar } from "../botones/botones";
  
 const FormEjercicio = ({nuevaRutina, setNuevaRutina, setModalFormEjercicio, ejercicioSeleccionado, setEjercicioSeleccionado}) => {
 
@@ -106,28 +107,24 @@ const FormEjercicio = ({nuevaRutina, setNuevaRutina, setModalFormEjercicio, ejer
   return (
     <ScrollView style={styles.container}>
       <View style={styles.botonera}>
-        <Pressable 
-          style={[styles.iconButton,{alignItems:'center'}]} 
+        <BotonVolver
           onPress={()=>{
             setEjercicioSeleccionado(null);
             setModalFormEjercicio(false);
           }}
-        >
-          <Image style={{width:50,height:50}} source={require('../../assets/img/volver.png')}></Image>
-        </Pressable>
+        />
         {
           ejercicioSeleccionado ?
-            <Pressable style={[styles.iconButton,{alignItems:'center'}]} onPress={()=>{
+            <BotonBorrar
+              onPress={()=>{
               eliminarEjercicio();
-              }}>
-              
-              <Image style={{width:50,height:50}} source={require('../../assets/img/eliminar.png')}></Image>
-            </Pressable>
+              }}
+            />
           :null
         }
-        <Pressable style={[styles.iconButton,{alignItems:'center'}]} onPress={handleGuardar}>
-                        <Image style={{width:60,height:60}} source={require('../../assets/img/guardar.png')}></Image>
-        </Pressable>
+        <BotonGuardar
+          onPress={handleGuardar}
+        />
       </View>
       <Text style={styles.titulo}>Personalizar Ejercicio</Text>
       <View style={styles.seccion}>

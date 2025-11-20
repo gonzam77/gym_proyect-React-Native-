@@ -1,4 +1,4 @@
-import { Modal, Pressable, StyleSheet, Text, View, Alert, ScrollView, Image } from "react-native";
+import { Modal, Pressable, Text, View, Alert, ScrollView } from "react-native";
 import { useEffect, useState } from "react";
 import FormRutina from "./formRutina";
 import DetalleEjercicio from "./detalleEjercicio";
@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import formatearTiempo from '../../helpers/formatearTiempo';
 import { styles } from '../../styles/detalleRutinaStyles';
 import { eliminarRutina, reiniciarRutina } from "../../store/rutinasSlice";
+import { BotonVolver, BotonEditar, BotonReiniciar, BotonBorrar } from "../botones/botones";
 
 const DetalleRutina = (
   {
@@ -41,25 +42,18 @@ const DetalleRutina = (
   return (
     <View style={styles.container}>
       <View style={styles.botonera}>
-        <Pressable
-            style={[styles.iconButton,{alignItems:'center'}]}
-            onPress={() => {
+        <BotonVolver 
+          onPress={() => {
               setRutinaSeleccionada({});
               setModalDetalle(false);
-            }}
-        >
-            <Image style={styles.iconos} source={require('../../assets/img/volver.png')}></Image>
-        </Pressable>
-
-        <Pressable
-          style={[styles.iconButton,{alignItems:'center'}]}
+          }}
+        />
+        <BotonEditar
           onPress={() => {
             setModalFormRutina(true);
           }}
-        >
-            <Image style={{ width:55, height:55 }} source={require('../../assets/img/editar.png')}></Image>
-        </Pressable>
-        <Pressable 
+        />
+        <BotonReiniciar 
           onPress={()=>{
               Alert.alert("Reiniciar", "Desea reiniciar los ejercicios?", [
                 { text: "Cancelar" },
@@ -71,12 +65,8 @@ const DetalleRutina = (
                 },
               ]);
           }}
-        >
-          <Image style={{width:45,height:45, alignSelf:'center'}} source={require('../../assets/img/reiniciar.png')}></Image>
-        </Pressable>
-
-        <Pressable
-          style={[styles.iconButton,{alignItems:'center'}]}
+        />
+        <BotonBorrar 
           onPress={() => {
             Alert.alert("Eliminar", "Desea eliminar la rutina?", [
               { text: "Cancelar" },
@@ -88,9 +78,7 @@ const DetalleRutina = (
               },
             ]);
           }}
-        >
-          <Image style={styles.iconos} source={require('../../assets/img/eliminar.png')}></Image>
-        </Pressable>
+        />
       </View>
       <View>
         <Text style={styles.titulo}>{rutinaActualizada?.nombre}</Text>
@@ -144,7 +132,6 @@ const DetalleRutina = (
       <Modal
         visible={modalEjercicio}
         animationType="slide"
-        onRequestClose={()=>{setModalEjercicio(false)}}
       >
         <DetalleEjercicio
           ejercicio={ejercicio}
