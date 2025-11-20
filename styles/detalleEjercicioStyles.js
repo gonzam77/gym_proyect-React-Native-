@@ -55,18 +55,6 @@ export const styles = StyleSheet.create({
     marginBottom:20
 
   },
-  btnVolver: {
-    backgroundColor: colores.secundario,
-    borderTopStartRadius:30,
-    borderBottomStartRadius:30,
-    borderColor:colores.detalle,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    alignSelf: "center",
-    elevation: 3,
-    marginVertical:20,
-    marginRight:5
-  },
   btnDescanso: {
     backgroundColor: colores.secundario,
     borderRadius: 30,
