@@ -4,6 +4,7 @@ import BackgroundTimer from "react-native-background-timer";
 import Icon from "react-native-vector-icons/Ionicons";
 import PushNotification from "react-native-push-notification";
 import { styles } from "../../styles/descansoStyles";
+import { Boton, BotonStop } from "../botones/botones";
 
 const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
   const segundosTotales = ejercicio.descanso * 60;
@@ -91,13 +92,15 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
       </View>
 
       {segundos > 0 ? (
-        <Pressable style={styles.btn} onPress={() => setModalDescanso(false)}>
-          <Text style={styles.btnTexto}>Saltar Descanso</Text>
-        </Pressable>
+        <Boton
+          onPress={() => setModalDescanso(false)}
+        >
+          Saltar Descanso
+        </Boton>
       ) : (
-        <Pressable onPress={() => setModalDescanso(false)}>
-          <Image style={{ width: 80, height: 80 }} source={require("../../assets/img/stop.png")} />
-        </Pressable>
+        <BotonStop
+          onPress={() => setModalDescanso(false)}
+        />
       )}
     </View>
   );
