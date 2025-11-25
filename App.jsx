@@ -15,9 +15,9 @@ import {  NavigationContainer  } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-import MisRutinas from './components/rutinas/misRutinas';
-import Usuario from './components/usuario/usuario';
-import Notas from './components/notas/notas';
+import MisRutinas from './views/rutinas/misRutinas';
+import Usuario from './views/usuario/usuario';
+import Notas from './views/notas/notas';
 
 
 PushNotification.configure({

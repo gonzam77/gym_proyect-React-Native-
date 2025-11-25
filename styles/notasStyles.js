@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { colores } from "./colores";
 
 const styles = StyleSheet.create({
     container: {
@@ -6,7 +7,6 @@ const styles = StyleSheet.create({
         backgroundColor: "#f0f0f0",
     },
 
-    // Tarjeta de categoría
     card: {
         backgroundColor: "#ffffff",
         padding: 16,
@@ -25,12 +25,12 @@ const styles = StyleSheet.create({
         color: "#333",
     },
 
-    // Comentarios internos (Notas)
     commentContainer: {
         backgroundColor: "#fafafa",
         padding: 10,
         borderRadius: 10,
-        marginBottom: 10,
+        marginVertical: 10,
+        marginHorizontal:10,
         borderWidth: 1,
         borderColor: "#ddd",
     },
@@ -42,7 +42,28 @@ const styles = StyleSheet.create({
     commentText: {
         fontSize: 15,
         color: "#333",
-    }
+    },
+    titulo:{
+        textAlign:'center',
+        fontSize: 20,
+        fontWeight: "bold",
+        marginVertical: 10,
+        color: "#333",
+    },
+    btn: {
+        backgroundColor: colores.fondoBtn2,
+        borderRadius: 30,
+        paddingVertical: 15,
+        paddingHorizontal: 18,
+        elevation: 3,
+        marginHorizontal:10,
+    },
+    btnTexto: {
+        fontSize: 18,
+        color: colores.fondo,
+        fontWeight: "bold",
+        textAlign: "center",
+    },
 });
 
 export default styles;

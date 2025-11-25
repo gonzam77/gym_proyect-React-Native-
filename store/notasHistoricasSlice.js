@@ -5,30 +5,55 @@ const initialState = {
     {
       id:1,
       titulo:'Registro de comidas',
-      notas:[{
-        id:1,
-        fecha:1732109085123,
-        nota:'Pollo al horno con ensalada de lechugas'
-      }]
+      tipo: 'texto',
+      notas:[
+        {
+          id:2,
+          fecha:1731801600000,
+          nota:'Pollo al horno con ensalada de lechugas'
+        },
+        {
+          id:3,
+          fecha:1731889800000,
+          nota:'Bife de pollo con palta y huevos revuelos.'
+        },
 
+    ]
+      
     },
     {
-      id:2,
+      id:4,
       titulo:'Logros Diarios',
-      notas:[{
-        id:1,
-        fecha:1732109085123,
-        nota:'Hoy hice mi primera dominada.'
-      }]
+      tipo: 'texto',
+      notas:[
+        {
+          id:5,
+          fecha:1731972600000,
+          nota:'Hoy hice mi primera dominada.'
+        },
+        {
+          id:6,
+          fecha:1732059000000,
+          nota:'Hoy aumenté 2.5kg en Press Plano.'
+        },
+      ]
     },
     {
-      id:3,
+      id:7,
       titulo:'Comentarios Diarios',
-      notas:[{
-        id:1,
-        fecha:1732109085123,
-        nota:'Hoy me senti con menos fuerza que ayer.'
-      }]
+      tipo: 'texto',
+      notas:[
+        {
+          id:8,
+          fecha:1732145400000,
+          nota:'Hoy me senti con menos fuerza que ayer.'
+        },
+        {
+          id:9,
+          fecha:1732231800000,
+          nota:'Hoy entrené con spotter y logre mas repeticiones en sentadilla libre.'
+        },
+      ]
     }  
   ],
 };
