@@ -10,12 +10,24 @@ const initialState = {
         {
           id:2,
           fecha:1731801600000,
-          nota:'Pollo al horno con ensalada de lechugas'
+          nota:
+          `
+Desayuno:Yogur proteico con frutas y avena 
+Almuerzo:Pollo salteado con arroz integral
+Merienda:Licuado proteico
+Cena:Salmón a la plancha con ensalada
+          `
         },
         {
           id:3,
           fecha:1731889800000,
-          nota:'Bife de pollo con palta y huevos revuelos.'
+          nota:
+          `
+Desayuno:Omelette de claras con verduras 
+Almuerzo:Ensalada power con atún
+Merienda:Tostadas integrales con palta
+Cena:Tacos saludables de carne magra
+          `
         },
 
     ]
@@ -23,18 +35,18 @@ const initialState = {
     },
     {
       id:4,
-      titulo:'Logros Diarios',
+      titulo:'Objetivos Diarios',
       tipo: 'texto',
       notas:[
         {
           id:5,
           fecha:1731972600000,
-          nota:'Hoy hice mi primera dominada.'
+          nota:'Completar mi entrenamiento del día (aunque sea corto)'
         },
         {
           id:6,
           fecha:1732059000000,
-          nota:'Hoy aumenté 2.5kg en Press Plano.'
+          nota:'Llegar a 7.000 – 10.000 pasos.'
         },
       ]
     },
@@ -46,12 +58,12 @@ const initialState = {
         {
           id:8,
           fecha:1732145400000,
-          nota:'Hoy me senti con menos fuerza que ayer.'
+          nota:'Hoy me sentí más liviano durante el entrenamiento. No tuve tantas ganas al empezar, pero una vez que arranqué pude completar todo sin saltarme series. Me alegra haber mantenido la constancia, aunque no fue mi mejor día en energía. Sumar un pequeño esfuerzo igual cuenta.'
         },
         {
           id:9,
           fecha:1732231800000,
-          nota:'Hoy entrené con spotter y logre mas repeticiones en sentadilla libre.'
+          nota:'Me alimenté mejor que ayer: agregué más proteína y evité picar por ansiedad. También caminé más y sentí menos rigidez en la espalda. Todavía tengo que mejorar el descanso, pero hoy di un paso en la dirección correcta y eso me motiva.'
         },
       ]
     },  
@@ -64,54 +76,62 @@ const initialState = {
           id:11,
           fecha:1732145400000,
           nota:
-          `Ingredientes:
-          1 lata de atún al agua
+          `
+Ingredientes:
+1 lata de atún al agua
 
-          1 tomate picado
+1 tomate picado
 
-          ½ pepino en rodajas
+½ pepino en rodajas
 
-          1 cda de aceite de oliva
+1 cda de aceite de oliva
 
-          Sal y limón a gusto
+Sal y limón a gusto
 
-          Preparación:
-          Mezclá todos los ingredientes en un bowl, condimentá y listo.`
+Preparación:
+Mezclá todos los ingredientes en un bowl, condimentá y listo.
+          `
         },
         {
           id:12,
           fecha:1732231800000,
           nota:
-          `Huevos revueltos con espinaca
+          `
+Huevos revueltos con espinaca
 
-          Ingredientes:
+Ingredientes:
 
-          2 huevos
+2 huevos
 
-          1 puñado de espinaca fresca
+1 puñado de espinaca fresca
 
-          1 chorrito de aceite o spray vegetal
+1 chorrito de aceite o spray vegetal
 
-          Sal y pimienta
+Sal y pimienta
 
-          Preparación:
-          Salteá la espinaca 1 minuto, agregá los huevos batidos, revolvé hasta cocción y condimentá.`
+Preparación:
+Salteá la espinaca 1 minuto, agregá los huevos batidos, revolvé hasta cocción y condimentá.
+          `
         },
         {
           id:13,
           fecha:1732231800000,
           nota:
-          `Ensalada rápida de pollo
+          `
+Ensalada rápida de pollo
 
-          Ingredientes: pollo cocido en tiras, mix de hojas verdes, tomate cherry, aceite de oliva, limón, sal.
-          Preparación: mezclar todo en un bowl, aliñar con aceite, limón y sal. Listo.`
+Ingredientes: pollo cocido en tiras, mix de hojas verdes, tomate cherry, aceite de oliva, limón, sal.
+Preparación: mezclar todo en un bowl, aliñar con aceite, limón y sal. Listo.
+          `
         },
         {
           id:14,
           fecha:1732231800000,
           nota:
-          `Ingredientes: 2 huevos, espinaca picada, queso descremado, sal, pimienta.
-          Preparación: batí los huevos, agregá espinaca y condimentos, volcalo en sartén, añadí queso y cociná hasta dorar.`
+          `
+Ingredientes: 2 huevos, espinaca picada, queso descremado, sal, pimienta.
+Preparación: batí los huevos, agregá espinaca y condimentos, volcalo en sartén, añadí queso y cociná hasta dorar.
+          `
         },
       ]
     },  
