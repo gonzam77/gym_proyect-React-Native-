@@ -3,9 +3,10 @@ import styles from '../../styles/botonesStyles'
 import { useRef } from "react"
 
 
-export const BotonGuardar = ({ onPress }) => {
+export const BotonGuardar = ({ onPress, estaDeshabilitado }) => {
     return (
-        <Pressable 
+        <Pressable
+            disabled={estaDeshabilitado}
             style={styles.iconButton} 
             onPress={onPress}
         >
