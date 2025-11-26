@@ -1,17 +1,22 @@
-import { View, Text, ScrollView, Pressable, Modal } from "react-native";
+import { View, Text, ScrollView, Pressable, Modal, Alert } from "react-native";
 import styles from "../../styles/notasStyles";
 import Icon from 'react-native-vector-icons/Ionicons';
 import FormComentario from "./formComentrario";
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { eliminarComentario } from "../../store/notasHistoricasSlice";
 
-const NotaDetalle = ({ nota, setNotaModal })=>{
+const NotaDetalle = ({ notaSeleccionada, setNotaModal })=>{
+    console.log('notaSeleccionada',notaSeleccionada);
     
-    const notaActualizada = useSelector(state => state.notasHistoricas.notasHistoricas.find(n => n.id === nota.id))
+    
+    const notaActualizada = useSelector(state => state.notasHistoricas.notasHistoricas.find(n => n.id === notaSeleccionada?.id))
     const listadoNotas = [...(notaActualizada?.notas ?? [])].reverse();
 
     const [formComentarioModal, setFormComentarioModal] = useState(false);
     const [comentarioSeleccionado, setComentarioSeleccionado] = useState({});
+
+    const dispatch = useDispatch();
  
     return (
         <View style={{flex:1}}>
@@ -26,7 +31,7 @@ const NotaDetalle = ({ nota, setNotaModal })=>{
                 <Text
                     style={styles.titulo}
                 >
-                    {nota.titulo}
+                    {notaSeleccionada?.titulo}
                 </Text>
             </View>
             <ScrollView>
@@ -38,8 +43,41 @@ const NotaDetalle = ({ nota, setNotaModal })=>{
                             return (
 
                                 <View key={nota.id} style={styles.commentContainer}>
-                                    <Text style={styles.commentDate}>{fecha}</Text>
-                                    <Text style={styles.commentText}>{nota.nota}</Text>
+                                    <View style={{alignItems:'flex-end'}}>
+                                        <Pressable
+                                            onPress={()=>{
+                                                Alert.alert( 
+                                                    'Seleccione una opción',
+                                                    'Seleccione una opción',
+                                                    [
+                                                        {
+                                                            text:'Cancelar'
+                                                        }, 
+                                                        {
+                                                            text:'Editar', onPress:()=>{
+                                                                setComentarioSeleccionado(nota);
+                                                                setFormComentarioModal(true);
+                                                            }
+                                                        },
+                                                        {
+                                                            text:'Elimnar', onPress:()=>{
+                                                                const idNota = notaSeleccionada?.id;
+                                                                const idComentario = nota?.id;
+                                                                dispatch(eliminarComentario({ idNota, idComentario }))
+                                                            }
+                                                        }    
+
+                                                    ]
+                                                )
+                                            }}
+                                        >
+                                            <Icon name="ellipsis-vertical-outline"></Icon>
+                                        </Pressable>
+                                    </View>
+                                    <View>
+                                        <Text style={styles.commentDate}>{fecha}</Text>
+                                        <Text style={styles.commentText}>{nota.nota}</Text>
+                                    </View>
                                 </View>
                             )
                         })
@@ -62,7 +100,7 @@ const NotaDetalle = ({ nota, setNotaModal })=>{
                 <FormComentario
                     comentarioSeleccionado={comentarioSeleccionado}
                     setFormComentarioModal={setFormComentarioModal}
-                    idNota={nota.id}
+                    idNota={notaSeleccionada.id}
                 />
             </Modal>
 

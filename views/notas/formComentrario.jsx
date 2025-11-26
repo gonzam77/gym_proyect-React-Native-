@@ -6,9 +6,10 @@ import { agregarComentario } from "../../store/notasHistoricasSlice";
 import Icon from 'react-native-vector-icons/Ionicons';
 import uuid from 'react-native-uuid';
 
-const FormComentario = ({ idNota, notaSeleccionada, setFormComentarioModal }) => {
+const FormComentario = ({ idNota, comentarioSeleccionado, setFormComentarioModal }) => {
 
     const nuevaFecha = Date.now();
+    const dispatch = useDispatch();
     
     const [comentario, setComentario] = useState({
         id: uuid.v4(),
@@ -16,7 +17,10 @@ const FormComentario = ({ idNota, notaSeleccionada, setFormComentarioModal }) =>
         nota:'',
     });
 
-    const dispatch = useDispatch();
+    useEffect(()=>{
+        if(comentarioSeleccionado?.id)setComentario(comentarioSeleccionado);
+    },[comentarioSeleccionado])
+
     
     const handeChange = (campo, valor) => {
         setComentario({

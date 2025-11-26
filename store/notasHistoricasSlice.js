@@ -65,21 +65,34 @@ const notasHistoricasSlice = createSlice({
       agregarNotas:(state,action) => {
         state.notasHistoricas.push(action.payload);
       },
-      agregarComentario:(state,action) => {
-        console.log('payload', action.payload);
-        
-        const {idNota, comentario} = action.payload;
+      agregarComentario: (state, action) => {
+        const { idNota, comentario } = action.payload;
         const nota = state.notasHistoricas.find(n => n.id === idNota);
-            if (nota) {
-              nota.notas.push(comentario);
-              console.log('notaStore', JSON.parse(JSON.stringify(nota)));
-            }
+        if (!nota) return;
+        const existente = nota.notas.find(n => n.id === comentario.id);
+        if (existente) {
+            Object.assign(existente, comentario); // mutación segura
+        } else {
+            nota.notas.push(comentario);
+        }
       },
       modificarNota:(state,action) => {
-        state.notasHistoricas = state.notasHistoricas.map(nota => nota.id === action.payload.id ? action.payload : nota)
+        const { id, ...rest } = action.payload;
+        const nota = state.notasHistoricas.find(n => n.id === id);
+        if (!nota) return;
+
+        Object.assign(nota, rest); // fusiona solo los cambios
       },
       eliminarNota: (state,action) => {
         state.notasHistoricas = state.notasHistoricas.filter(e => e.id !== action.payload.id) ;
+      },
+      eliminarComentario: (state, action) => {
+        const { idNota, idComentario } = action.payload;
+
+        const nota = state.notasHistoricas.find(n => n.id === idNota);
+        if (!nota) return;
+
+        nota.notas = nota.notas.filter(c => c.id !== idComentario);
       },
     }
 })
@@ -89,6 +102,7 @@ export const {
     modificarNota,
     eliminarNota,
     agregarComentario,
+    eliminarComentario,
 } = notasHistoricasSlice.actions;
 
 export default notasHistoricasSlice.reducer;

@@ -51,7 +51,7 @@ const Notas = () => {
                     onRequestClose={() => setNotaModal(false)}
                 >
                     <NotaDetalle
-                        nota={notaSeleccionada}
+                        notaSeleccionada={notaSeleccionada}
                         setNotaModal={setNotaModal}
                     />
                 </Modal>
