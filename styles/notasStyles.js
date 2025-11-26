@@ -53,11 +53,11 @@ const styles = StyleSheet.create({
     btn: {
         backgroundColor: colores.fondoBtn2,
         borderRadius: 30,
-        paddingVertical: 15,
-        paddingHorizontal: 18,
+        paddingVertical: 10,
+        paddingHorizontal: 10,
         elevation: 3,
         marginHorizontal:10,
-        borderColor:'#000',
+        borderColor:'#43d112',
         borderWidth:2
     },
     btnTexto: {

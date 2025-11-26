@@ -90,7 +90,7 @@ const NotaDetalle = ({ notaSeleccionada, setNotaSeleccionada, setNotaModal })=>{
                 style={[styles.btn,{position:'absolute', bottom:20, right:10}]}
                 onPress={()=>setFormComentarioModal(true)}
             >
-                <Icon name="chatbubble-ellipses-outline" size={25}></Icon>
+                <Icon name="chatbubble-ellipses-outline" size={30} color={'#fff'}></Icon>
             </Pressable>
 
             <Modal
