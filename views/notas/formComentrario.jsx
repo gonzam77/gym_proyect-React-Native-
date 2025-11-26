@@ -31,6 +31,7 @@ const FormComentario = ({ idNota, comentarioSeleccionado, setFormComentarioModal
 
     const handleGuardar = ()=>{
         dispatch(agregarComentario({idNota, comentario}))
+        setComentario({});
         setFormComentarioModal(false);
     };
 

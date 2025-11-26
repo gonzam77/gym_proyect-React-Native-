@@ -6,9 +6,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { eliminarComentario } from "../../store/notasHistoricasSlice";
 
-const NotaDetalle = ({ notaSeleccionada, setNotaModal })=>{
-    console.log('notaSeleccionada',notaSeleccionada);
-    
+const NotaDetalle = ({ notaSeleccionada, setNotaSeleccionada, setNotaModal })=>{
     
     const notaActualizada = useSelector(state => state.notasHistoricas.notasHistoricas.find(n => n.id === notaSeleccionada?.id))
     const listadoNotas = [...(notaActualizada?.notas ?? [])].reverse();
@@ -22,7 +20,10 @@ const NotaDetalle = ({ notaSeleccionada, setNotaModal })=>{
         <View style={{flex:1}}>
             <View>
                 <Pressable
-                    onPress={()=>setNotaModal(false)}
+                    onPress={()=>{
+                        setNotaModal(false),
+                        setNotaSeleccionada({})
+                    }}
                     style={{marginTop:20,marginLeft:10,}}
                 >
                     <Icon name="chevron-back-outline" color={'#000'} size={25}></Icon>

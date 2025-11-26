@@ -7,7 +7,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { agregarNotas, modificarNota } from "../../store/notasHistoricasSlice";
 
 
-const FormNota = ({ notaSeleccionada, setFormModal }) => {
+const FormNota = ({ notaSeleccionada, setFormModal, setNotaSeleccionada }) => {
 
     const dispatch = useDispatch();
 
@@ -39,14 +39,17 @@ const FormNota = ({ notaSeleccionada, setFormModal }) => {
         }else {
             dispatch(agregarNotas(nota));
         };
-
         setFormModal(false);
+        setNotaSeleccionada({});
     }
 
     return (
         <View style={styles.container}>
             <Pressable
-                onPress={()=>setFormModal(false)}
+                onPress={()=>{
+                    setFormModal(false);
+                    setNotaSeleccionada({});
+                }}
                 style={{marginTop:20,marginLeft:10,}}
             >
                 <Icon name="chevron-back-outline" color={'#000'} size={25}></Icon>

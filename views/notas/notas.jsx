@@ -11,10 +11,9 @@ const Notas = () => {
 
     const notas = useSelector(state => state.notasHistoricas.notasHistoricas);
     const dispatch = useDispatch();
-
     const [notaModal, setNotaModal] = useState(false);
     const [fromModal, setFormModal] = useState(false);
-    const [notaSeleccionada, setNotaSeleccionada] = useState();
+    const [notaSeleccionada, setNotaSeleccionada] = useState({});
     
     return (
         <View style={{flex:1}}>
@@ -86,17 +85,19 @@ const Notas = () => {
                 >
                     <NotaDetalle
                         notaSeleccionada={notaSeleccionada}
+                        setNotaSeleccionada={setNotaSeleccionada}
                         setNotaModal={setNotaModal}
-                    />
+                        />
                 </Modal>
 
                 <Modal
                     visible={fromModal}
                     animationType="slide"
                     onRequestClose={() => setFormModal(false)}
-                >
+                    >
                     <FormNota
                         notaSeleccionada={notaSeleccionada}
+                        setNotaSeleccionada={setNotaSeleccionada}
                         setFormModal={setFormModal}
                     />
                 </Modal>
