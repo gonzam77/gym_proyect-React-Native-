@@ -6,7 +6,7 @@ import { agregarComentario } from "../../store/notasHistoricasSlice";
 import Icon from 'react-native-vector-icons/Ionicons';
 import uuid from 'react-native-uuid';
 
-const FormComentario = ({ idNota, comentarioSeleccionado, setFormComentarioModal }) => {
+const FormComentario = ({ idNota, comentarioSeleccionado, setComentarioSeleccionado, setFormComentarioModal }) => {
 
     const nuevaFecha = Date.now();
     const dispatch = useDispatch();
@@ -30,7 +30,8 @@ const FormComentario = ({ idNota, comentarioSeleccionado, setFormComentarioModal
     };
 
     const handleGuardar = ()=>{
-        dispatch(agregarComentario({idNota, comentario}))
+        dispatch(agregarComentario({idNota, comentario}));
+        setComentarioSeleccionado({});
         setComentario({});
         setFormComentarioModal(false);
     };
@@ -38,7 +39,10 @@ const FormComentario = ({ idNota, comentarioSeleccionado, setFormComentarioModal
     return (
         <View>
             <Pressable
-                onPress={()=>setFormComentarioModal(false)}
+                onPress={()=>{
+                    setFormComentarioModal(false);
+                    setComentarioSeleccionado({});
+                }}
                 style={{marginTop:20,marginLeft:10,}}
             >
                 <Icon name="chevron-back-outline" color={'#000'} size={25}></Icon>

@@ -23,7 +23,7 @@ const FormEjercicio = ({nuevaRutina, setNuevaRutina, setModalFormEjercicio, ejer
     if (ejercicioSeleccionado) {
       const seleccionado = nuevaRutina.ejercicios.find(e => e.id === ejercicioSeleccionado);
       if (seleccionado) {
-        setEjercicioNuevo({ ...seleccionado });
+        setEjercicioNuevo(JSON.parse(JSON.stringify(seleccionado)));
         const categoria = listadoEjercicios.find(e => e.idEjercicio === seleccionado.ejercicio.idEjercicio
         )?.categoria;
         if (categoria) {
@@ -62,7 +62,7 @@ const FormEjercicio = ({nuevaRutina, setNuevaRutina, setModalFormEjercicio, ejer
 
   const validarFormulario = () => {   
     if (!selectedCategory) return "Debe seleccionar una categoría.";
-    if (!ejercicioNuevo.ejercicio.idEjercicio) return "Debe seleccionar un ejercicio.";
+    if (!ejercicioNuevo.ejercicio?.idEjercicio) return "Debe seleccionar un ejercicio.";
     if (!ejercicioNuevo.series || ejercicioNuevo.series <= 0 ||
         !ejercicioNuevo.descanso || ejercicioNuevo.descanso <= 0)
       return "Todos los campos deben ser mayores a cero.";

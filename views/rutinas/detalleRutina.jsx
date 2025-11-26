@@ -22,6 +22,8 @@ const DetalleRutina = (
     state.rutinas.rutinas.find(r => r.id === rutinaSeleccionada?.id)
   );
 
+  const copiaRutinaActualizada = JSON.parse(JSON.stringify(rutinaActualizada));
+
   const dispatch = useDispatch();
   const [ejercicio, setEjercicio] = useState({});
   const [modalEjercicio, setModalEjercicio] = useState(false);
@@ -33,10 +35,10 @@ const DetalleRutina = (
   };
   
   useEffect(()=>{  
-  },[rutinaActualizada]);
+  },[copiaRutinaActualizada]);
 
   const handleReiniciarRutina = () =>{
-    dispatch(reiniciarRutina(rutinaActualizada));
+    dispatch(reiniciarRutina(copiaRutinaActualizada));
   }
   
   return (
@@ -73,7 +75,7 @@ const DetalleRutina = (
               {
                 text: "Ok, Eliminar",
                 onPress: () => {
-                  handleEliminarRutina(rutinaActualizada.id);
+                  handleEliminarRutina(copiaRutinaActualizada.id);
                 },
               },
             ]);
@@ -81,7 +83,7 @@ const DetalleRutina = (
         />
       </View>
       <View>
-        <Text style={styles.titulo}>{rutinaActualizada?.nombre}</Text>
+        <Text style={styles.titulo}>{copiaRutinaActualizada?.nombre}</Text>
       </View>
       <Text style={styles.tiempo}>
         Tiempo Estimado: {formatearTiempo(rutinaSeleccionada.tiempo)}
@@ -94,7 +96,7 @@ const DetalleRutina = (
       >
         <View style={styles.listaEjercicios}>
           {
-            rutinaActualizada?.ejercicios?.map((e, index) => (
+            copiaRutinaActualizada?.ejercicios?.map((e, index) => (
               <Pressable 
                 key={e.id} 
                 style={styles.ejercicioItem}
@@ -124,7 +126,7 @@ const DetalleRutina = (
         onRequestClose={() => setModalFormRutina(false)}
       >
         <FormRutina 
-          rutinaSeleccionada={rutinaActualizada}
+          rutinaSeleccionada={copiaRutinaActualizada}
           setModalFormRutina={setModalFormRutina}
         />
       </Modal>
@@ -136,7 +138,7 @@ const DetalleRutina = (
         <DetalleEjercicio
           ejercicio={ejercicio}
           setModalEjercicio={setModalEjercicio}
-          rutinaSeleccionada={rutinaActualizada}
+          rutinaSeleccionada={copiaRutinaActualizada}
         />
       </Modal>
 

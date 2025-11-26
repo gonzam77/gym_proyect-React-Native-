@@ -28,7 +28,11 @@ async function requestNotificationPermission() {
 const MisRutinas = () => {
   
   const rutinas = useSelector(state => state.rutinas.rutinas);
-  const usuario = useSelector(state => state.usuario.usuario);  
+  const usuario = useSelector(state => state.usuario.usuario);
+  
+  const copiaRutinas = JSON.parse(JSON.stringify(rutinas));
+  const copiaUsuario = JSON.parse(JSON.stringify(usuario));
+
   
   const [modalFormRutina, setModalFormRutina] = useState(false);
   const [modalDetalle, setModalDetalle] = useState(false);
@@ -40,7 +44,8 @@ const MisRutinas = () => {
   
   useEffect(()=>{
     if(!usuario?.nombre?.trim()) navigation.navigate('Usuario');
-  },[usuario])
+  }, [usuario]);
+
 
   useEffect(()=>{
     requestNotificationPermission();
@@ -48,8 +53,9 @@ const MisRutinas = () => {
 
   const EntrenamientoItem = ({ nombre, id, tiempo }) => (
     <Pressable onPress={()=>{
-        const selectedRutina = rutinas.find(e=>e.id===id)
-        setRutinaSeleccionada(selectedRutina)
+        const selectedRutina = 
+          copiaRutinas.find(e => e.id === id);
+        setRutinaSeleccionada(selectedRutina);
         setModalDetalle(true)
       }} style={styles.entrenamiento}>
         <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
@@ -106,7 +112,7 @@ const MisRutinas = () => {
           </Text>
 
           <Text style={{fontSize:45, color:'#fff', fontWeight:'800', }}>
-            {usuario?.nombre || ''} 
+            {copiaUsuario?.nombre || ''} 
           </Text>
         </View>
 
@@ -117,7 +123,7 @@ const MisRutinas = () => {
       
       <ScrollView contentContainerStyle={styles.scroll}>
         {
-          rutinas?.length ? null : (
+          copiaRutinas?.length ? null : (
             <View style={styles.leyenda}>
               <Text style={styles.leyendaTexto}>Aun no ha programado rutinas</Text>
             </View>
@@ -125,7 +131,7 @@ const MisRutinas = () => {
         }
   
         {
-          rutinas?.map((e, index) => (
+          copiaRutinas?.map((e, index) => (
             <EntrenamientoItem
             nombre={e?.nombre}
             id={e?.id}
@@ -156,7 +162,7 @@ const MisRutinas = () => {
         <DetalleRutina
           rutinaSeleccionada={rutinaSeleccionada}
           setRutinaSeleccionada={setRutinaSeleccionada}
-          rutinas={rutinas}
+          rutinas={copiaRutinas}
           setModalFormRutina={setModalFormRutina}
           modalFormRutina={modalFormRutina}
           setModalDetalle={setModalDetalle}
@@ -169,7 +175,7 @@ const MisRutinas = () => {
         onRequestClose={() => setModalFormRutina(false)}
       >
         <FormRutina
-          rutinas={rutinas}
+          rutinas={copiaRutinas}
           setModalFormRutina={setModalFormRutina}
           rutinaSeleccionada={rutinaSeleccionada}
           setRutinaSeleccionada={setRutinaSeleccionada}

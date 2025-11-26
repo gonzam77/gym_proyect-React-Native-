@@ -51,7 +51,7 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
 
     useEffect(() => {
         if (rutinaSeleccionada?.id) {
-            setNuevaRutina(rutinaSeleccionada);
+            setNuevaRutina(JSON.parse(JSON.stringify(rutinaSeleccionada)));
         } else {
             setNuevaRutina({
                 id: '',
@@ -115,12 +115,11 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
                 id: '',
                 nombre: '',
                 ejercicios: [],
-                estado: 0
+                estado: 0,
+                tiempo: 0
             });
             setModalFormRutina(false);
         }, 2000);
-
-        
     };
 
     return (

@@ -10,6 +10,7 @@ import { eliminarNota } from "../../store/notasHistoricasSlice";
 const Notas = () => {
 
     const notas = useSelector(state => state.notasHistoricas.notasHistoricas);
+    const copiaNotas = JSON.parse(JSON.stringify(notas));
     const dispatch = useDispatch();
     const [notaModal, setNotaModal] = useState(false);
     const [fromModal, setFormModal] = useState(false);
@@ -19,7 +20,7 @@ const Notas = () => {
         <View style={{flex:1}}>
             <ScrollView style={styles.container}>
                 {
-                    notas?.map(nota => (
+                    copiaNotas?.map(nota => (
                         <View key={nota.id} style={styles.card}>
                             <View>
                                 <View style={{alignItems:'flex-end'}}>

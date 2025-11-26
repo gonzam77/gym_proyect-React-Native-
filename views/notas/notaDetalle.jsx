@@ -9,7 +9,8 @@ import { eliminarComentario } from "../../store/notasHistoricasSlice";
 const NotaDetalle = ({ notaSeleccionada, setNotaSeleccionada, setNotaModal })=>{
     
     const notaActualizada = useSelector(state => state.notasHistoricas.notasHistoricas.find(n => n.id === notaSeleccionada?.id))
-    const listadoNotas = [...(notaActualizada?.notas ?? [])].reverse();
+    const copiaNotaActualizada = JSON.parse(JSON.stringify(notaActualizada));
+    const listadoNotas = copiaNotaActualizada?.notas?.reverse();
 
     const [formComentarioModal, setFormComentarioModal] = useState(false);
     const [comentarioSeleccionado, setComentarioSeleccionado] = useState({});
@@ -100,6 +101,7 @@ const NotaDetalle = ({ notaSeleccionada, setNotaSeleccionada, setNotaModal })=>{
             >
                 <FormComentario
                     comentarioSeleccionado={comentarioSeleccionado}
+                    setComentarioSeleccionado={setComentarioSeleccionado}
                     setFormComentarioModal={setFormComentarioModal}
                     idNota={notaSeleccionada.id}
                 />
