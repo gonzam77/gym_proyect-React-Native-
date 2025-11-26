@@ -54,7 +54,67 @@ const initialState = {
           nota:'Hoy entrené con spotter y logre mas repeticiones en sentadilla libre.'
         },
       ]
-    }  
+    },  
+    {
+      id:10,
+      titulo:'Recetas',
+      tipo: 'texto',
+      notas:[
+        {
+          id:11,
+          fecha:1732145400000,
+          nota:
+          `Ingredientes:
+          1 lata de atún al agua
+
+          1 tomate picado
+
+          ½ pepino en rodajas
+
+          1 cda de aceite de oliva
+
+          Sal y limón a gusto
+
+          Preparación:
+          Mezclá todos los ingredientes en un bowl, condimentá y listo.`
+        },
+        {
+          id:12,
+          fecha:1732231800000,
+          nota:
+          `Huevos revueltos con espinaca
+
+          Ingredientes:
+
+          2 huevos
+
+          1 puñado de espinaca fresca
+
+          1 chorrito de aceite o spray vegetal
+
+          Sal y pimienta
+
+          Preparación:
+          Salteá la espinaca 1 minuto, agregá los huevos batidos, revolvé hasta cocción y condimentá.`
+        },
+        {
+          id:13,
+          fecha:1732231800000,
+          nota:
+          `Ensalada rápida de pollo
+
+          Ingredientes: pollo cocido en tiras, mix de hojas verdes, tomate cherry, aceite de oliva, limón, sal.
+          Preparación: mezclar todo en un bowl, aliñar con aceite, limón y sal. Listo.`
+        },
+        {
+          id:14,
+          fecha:1732231800000,
+          nota:
+          `Ingredientes: 2 huevos, espinaca picada, queso descremado, sal, pimienta.
+          Preparación: batí los huevos, agregá espinaca y condimentos, volcalo en sartén, añadí queso y cociná hasta dorar.`
+        },
+      ]
+    },  
   ],
 };
 
