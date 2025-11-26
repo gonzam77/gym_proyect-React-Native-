@@ -56,7 +56,7 @@ const Notas = () => {
                                 <Text>Última nota:</Text>
                             </View>
                             <Pressable
-                                onLongPress={()=>{
+                                onPress={()=>{
                                     setNotaSeleccionada(nota);
                                     setNotaModal(true);
                                 }}

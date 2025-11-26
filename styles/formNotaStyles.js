@@ -9,6 +9,7 @@ const styles = StyleSheet.create({
     titulo:{
         fontSize:30,
         color:"#000",
+        fontWeight:'600',
         textAlign:'center',
     },
     label:{
@@ -21,6 +22,7 @@ const styles = StyleSheet.create({
         color:'#000',
         borderRadius:5,
         marginHorizontal:15,
+        marginVertical:20,
         fontSize:15,
         borderColor:'#000',
         borderWidth:2

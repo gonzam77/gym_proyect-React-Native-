@@ -49,7 +49,7 @@ const NotaDetalle = ({ notaSeleccionada, setNotaSeleccionada, setNotaModal })=>{
                                             onPress={()=>{
                                                 Alert.alert( 
                                                     'Seleccione una opción',
-                                                    'Seleccione una opción',
+                                                    '',
                                                     [
                                                         {
                                                             text:'Cancelar'

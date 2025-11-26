@@ -56,12 +56,12 @@ const FormNota = ({ notaSeleccionada, setFormModal, setNotaSeleccionada }) => {
                 
             </Pressable>
             <Text style={styles.titulo}>
-                Nueva Nota
+                { notaSeleccionada.id ? 'Editar Nota' : 'Nueva Nota' }
             </Text>
             <View style={styles.form}>
-                <Text
+                {/* <Text
                     style={styles.label}
-                >Titulo</Text>
+                >Titulo</Text> */}
                 <TextInput
                     placeholder="Titulo..."
                     placeholderTextColor={'#5e5c5cff'}
