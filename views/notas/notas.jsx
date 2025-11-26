@@ -33,9 +33,9 @@ const Notas = () => {
                                     nota.notas?.length > 0 ? (() => {
                                         const u = nota.notas.at(-1);
                                         return (
-                                            <View key={u.id} style={styles.commentContainer}>
-                                                <Text style={styles.commentDate}>{new Date(u.fecha).toLocaleString()}</Text>
-                                                <Text style={styles.commentText}>{u.nota}</Text>
+                                            <View key={u?.id} style={styles.commentContainer}>
+                                                <Text style={styles.commentDate}>{new Date(u?.fecha).toLocaleString()}</Text>
+                                                <Text style={styles.commentText}>{u?.nota}</Text>
                                             </View>
                                         );
                                     })() : <Text>¡No ha agregado notas!</Text>

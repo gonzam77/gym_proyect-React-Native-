@@ -65,6 +65,16 @@ const notasHistoricasSlice = createSlice({
       agregarNotas:(state,action) => {
         state.notasHistoricas.push(action.payload);
       },
+      agregarComentario:(state,action) => {
+        console.log('payload', action.payload);
+        
+        const {idNota, comentario} = action.payload;
+        const nota = state.notasHistoricas.find(n => n.id === idNota);
+            if (nota) {
+              nota.notas.push(comentario);
+              console.log('notaStore', JSON.parse(JSON.stringify(nota)));
+            }
+      },
       modificarNota:(state,action) => {
         state.notasHistoricas = state.notasHistoricas.map(nota => nota.id === action.payload.id ? action.payload : nota)
       },
@@ -77,7 +87,8 @@ const notasHistoricasSlice = createSlice({
 export const {
     agregarNotas,
     modificarNota,
-    eliminarNota
+    eliminarNota,
+    agregarComentario,
 } = notasHistoricasSlice.actions;
 
 export default notasHistoricasSlice.reducer;

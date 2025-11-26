@@ -1,11 +1,18 @@
-import { View, Text, ScrollView, Pressable } from "react-native";
+import { View, Text, ScrollView, Pressable, Modal } from "react-native";
 import styles from "../../styles/notasStyles";
 import Icon from 'react-native-vector-icons/Ionicons';
+import FormComentario from "./formComentrario";
+import { useState } from "react";
+import { useSelector } from "react-redux";
 
 const NotaDetalle = ({ nota, setNotaModal })=>{
-    console.log('nota',nota);
-    const listadoNotas = [...nota.notas].reverse();
+    
+    const notaActualizada = useSelector(state => state.notasHistoricas.notasHistoricas.find(n => n.id === nota.id))
+    const listadoNotas = [...(notaActualizada?.notas ?? [])].reverse();
 
+    const [formComentarioModal, setFormComentarioModal] = useState(false);
+    const [comentarioSeleccionado, setComentarioSeleccionado] = useState({});
+ 
     return (
         <View style={{flex:1}}>
             <View>
@@ -42,9 +49,23 @@ const NotaDetalle = ({ nota, setNotaModal })=>{
 
             <Pressable
                 style={[styles.btn,{position:'absolute', bottom:20, right:10}]}
+                onPress={()=>setFormComentarioModal(true)}
             >
                 <Icon name="chatbubble-ellipses-outline" size={25}></Icon>
             </Pressable>
+
+            <Modal
+                visible={formComentarioModal}
+                animationType="slide"
+                onRequestClose={()=>setFormComentarioModal(false)}    
+            >
+                <FormComentario
+                    comentarioSeleccionado={comentarioSeleccionado}
+                    setFormComentarioModal={setFormComentarioModal}
+                    idNota={nota.id}
+                />
+            </Modal>
+
         </View>
     )
 }
