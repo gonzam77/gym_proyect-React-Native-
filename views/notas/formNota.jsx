@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import styles from "../../styles/formNotaStyles";
 import uuid from 'react-native-uuid';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { agregarNotas } from "../../store/notasHistoricasSlice";
+import { agregarNotas, modificarNota } from "../../store/notasHistoricasSlice";
 
 
 const FormNota = ({ notaSeleccionada, setFormModal }) => {
@@ -12,28 +12,34 @@ const FormNota = ({ notaSeleccionada, setFormModal }) => {
     const dispatch = useDispatch();
 
     const [nota, setNota] = useState({
-        id:'',
+        id:uuid.v4(),
         titulo:'',
         tipo:'texto',
         notas:[],
     });
 
     useEffect(()=>{
-        setNota({
-            ...nota,
-            id : uuid.v4()
-        })
-    },[])
-
+        if(notaSeleccionada?.id) setNota(notaSeleccionada);
+    },[notaSeleccionada])
+    
     const handleChange = (campo,value)=>{
         setNota({
             ...nota,
             [campo]:value
         });
     };
-
+    
     const handleGuardar = () => {
-        dispatch(agregarNotas(nota));
+        
+        if(notaSeleccionada?.id){
+            dispatch(modificarNota({
+                id: nota.id,
+                titulo:nota.titulo
+            }))
+        }else {
+            dispatch(agregarNotas(nota));
+        };
+
         setFormModal(false);
     }
 

@@ -1,33 +1,67 @@
-import { View, Text, ScrollView, Pressable, Modal } from "react-native";
-import { useSelector } from "react-redux";
+import { View, Text, ScrollView, Pressable, Modal, Alert } from "react-native";
+import { useSelector, useDispatch } from "react-redux";
 import styles from "../../styles/notasStyles";
 import { useState } from "react";
 import Icon from 'react-native-vector-icons/Ionicons';
 import NotaDetalle from "./notaDetalle";
 import FormNota from './formNota';
+import { eliminarNota } from "../../store/notasHistoricasSlice";
 
 const Notas = () => {
 
     const notas = useSelector(state => state.notasHistoricas.notasHistoricas);
+    const dispatch = useDispatch();
 
     const [notaModal, setNotaModal] = useState(false);
     const [fromModal, setFormModal] = useState(false);
     const [notaSeleccionada, setNotaSeleccionada] = useState();
-
+    
     return (
         <View style={{flex:1}}>
             <ScrollView style={styles.container}>
                 {
                     notas?.map(nota => (
                         <View key={nota.id} style={styles.card}>
+                            <View>
+                                <View style={{alignItems:'flex-end'}}>
+                                    <Pressable
+                                        onPress={()=>{
+                                            Alert.alert( 
+                                                'Seleccione una opción',
+                                                '',
+                                                [
+                                                    {
+                                                        text:'Cancelar'
+                                                    }, 
+                                                    {
+                                                        text:'Editar', onPress:()=>{
+                                                            setNotaSeleccionada(nota);
+                                                            setFormModal(true)
+                                                        }
+                                                    },
+                                                    {
+                                                        text:'Elimnar', onPress:()=>{
+                                                            const idNota = nota.id;
+                                                            dispatch(eliminarNota(idNota))
+                                                        }
+                                                    }    
+
+                                                ]
+                                            )
+                                        }}
+                                    >
+                                        <Icon name="ellipsis-vertical-outline"></Icon>
+                                    </Pressable>
+                                </View>
+                                <Text style={styles.cardTitle}>{nota.titulo}</Text>
+                                <Text>Última nota:</Text>
+                            </View>
                             <Pressable
                                 onLongPress={()=>{
                                     setNotaSeleccionada(nota);
                                     setNotaModal(true);
                                 }}
                             >
-                                <Text style={styles.cardTitle}>{nota.titulo}</Text>
-                                <Text>Última nota:</Text>
 
                                 {
                                     nota.notas?.length > 0 ? (() => {
@@ -62,7 +96,7 @@ const Notas = () => {
                     onRequestClose={() => setFormModal(false)}
                 >
                     <FormNota
-                        nota={notaSeleccionada}
+                        notaSeleccionada={notaSeleccionada}
                         setFormModal={setFormModal}
                     />
                 </Modal>

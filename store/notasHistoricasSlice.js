@@ -84,7 +84,7 @@ const notasHistoricasSlice = createSlice({
         Object.assign(nota, rest); // fusiona solo los cambios
       },
       eliminarNota: (state,action) => {
-        state.notasHistoricas = state.notasHistoricas.filter(e => e.id !== action.payload.id) ;
+        state.notasHistoricas = state.notasHistoricas.filter(e => e.id !== action.payload) ;
       },
       eliminarComentario: (state, action) => {
         const { idNota, idComentario } = action.payload;
