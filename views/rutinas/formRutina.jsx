@@ -118,7 +118,6 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
                 estado: 0
             });
             setModalFormRutina(false);
-            setEstaDeshabilitado(false);
         }, 2000);
 
         
@@ -143,6 +142,7 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
                             }}
                         />
                         <BotonGuardar
+                            estaDeshabilitado={estaDeshabilitado}
                             onPress={()=>{
                                 setEstaDeshabilitado(true);
                                 handleGuardar();
