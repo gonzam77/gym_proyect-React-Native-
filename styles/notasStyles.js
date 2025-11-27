@@ -22,7 +22,8 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: "bold",
         marginBottom: 10,
-        color: "#333",
+        marginLeft: 5,
+        color: "#000",
     },
 
     commentContainer: {

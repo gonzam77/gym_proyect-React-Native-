@@ -22,9 +22,14 @@ const Notas = () => {
                 {
                     copiaNotas?.map(nota => (
                         <View key={nota.id} style={styles.card}>
-                            <View>
+                            <View style={{flexDirection:'row', justifyContent:'space-between'}}>
+                                <View>
+                                    <Text style={styles.cardTitle}>{nota.titulo}</Text>
+                                    <Text>Última nota:</Text>
+                                </View>
                                 <View style={{alignItems:'flex-end'}}>
                                     <Pressable
+                                        
                                         onPress={()=>{
                                             Alert.alert( 
                                                 'Seleccione una opción',
@@ -50,11 +55,10 @@ const Notas = () => {
                                             )
                                         }}
                                     >
-                                        <Icon name="ellipsis-vertical-outline"></Icon>
+                                        <Icon name="ellipsis-vertical-outline" size={20}></Icon>
                                     </Pressable>
                                 </View>
-                                <Text style={styles.cardTitle}>{nota.titulo}</Text>
-                                <Text>Última nota:</Text>
+                                
                             </View>
                             <Pressable
                                 onPress={()=>{
@@ -74,6 +78,9 @@ const Notas = () => {
                                         );
                                     })() : <Text>¡No ha agregado notas!</Text>
                                 }
+                                <View style={{alignSelf:'flex-end', margin:5}}>
+                                    <Icon name="chevron-forward-outline" color={'#000'} size={20}></Icon>
+                                </View>
                             </Pressable>
                         </View>
                     ))
