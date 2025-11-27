@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { View, Pressable, Text, TextInput } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import styles from "../../styles/formNotaStyles";
 import uuid from 'react-native-uuid';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -59,9 +59,6 @@ const FormNota = ({ notaSeleccionada, setFormModal, setNotaSeleccionada }) => {
                 { notaSeleccionada.id ? 'Editar Nota' : 'Nueva Nota' }
             </Text>
             <View style={styles.form}>
-                {/* <Text
-                    style={styles.label}
-                >Titulo</Text> */}
                 <TextInput
                     placeholder="Titulo..."
                     placeholderTextColor={'#5e5c5cff'}
