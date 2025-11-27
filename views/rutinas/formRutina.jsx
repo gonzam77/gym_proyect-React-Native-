@@ -110,6 +110,7 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
         
         setNuevaRutina({});
         setModalFormRutina(false);
+        setEstaDeshabilitado(false);
     };
 
     return (
