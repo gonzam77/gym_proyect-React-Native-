@@ -8,16 +8,18 @@ const styles = StyleSheet.create({
         justifyContent:'center'
     },
     label:{
-        fontSize:30,
+        fontSize:15,
         color:"#fff",
-        textAlign:'center',
+        marginLeft:15,
     },
     input:{
         backgroundColor:'#fff',
         color:'#000',
-        margin:20,
+        marginHorizontal:15,
+        marginVertical:10,
         borderRadius:5,
         fontSize:15,
+        textAlignVertical: "top",
     },
     btn:{
         backgroundColor:colores.detalle,

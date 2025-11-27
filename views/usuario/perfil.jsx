@@ -9,6 +9,8 @@ const Perfil = () => {
     const [formModal, setFormModal] = useState(false);
 
     const usuario = useSelector(state => state.usuario.usuario);
+    console.log('usuario', usuario);
+    
 
   return (
     <View style={styles.container}>
@@ -69,7 +71,7 @@ const Perfil = () => {
 
         <Modal
             visible={formModal}
-            animationType="slice"
+            animationType="slide"
             onRequestClose={() => setFormModal(false)}
         >
             <FormUsuario
