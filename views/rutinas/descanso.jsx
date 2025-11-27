@@ -44,13 +44,6 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
     };
   }, [activo, segundos]);
 
-  // cerrar cuando llega a cero
-  // useEffect(() => {
-  //   if (segundos === 0) {
-  //     setModalDescanso(false);
-  //   }
-  // }, [segundos]);
-
   const reiniciar = () => {
     if (intervaloRef.current) {
       BackgroundTimer.clearInterval(intervaloRef.current);

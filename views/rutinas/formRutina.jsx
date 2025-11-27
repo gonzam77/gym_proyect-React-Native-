@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Pressable, Text, TextInput, View, Modal, ScrollView, Alert, Animated } from "react-native";
 import FormEjercicio from "./formEjercicio";
-// import Toast from "react-native-toast-message";
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useDispatch } from "react-redux";
 import { agregarRutina, setRutinas } from '../../store/rutinasSlice';
@@ -108,16 +107,9 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
             dispatch(agregarRutina(nuevaRutina));
         }
 
-        // Toast.show({
-        //     type: 'success',
-        //     text1: '¡Guardado con éxito!',
-        //     text2: 'Tu rutina fue guardada correctamente.',
-        // });
         
-        // setTimeout(() => {
         setNuevaRutina({});
         setModalFormRutina(false);
-        // }, 2000);
     };
 
     return (
@@ -212,7 +204,6 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
                     setModalFormEjercicio={setModalFormEjercicio}
                 /> 
             </Modal>
-                {/* <Toast /> */}
         </View>
 
     );

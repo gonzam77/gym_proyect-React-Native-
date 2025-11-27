@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { View, Text, Pressable, TextInput, StyleSheet } from "react-native";
+import { View, Text, Pressable, TextInput } from "react-native";
 import { useDispatch } from "react-redux";
-import { colores } from '../../styles/colores'
 import { agregarComentario } from "../../store/notasHistoricasSlice";
 import Icon from 'react-native-vector-icons/Ionicons';
 import uuid from 'react-native-uuid';
+import styles from "../../styles/formComentarioStyles";
 
 const FormComentario = ({ idNota, comentarioSeleccionado, setComentarioSeleccionado, setFormComentarioModal }) => {
 
@@ -71,35 +71,4 @@ const FormComentario = ({ idNota, comentarioSeleccionado, setComentarioSeleccion
     )
 };
 
-
 export default FormComentario;
-
-
-const styles = StyleSheet.create({
-    container:{
-        flex:1,
-    },
-    input:{
-        borderWidth: 1,
-        borderColor: "#ccc",
-        borderRadius: 8,
-        padding: 10,
-        textAlignVertical: "top",
-        minHeight: 100,
-        margin:30
-
-    },
-    btn:{
-        backgroundColor:colores.fondoBtn2,
-        marginHorizontal:30,
-        padding:10,
-        borderRadius:10
-
-    },
-    btnText:{
-        textAlign:'center',
-        color:'#fff',
-        fontSize:18,
-        fontWeight:'600',        
-    },
-})
