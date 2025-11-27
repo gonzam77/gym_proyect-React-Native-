@@ -107,7 +107,6 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
             dispatch(agregarRutina(nuevaRutina));
         }
 
-        
         setNuevaRutina({});
         setModalFormRutina(false);
         setEstaDeshabilitado(false);
