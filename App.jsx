@@ -7,12 +7,17 @@ import {
 import PushNotification from "react-native-push-notification";
 import { Platform } from "react-native";
 
+import InAppUpdates from 'react-native-in-app-updates';
+
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { store, persistor } from './store/store';
 
+import { useEffect } from 'react';
+
 import {  NavigationContainer  } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 import MisRutinas from './views/rutinas/misRutinas';
@@ -49,6 +54,27 @@ const RootTabs = createBottomTabNavigator({
 
 
 const App = () => {
+
+  useEffect(() => {
+    try {
+      const inAppUpdates = new InAppUpdates(false);
+
+      inAppUpdates.checkNeedsUpdate().then((result) => {
+        if (result.shouldUpdate) {
+          inAppUpdates.startUpdate({
+            updateType:
+            Platform.OS === 'android'
+            ? InAppUpdates.UPDATE_TYPE.IMMEDIATE
+            : InAppUpdates.UPDATE_TYPE.FLEXIBLE,
+          });
+        }
+      });
+    } catch (error) {
+      console.log("In-App Updates no disponible en desarrollo:", error);
+    }
+  }, []);
+
+
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
