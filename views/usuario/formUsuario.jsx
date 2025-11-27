@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 import { View, Text, Pressable, TextInput, Alert, ScrollView } from "react-native";
 import { useDispatch } from "react-redux";
 import { guardarUsuario } from "../../store/usuarioSlice";
-import { useNavigation } from "@react-navigation/native";
 import styles from "../../styles/usuarioStyles";
+import uuid from 'react-native-uuid';
 
 const FormUsuario = ({ usuario, setFormModal })=>{
-
-    const navigation = useNavigation();
+    
+    console.log(usuario.nombre);
 
     const [nuevoUsuario, setNuevoUsuario] = useState({
         id:'',
@@ -24,11 +24,17 @@ const FormUsuario = ({ usuario, setFormModal })=>{
     const dispatch = useDispatch();
 
     useEffect(()=>{
-        if(usuario.id) {
-            const copiaUsuario = JSON.parse(JSON.stringify(usuario));
+        console.log(usuario.nombre);
+        
+        if(usuario.nombre) {
             setNuevoUsuario(usuario);
+        } else {
+            setNuevoUsuario({
+                ...nuevoUsuario,
+                id: uuid.v4(),
+            })
         }
-    },[usuario]);
+    },[]);
 
     const validacion = ()=>{
         if(!nuevoUsuario.nombre?.trim()){
@@ -48,7 +54,6 @@ const FormUsuario = ({ usuario, setFormModal })=>{
     const guardar = () => {
         dispatch(guardarUsuario(nuevoUsuario));
         setFormModal(false)
-        // navigation.navigate('Perfil')  
     };
 
     return(

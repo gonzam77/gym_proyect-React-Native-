@@ -3,14 +3,13 @@ import { View, Text, StyleSheet, Image, Pressable, Modal } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import FormUsuario from "./formUsuario";
 import { useSelector } from "react-redux";
+import styles from "../../styles/perfilStyles";
 
 const Perfil = () => {
 
     const [formModal, setFormModal] = useState(false);
 
     const usuario = useSelector(state => state.usuario.usuario);
-    console.log('usuario', usuario);
-    
 
   return (
     <View style={styles.container}>
@@ -58,15 +57,16 @@ const Perfil = () => {
             </View>
 
             <View style={styles.row}>
-                <Text style={styles.label}>Objetivos:</Text>
-                <Text style={styles.value}>{usuario.objetivos || "-"}</Text>
-            </View>
-
-            <View style={styles.row}>
                 <Text style={styles.label}>Disponibilidad:</Text>
                 <Text style={styles.value}>{usuario.disponibilidad || "-"}</Text>
             </View>
+        </View>
 
+        <View style={styles.card}>
+            <View style={styles.header}>
+                <Text style={styles.label}>Objetivos:</Text>
+                <Text style={styles.objetivos}>{usuario.objetivos || "-"}</Text>
+            </View>
         </View>
 
         <Modal
@@ -82,49 +82,5 @@ const Perfil = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-    container:{
-        backgroundColor:'#000',
-        flex:1
-    },
-    card: {
-        backgroundColor: "#fff",
-        padding: 20,
-        borderRadius: 16,
-        margin: 20,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 3 },
-        shadowOpacity: 0.2,
-        shadowRadius: 5,
-        elevation: 5,
-    },
-    header: {
-        alignItems: "center",
-        marginBottom: 20,
-    },
-    nombre: {
-        marginTop: 10,
-        fontSize: 22,
-        fontWeight: "bold",
-        color: "#333",
-    },
-    row: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        paddingVertical: 6,
-        borderBottomWidth: 0.4,
-        borderColor: "#ccc",
-    },
-    label: {
-        fontSize: 18,
-        color: "#555",
-        fontWeight: "600",
-    },
-    value: {
-        fontSize: 16,
-        color: "#333",
-    },
-    });
 
 export default Perfil;
