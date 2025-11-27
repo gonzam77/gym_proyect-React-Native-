@@ -40,7 +40,7 @@ const Notas = () => {
                                                         }
                                                     },
                                                     {
-                                                        text:'Elimnar', onPress:()=>{
+                                                        text:'Eliminar', onPress:()=>{
                                                             const idNota = nota.id;
                                                             dispatch(eliminarNota(idNota))
                                                         }

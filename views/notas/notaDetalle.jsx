@@ -62,7 +62,7 @@ const NotaDetalle = ({ notaSeleccionada, setNotaSeleccionada, setNotaModal })=>{
                                                             }
                                                         },
                                                         {
-                                                            text:'Elimnar', onPress:()=>{
+                                                            text:'Eliminar', onPress:()=>{
                                                                 const idNota = notaSeleccionada?.id;
                                                                 const idComentario = nota?.id;
                                                                 dispatch(eliminarComentario({ idNota, idComentario }))
