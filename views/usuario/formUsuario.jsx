@@ -7,8 +7,6 @@ import uuid from 'react-native-uuid';
 
 const FormUsuario = ({ usuario, setFormModal })=>{
     
-    console.log(usuario.nombre);
-
     const [nuevoUsuario, setNuevoUsuario] = useState({
         id:'',
         nombre:"",
