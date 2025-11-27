@@ -21,7 +21,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 import MisRutinas from './views/rutinas/misRutinas';
-import Usuario from './views/usuario/usuario';
+import Perfil from './views/usuario/perfil';
 import Notas from './views/notas/notas';
 
 
@@ -46,7 +46,7 @@ PushNotification.createChannel(
 
 const RootTabs = createBottomTabNavigator({
   screens: {
-    Usuario: Usuario,
+    Perfil: Perfil,
     Home: MisRutinas,
     Notas: Notas
   },
@@ -95,7 +95,7 @@ const App = () => {
                     iconName = focused ? 'fitness' : 'fitness-outline'
                   } else if (route.name === 'Notas') {
                     iconName = focused ? 'create' : 'create-outline'
-                  } else if (route.name === 'Usuario')
+                  } else if (route.name === 'Perfil')
                   iconName = focused ? 'person' : 'person-outline'
                   return <Ionicons name={iconName} size={size} color={color}/>
                 },
@@ -110,8 +110,8 @@ const App = () => {
               })}
             >
               <RootTabs.Screen
-                name='Usuario'
-                component={Usuario}
+                name='Perfil'
+                component={Perfil}
                 />
               <RootTabs.Screen
                 name='MisRutinas'
