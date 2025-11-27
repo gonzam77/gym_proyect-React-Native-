@@ -118,14 +118,14 @@ adb -s ZN3223Q45V install -r android/app/build/outputs/apk/release/app-release.a
 <!-- Estructura de commits --> 
 
 -feat(rutinas): 
-    agregar temporizador de descanso entre series
+    agregar 
 -fix(api): 
-    corregir error al enviar coordenadas vacías
+    corregir error 
 -refactor(ui): 
-    simplificar componente de detalle de ejercicio
+    simplificar componente 
 -style: 
     mejorar formato del archivo de estilos
 -docs: 
-    actualizar instrucciones de instalación
+    actualizar documentos
 -chore: 
     actualizar dependencias de React Native
