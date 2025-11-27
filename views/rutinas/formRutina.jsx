@@ -97,6 +97,7 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
     const handleGuardar = () => {
         if (!nuevaRutina.nombre.trim()) {
             Alert.alert('Error', 'El nombre de la rutina es obligatorio.');
+            setEstaDeshabilitado(false);
             return;
         }
 
@@ -109,7 +110,6 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
 
         setNuevaRutina({});
         setModalFormRutina(false);
-        setEstaDeshabilitado(false);
     };
 
     return (
