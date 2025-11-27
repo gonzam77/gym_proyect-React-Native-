@@ -12,7 +12,7 @@ const FormNota = ({ notaSeleccionada, setFormModal, setNotaSeleccionada }) => {
     const dispatch = useDispatch();
 
     const [nota, setNota] = useState({
-        id:uuid.v4(),
+        id: uuid.v4(),
         titulo:'',
         tipo:'texto',
         notas:[],

@@ -4,6 +4,7 @@ import listadoEjercicios from "../../helpers/ejercicios";
 import { Picker } from "@react-native-picker/picker";
 import { styles } from '../../styles/formEjercicioStyles';
 import { BotonBorrar, BotonVolver, BotonGuardar } from "../../components/botones/botones";
+import uuid from 'react-native-uuid';
  
 const FormEjercicio = ({nuevaRutina, setNuevaRutina, setModalFormEjercicio, ejercicioSeleccionado, setEjercicioSeleccionado}) => {
 
@@ -12,7 +13,7 @@ const FormEjercicio = ({nuevaRutina, setNuevaRutina, setModalFormEjercicio, ejer
   const [errores, setErrores] = useState("");
 
   const [ejercicioNuevo, setEjercicioNuevo] = useState({
-    id: Date.now(),
+    id: '',
     ejercicio:{},
     series: "",
     descanso: "",
@@ -95,7 +96,7 @@ const FormEjercicio = ({nuevaRutina, setNuevaRutina, setModalFormEjercicio, ejer
         ...nuevaRutina,
         ejercicios: [
           ...nuevaRutina.ejercicios,
-          { ...ejercicioNuevo, id: Date.now() }
+          { ...ejercicioNuevo, id: uuid.v4() }
         ],
       });
 
