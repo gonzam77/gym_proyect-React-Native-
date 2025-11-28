@@ -21,8 +21,8 @@ android {
         applicationId "com.rutina360" // Cambialo si tu package name es otro
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 4
-        versionName "1.0.3"
+        versionCode 6
+        versionName "1.0.5"
     }
 
     signingConfigs {
