@@ -116,7 +116,7 @@ const MisRutinas = () => {
         {
           rutinas?.length ? null : (
             <View style={styles.leyenda}>
-              <Text style={styles.leyendaTexto}>Aun no ha programado rutinas</Text>
+              <Text style={styles.leyendaTexto}>Aún no ha programado rutinas</Text>
             </View>
           )
         }
