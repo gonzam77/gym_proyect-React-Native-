@@ -3,8 +3,7 @@ import {colores} from './colores';
 
 export const styles = StyleSheet.create({
   container: {
-    // backgroundColor: '#000', // importante para que se vea el fondo
-    flex:1
+    flex:1,
   },
   fondo: {
     flex: 1,
@@ -17,12 +16,16 @@ export const styles = StyleSheet.create({
   agregar:{
     width:80,
     height:80
-  },  
+  },
+  leyenda:{
+    backgroundColor:'#000'
+  },
   leyendaTexto: {
     textAlign: 'center',
     color: colores.secundario,
     fontSize: 20,
     fontWeight: '900',
+    paddingVertical:5
   },
   entrenamiento: {
     marginHorizontal: 15,
