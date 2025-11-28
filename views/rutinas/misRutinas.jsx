@@ -37,11 +37,7 @@ const MisRutinas = () => {
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const navigation = useNavigation();
   
-  useEffect(()=>{
-    if(!usuario?.nombre?.trim()) navigation.navigate('Usuario');
-  }, [usuario]);
-
-
+ 
   useEffect(()=>{
     requestNotificationPermission();
   },[]);
