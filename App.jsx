@@ -61,11 +61,14 @@ const App = () => {
 
       inAppUpdates.checkNeedsUpdate().then((result) => {
         if (result.shouldUpdate) {
+          // inAppUpdates.startUpdate({
+          //   updateType:
+          //   Platform.OS === 'android'
+          //   ? InAppUpdates.UPDATE_TYPE.IMMEDIATE
+          //   : InAppUpdates.UPDATE_TYPE.FLEXIBLE,
+          // });
           inAppUpdates.startUpdate({
-            updateType:
-            Platform.OS === 'android'
-            ? InAppUpdates.UPDATE_TYPE.IMMEDIATE
-            : InAppUpdates.UPDATE_TYPE.FLEXIBLE,
+            updateType: InAppUpdates.UPDATE_TYPE.IMMEDIATE
           });
         }
       });
