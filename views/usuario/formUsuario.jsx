@@ -22,9 +22,7 @@ const FormUsuario = ({ usuario, setFormModal })=>{
     const dispatch = useDispatch();
 
     useEffect(()=>{
-        console.log(usuario.nombre);
-        
-        if(usuario.nombre) {
+        if(usuario.id) {
             setNuevoUsuario(usuario);
         } else {
             setNuevoUsuario({
@@ -106,6 +104,14 @@ const FormUsuario = ({ usuario, setFormModal })=>{
                     style={styles.input}
                     placeholderTextColor='#888'
                 ></TextInput>
+                <Text style={styles.label}>Disponibilidad Semanal</Text>
+                <TextInput
+                    placeholder="1 dia, 2 dias, 3 dias a la semana..."
+                    value={nuevoUsuario.disponibilidad}
+                    onChangeText={(valor)=>{handleChange('disponibilidad',valor)}}
+                    style={styles.input}
+                    placeholderTextColor='#888'
+                ></TextInput>
                 <Text style={styles.label}>Objetivos</Text>
                 <TextInput
                     multiline
@@ -116,25 +122,15 @@ const FormUsuario = ({ usuario, setFormModal })=>{
                     style={[styles.input,{minHeight:80}]}
                     placeholderTextColor='#888'
                 ></TextInput>
-                <Text style={styles.label}>Disponibilidad Semanal</Text>
-                <TextInput
-                    multiline
-                    numberOfLines={4}
-                    placeholder="1, 2, 3, 4, 5, 6, 7...."
-                    value={nuevoUsuario.disponibilidad}
-                    onChangeText={(valor)=>{handleChange('disponibilidad',valor)}}
-                    style={[styles.input,{minHeight:80}]}
-                    placeholderTextColor='#888'
-                ></TextInput>
+                <Pressable
+                    style={styles.btn}
+                    onPress={validacion}
+                >
+                    <Text style={styles.btnTexto}>
+                        GUARDAR CAMBIOS
+                    </Text>
+                </Pressable>
             </ScrollView>
-            <Pressable
-                style={styles.btn}
-                onPress={validacion}
-            >
-                <Text style={styles.btnTexto}>
-                    GUARDAR CAMBIOS
-                </Text>
-            </Pressable>
         </View>
     )
 
