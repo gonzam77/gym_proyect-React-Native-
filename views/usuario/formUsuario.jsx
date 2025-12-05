@@ -3,9 +3,14 @@ import { View, Text, Pressable, TextInput, Alert, ScrollView } from "react-nativ
 import { useDispatch } from "react-redux";
 import { guardarUsuario } from "../../store/usuarioSlice";
 import styles from "../../styles/usuarioStyles";
-import uuid from 'react-native-uuid';
 
 const FormUsuario = ({ usuario, setFormModal })=>{
+
+    const generarId = () =>
+    Math.random().toString(36).substring(2, 10) +
+    Date.now().toString(36);
+
+    console.log('form', usuario);
     
     const [nuevoUsuario, setNuevoUsuario] = useState({
         id:'',
@@ -22,15 +27,15 @@ const FormUsuario = ({ usuario, setFormModal })=>{
     const dispatch = useDispatch();
 
     useEffect(()=>{
-        if(usuario.id) {
+        if(usuario.nombre) {
             setNuevoUsuario(usuario);
         } else {
             setNuevoUsuario({
                 ...nuevoUsuario,
-                id: uuid.v4(),
+                id: generarId(),
             })
         }
-    },[]);
+    },[usuario]);
 
     const validacion = ()=>{
         if(!nuevoUsuario.nombre?.trim()){

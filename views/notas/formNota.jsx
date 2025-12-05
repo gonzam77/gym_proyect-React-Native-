@@ -11,8 +11,12 @@ const FormNota = ({ notaSeleccionada, setFormModal, setNotaSeleccionada }) => {
 
     const dispatch = useDispatch();
 
+    const generarId = () =>
+    Math.random().toString(36).substring(2, 10) +
+    Date.now().toString(36);
+
     const [nota, setNota] = useState({
-        id: uuid.v4(),
+        id: generarId(),
         titulo:'',
         tipo:'texto',
         notas:[],

@@ -10,9 +10,13 @@ const FormComentario = ({ idNota, comentarioSeleccionado, setComentarioSeleccion
 
     const nuevaFecha = Date.now();
     const dispatch = useDispatch();
+
+    const generarId = () =>
+    Math.random().toString(36).substring(2, 10) +
+    Date.now().toString(36);
     
     const [comentario, setComentario] = useState({
-        id: uuid.v4(),
+        id: generarId(),
         fecha: nuevaFecha,
         nota:'',
     });

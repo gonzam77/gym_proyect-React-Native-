@@ -77,6 +77,10 @@ const FormEjercicio = ({nuevaRutina, setNuevaRutina, setModalFormEjercicio, ejer
       }));
   };
 
+  const generarId = () =>
+    Math.random().toString(36).substring(2, 10) +
+    Date.now().toString(36);
+
   const handleGuardar = () => {
     const error = validarFormulario();
 
@@ -96,7 +100,7 @@ const FormEjercicio = ({nuevaRutina, setNuevaRutina, setModalFormEjercicio, ejer
         ...nuevaRutina,
         ejercicios: [
           ...nuevaRutina.ejercicios,
-          { ...ejercicioNuevo, id: uuid.v4() }
+          { ...ejercicioNuevo, id: generarId() }
         ],
       });
 
