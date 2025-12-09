@@ -9,9 +9,14 @@ import Descanso from "./descanso";
 const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) => {
 
   const [modalDescanso, setModalDescanso] = useState(false);
+  
+  //Series realizadas
   const [serie, setSerie] = useState(0);
+  //Ejercicio activo
   const [estado, setEstado] = useState(false);
+  //Ejercicio finalizado
   const [finalizado, setFinalizado] = useState(false);
+
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const dispatch = useDispatch();
@@ -22,24 +27,13 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
       ?.ejercicios?.find(e => e.id === ejercicio.id)
   );
 
-  const actualizarSeries = (nuevaSerie) => {
-    if (!ejercicioActualizado) return;
-
-    dispatch(
-      modificarEjercicio({
-        idEjercicio: ejercicioActualizado.id,
-        idRutina: rutinaSeleccionada.id,
-        cambios: { seriesRealizadas: nuevaSerie },
-      })
-    );
-  };
-
   useEffect(() => {
     if (ejercicioActualizado) {
+      console.log('ejercicioActualizado',ejercicioActualizado);
+      
       setSerie(ejercicioActualizado.seriesRealizadas ?? 0);
     }
   }, [ejercicioActualizado]);
-
 
   useEffect(() => {
     if (!estado) return;
@@ -65,10 +59,18 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
     return () => loop.stop();
   }, [estado]);
 
-  
+  const actualizarSeries = (nuevaSerie) => {
+    console.log('nuevaSerie',nuevaSerie);
+    dispatch(
+      modificarEjercicio({
+        idEjercicio: ejercicioActualizado.id,
+        idRutina: rutinaSeleccionada.id,
+        cambios: { seriesRealizadas: nuevaSerie },
+      })
+    );
+  };
 
   const completarSerie = () => {
-    
     const nuevaSerie = serie + 1;
     setSerie(nuevaSerie);
     actualizarSeries(nuevaSerie);
@@ -107,7 +109,11 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
       <ScrollView>
 
         {!finalizado && (
-          <BotonVolver onPress={() => setModalEjercicio(false)} />
+          <BotonVolver 
+            onPress={() => {
+              setModalEjercicio(false);
+            }} 
+          />
         )}
 
         <Text style={styles.titulo}>{ejercicioActualizado.nombre}</Text>

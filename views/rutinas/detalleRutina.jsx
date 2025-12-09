@@ -22,6 +22,12 @@ const DetalleRutina = (
     state.rutinas.rutinas.find(r => r.id === rutinaSeleccionada?.id)
   );
 
+  
+
+  console.log('rutinaActualizada',rutinaActualizada);
+  
+  console.log('rutinaSeleccionada',rutinaSeleccionada);
+  
   const copiaRutinaActualizada = JSON.parse(JSON.stringify(rutinaActualizada));
 
   const dispatch = useDispatch();
@@ -35,6 +41,7 @@ const DetalleRutina = (
   };
   
   useEffect(()=>{  
+    setRutinaSeleccionada(rutinaActualizada);
   },[copiaRutinaActualizada]);
 
   const handleReiniciarRutina = () =>{
