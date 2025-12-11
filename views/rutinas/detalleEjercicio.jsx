@@ -10,15 +10,10 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
 
   const [modalDescanso, setModalDescanso] = useState(false);
   
-  //Series realizadas
   const [serie, setSerie] = useState(0);
-  //Ejercicio activo
   const [estado, setEstado] = useState(false);
-  //Ejercicio finalizado
   const [finalizado, setFinalizado] = useState(false);
-  
-  console.log('ejercicio', ejercicio);
-  
+
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const dispatch = useDispatch();
 
@@ -30,8 +25,6 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
 
   useEffect(() => {
     if (ejercicioActualizado) {
-      console.log('ejercicioActualizado',ejercicioActualizado);
-      
       setSerie(ejercicioActualizado.seriesRealizadas ?? 0);
     }
   }, [ejercicioActualizado]);
