@@ -3,6 +3,8 @@ import { View, Text, Pressable, TextInput, Alert, ScrollView } from "react-nativ
 import { useDispatch } from "react-redux";
 import { guardarUsuario } from "../../store/usuarioSlice";
 import styles from "../../styles/usuarioStyles";
+import { SelectList } from "react-native-dropdown-select-list";
+import disponibilidades from '../../helpers/disponibilidades';
 
 const FormUsuario = ({ usuario, setFormModal })=>{
 
@@ -10,8 +12,6 @@ const FormUsuario = ({ usuario, setFormModal })=>{
     Math.random().toString(36).substring(2, 10) +
     Date.now().toString(36);
 
-    console.log('form', usuario);
-    
     const [nuevoUsuario, setNuevoUsuario] = useState({
         id:'',
         nombre:"",
@@ -23,6 +23,14 @@ const FormUsuario = ({ usuario, setFormModal })=>{
         objetivos:"",
         disponibilidad:"",
     });
+
+    const defaultOptionGenero = usuario
+    ? { key: usuario.id, value: usuario.genero }
+    : undefined; 
+
+    const defaultOptionDispo = usuario
+    ? { key: usuario.id, value: usuario.disponibilidad }
+    : undefined; 
 
     const dispatch = useDispatch();
 
@@ -45,16 +53,23 @@ const FormUsuario = ({ usuario, setFormModal })=>{
         }
     };
 
-    const handleChange = (campo, value)=>{
-            setNuevoUsuario({
-                ...nuevoUsuario,
-                [campo]: value
-            });
+    const handleChange = (campo, valor)=>{
+        setNuevoUsuario(prev =>( {
+            ...prev,
+            [campo]: valor
+        }));
     };
+
+    const handleSelectList = (campo , valor)=>{
+        setNuevoUsuario(prev =>( {
+            ...prev,
+            [campo]: valor
+        }));
+    }
 
     const guardar = () => {
         dispatch(guardarUsuario(nuevoUsuario));
-        setFormModal(false)
+        setFormModal(false);
     };
 
     return(
@@ -102,21 +117,45 @@ const FormUsuario = ({ usuario, setFormModal })=>{
                     placeholderTextColor='#888'
                 ></TextInput>
                 <Text style={styles.label}>Ingrese su genero</Text>
-                <TextInput
+                <SelectList
+                    setSelected={(valor)=>handleSelectList('genero', valor)}
+                    data={[{key:1, value:'Masculino'},{ key:2, value:'Femenino'},{ key:3, value:'Otro'}]}
+                    save='value'
+                    placeholder="Seleccione genero..."
+                    search={false}
+                    boxStyles={{marginHorizontal:15, marginVertical:10, backgroundColor:'#fff'}}
+                    inputStyles={{color:'#000'}}
+                    dropdownStyles={{marginHorizontal:15, backgroundColor:'#fff'}}
+                    dropdownTextStyles={{color:'#000'}}
+                    defaultOption={defaultOptionGenero}
+                />
+                {/* <TextInput
                     placeholder="Masculino/Femenino/No especificar..."
                     value={nuevoUsuario.genero}
                     onChangeText={(valor)=>{handleChange('genero',valor)}}
                     style={styles.input}
                     placeholderTextColor='#888'
-                ></TextInput>
+                ></TextInput> */}
                 <Text style={styles.label}>Disponibilidad Semanal</Text>
-                <TextInput
+                <SelectList
+                    setSelected={(valor)=>handleSelectList('disponibilidad', valor)}
+                    data={disponibilidades}
+                    save='value'
+                    placeholder="Seleccione la disponibilidad"
+                    search={false}
+                    boxStyles={{marginHorizontal:15, marginVertical:10, backgroundColor:'#fff'}}
+                    inputStyles={{color:'#000'}}
+                    dropdownStyles={{marginHorizontal:15, backgroundColor:'#fff'}}
+                    dropdownTextStyles={{color:'#000'}}
+                    defaultOption={defaultOptionDispo}
+                />
+                {/* <TextInput
                     placeholder="1 dia, 2 dias, 3 dias a la semana..."
                     value={nuevoUsuario.disponibilidad}
-                    onChangeText={(valor)=>{handleChange('disponibilidad',valor)}}
                     style={styles.input}
+                    onChangeText={(valor)=>{handleChange('disponibilidad',valor)}}
                     placeholderTextColor='#888'
-                ></TextInput>
+                ></TextInput> */}
                 <Text style={styles.label}>Objetivos</Text>
                 <TextInput
                     multiline
