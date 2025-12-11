@@ -1,5 +1,8 @@
 import { StyleSheet } from "react-native";
 import { colores } from "./colores";
+import { Dimensions } from "react-native";
+
+const size = Dimensions.get("window").width * 0.3;
 
 const styles = StyleSheet.create({
     iconButton: {
@@ -11,15 +14,18 @@ const styles = StyleSheet.create({
     },
     btn: {
         backgroundColor: colores.fondoBtn1,
-        borderRadius: 30,
-        paddingVertical: 12,
-        paddingHorizontal: 30,
+        width: size,
+        height: size,
+        borderRadius: size/2,  
+        justifyContent: 'center',
+        alignItems: 'center',
         elevation: 3,
+        alignSelf: 'center',
     },
     btnTexto: {
         fontSize: 18,
         color: colores.fondo,
-        fontWeight: "bold",
+        fontWeight: "900",
         textAlign: "center",
     },
     iconos:{

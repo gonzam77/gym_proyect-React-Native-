@@ -88,7 +88,7 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
         <Boton
           onPress={() => setModalDescanso(false)}
         >
-          Saltar Descanso
+          Saltar
         </Boton>
       ) : (
         <BotonStop

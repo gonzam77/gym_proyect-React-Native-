@@ -148,7 +148,7 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
               Serie {serie + 1} en curso
             </Animated.Text>
 
-            <Boton onPress={completarSerie}>Descansar</Boton>
+            <Boton style={{}} onPress={completarSerie}>Descansar</Boton>
           </View>
         ) : finalizado ? (
           <View>
