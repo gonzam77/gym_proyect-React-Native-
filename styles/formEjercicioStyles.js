@@ -31,6 +31,7 @@ export const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 15,
     fontSize: 16,
+    textAlignVertical: "top",
   },
   pickerWrapper: {
     backgroundColor: "#111111",

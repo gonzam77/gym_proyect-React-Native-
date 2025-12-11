@@ -16,8 +16,9 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
   const [estado, setEstado] = useState(false);
   //Ejercicio finalizado
   const [finalizado, setFinalizado] = useState(false);
-
-
+  
+  console.log('ejercicio', ejercicio);
+  
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const dispatch = useDispatch();
 
@@ -140,6 +141,12 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
           <Text style={styles.tituloDetalle}>Detalle</Text>
           <Text style={styles.label}>Series: <Text style={styles.valor}>{ejercicioActualizado.series}</Text></Text>
           <Text style={styles.label}>Descanso: <Text style={styles.valor}>{ejercicioActualizado.descanso} Min</Text></Text>
+        </View>
+        <View style={styles.card}>
+            <View style={styles.header}>
+                <Text style={styles.label2}>Nota:</Text>
+                <Text style={styles.objetivos}>{ejercicio.nota || "-"}</Text>
+            </View>
         </View>
 
         {estado && !finalizado ? (

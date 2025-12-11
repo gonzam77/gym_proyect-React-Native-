@@ -86,5 +86,30 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 20,
   },
+  objetivos:{
+    alignSelf:'flex-start',
+    fontSize:15,
+    paddingTop:10,
+  },
+  label2: {
+    fontSize: 18,
+    color: "#555",
+    fontWeight: "600",
+  },
+  card: {
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 16,
+    margin: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 5,
+  },
+  header: {
+    alignItems: "flex-start",
+    marginBottom: 20,
+  },
 
 });

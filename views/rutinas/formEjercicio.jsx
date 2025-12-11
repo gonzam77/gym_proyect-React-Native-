@@ -17,7 +17,8 @@ const FormEjercicio = ({nuevaRutina, setNuevaRutina, setModalFormEjercicio, ejer
     ejercicio:{},
     series: "",
     descanso: "",
-    seriesRealizadas:0
+    seriesRealizadas:0,
+    nota:''
   });
 
   useEffect(() => {
@@ -71,10 +72,17 @@ const FormEjercicio = ({nuevaRutina, setNuevaRutina, setModalFormEjercicio, ejer
   };
 
   const handleChange = (campo, valor) => {
+    if (campo === 'nota') {
       setEjercicioNuevo(prev => ({
             ...prev,
-            [campo]: valor === "" ? "" : Number(valor),
+            [campo]: valor
       }));
+    } else {
+      setEjercicioNuevo(prev => ({
+        ...prev,
+        [campo]: valor === "" ? "" : Number(valor),
+      }))
+    };
   };
 
   const generarId = () =>
@@ -82,6 +90,9 @@ const FormEjercicio = ({nuevaRutina, setNuevaRutina, setModalFormEjercicio, ejer
     Date.now().toString(36);
 
   const handleGuardar = () => {
+  
+    console.log('ejercicioNuevo',ejercicioNuevo );
+    
     const error = validarFormulario();
 
     if (error) {
@@ -222,6 +233,16 @@ const FormEjercicio = ({nuevaRutina, setNuevaRutina, setModalFormEjercicio, ejer
             <Picker.Item label="10 Min" value='10'></Picker.Item>
           </Picker>
         </View>
+        <Text style={styles.label}>Nota</Text>
+        <TextInput
+          multiline
+          numberOfLines={4}
+          placeholder="Peso estimado, repeticiones estimadas"
+          value={ejercicioNuevo.nota}
+          onChangeText={(valor)=>{handleChange('nota',valor)}}
+          style={[styles.input,{minHeight:80}]}
+          placeholderTextColor='#888'
+        ></TextInput>
       </View>
       {errores !== "" && <Text style={styles.error}>{errores}</Text>}
     </ScrollView>
