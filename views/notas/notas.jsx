@@ -73,7 +73,7 @@ const Notas = () => {
                                         return (
                                             <View key={u?.id} style={styles.commentContainer}>
                                                 <Text style={styles.commentDate}>{new Date(u?.fecha).toLocaleString()}</Text>
-                                                <Text style={styles.commentText}>{u?.nota}</Text>
+                                                <Text numberOfLines={3} ellipsizeMode="tail" style={styles.commentText}>{u?.nota}</Text>
                                             </View>
                                         );
                                     })() : <Text>¡No ha agregado notas!</Text>
