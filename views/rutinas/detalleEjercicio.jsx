@@ -84,6 +84,7 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
 
     setEstado(false);
     setSerie(0);
+    setFinalizado(false);
 
     dispatch(
       modificarEjercicio({
