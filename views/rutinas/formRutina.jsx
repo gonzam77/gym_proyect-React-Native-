@@ -118,62 +118,61 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
 
     return (
         <View style={styles.container}>
-            <ScrollView 
-                style={styles.scroll}
-                contentContainerStyle={{ paddingBottom: 120, flexGrow: 1, minHeight: '120%' }}
-            >
-
-                <View style={styles.botonera}>
-                    <BotonVolver
-                        onPress={()=>{
-                            setNuevaRutina({});
-                            setModalFormRutina(false)
-                        }}
-                    />
-                    <BotonGuardar
-                        estaDeshabilitado={estaDeshabilitado}
-                        onPress={()=>{
-                            setEstaDeshabilitado(true);
-                            handleGuardar();
-                        }}
-                    />
-                </View>
-                    
-                <Text style={styles.titulo}>
-                    {rutinaSeleccionada?.id ? 'Editar Rutina' : 'Nueva Rutina'}
-                </Text>
-
-                <Text style={styles.tiempo}>
-                    Tiempo Estimado: {formatearTiempo(tiempoEstimado)}
-                </Text>
-
-                <View style={styles.form}>
-                    <Text style={styles.label}>Nombre de la rutina</Text>
-                    <TextInput
-                    style={styles.input}
-                    value={nuevaRutina.nombre}
-                    onChangeText={(valor)=>{handleChange('nombre',valor)}}
-                    placeholder="Ej: Pecho, Piernas, Fullbody..."
-                    placeholderTextColor="#888"
+            <View style={styles.botonera}>
+                <BotonVolver
+                    onPress={()=>{
+                        setNuevaRutina({});
+                        setModalFormRutina(false)
+                    }}
                 />
-                    <View style={[styles.botonera,{flexDirection:'column'}]}>
-                        <Pressable 
-                            onPressIn={presionarIn}
-                            onPressOut={presionarOut}
-                            onPress={()=>{
-                                setModalFormEjercicio(true)
-                            }}
-                        >
-                            <Animated.Image style={
-                                {
-                                    width:80,
-                                    height:80,
-                                    transform: [{ scale: scaleAnim }]
-                                }} source={require('../../assets/img/ejercicio.png')} />
+                <BotonGuardar
+                    estaDeshabilitado={estaDeshabilitado}
+                    onPress={()=>{
+                        setEstaDeshabilitado(true);
+                        handleGuardar();
+                    }}
+                />
+            </View>
+                
+            <Text style={styles.titulo}>
+                {rutinaSeleccionada?.id ? 'Editar Rutina' : 'Nueva Rutina'}
+            </Text>
 
-                        </Pressable>
-                    </View>
+            <Text style={styles.tiempo}>
+                Tiempo Estimado: {formatearTiempo(tiempoEstimado)}
+            </Text>
+
+            <View style={styles.form}>
+                <Text style={styles.label}>Nombre de la rutina</Text>
+                <TextInput
+                style={styles.input}
+                value={nuevaRutina.nombre}
+                onChangeText={(valor)=>{handleChange('nombre',valor)}}
+                placeholder="Ej: Pecho, Piernas, Fullbody..."
+                placeholderTextColor="#888"
+            />
+                <View style={[styles.botonera,{flexDirection:'column'}]}>
+                    <Pressable 
+                        onPressIn={presionarIn}
+                        onPressOut={presionarOut}
+                        onPress={()=>{
+                            setModalFormEjercicio(true)
+                        }}
+                    >
+                        <Animated.Image style={
+                            {
+                                width:80,
+                                height:80,
+                                transform: [{ scale: scaleAnim }]
+                            }} source={require('../../assets/img/ejercicio.png')} />
+
+                    </Pressable>
                 </View>
+            </View>
+            <ScrollView 
+                    style={styles.scroll}
+                    contentContainerStyle={{ paddingBottom: 120, flexGrow: 1, minHeight: '120%' }}
+                >
                 <View style={styles.listaEjercicios}>
                     {
                         nuevaRutina?.ejercicios?.map((e, index) => (
