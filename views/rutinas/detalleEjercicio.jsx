@@ -23,6 +23,11 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
       ?.ejercicios?.find(e => e.id === ejercicio.id)
   );
 
+  useEffect(()=>{
+    if(ejercicioActualizado.series === ejercicioActualizado.seriesRealizadas)
+      setFinalizado(true);
+  },[])
+
   useEffect(() => {
     if (ejercicioActualizado) {
       setSerie(ejercicioActualizado.seriesRealizadas ?? 0);
@@ -30,7 +35,6 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
   }, [ejercicioActualizado]);
 
   useEffect(() => {
-    if (!estado) return;
 
     fadeAnim.setValue(0);
 
@@ -51,7 +55,7 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
 
     loop.start();
     return () => loop.stop();
-  }, [estado]);
+  },[]);
 
   const actualizarSeries = (nuevaSerie) => {
     console.log('nuevaSerie',nuevaSerie);
@@ -98,7 +102,9 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
   if (!ejercicioActualizado) {
     return <Text style={{ color: "#fff" }}>Error cargando ejercicio</Text>;
   }
-
+  console.log('estado',estado);
+  console.log('finalizado',finalizado);
+  
   return (
     <View style={styles.container}>
       <ScrollView>
