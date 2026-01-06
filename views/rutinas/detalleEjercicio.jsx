@@ -58,7 +58,7 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
 
     loop.start();
     return () => loop.stop();
-  },[]);
+  },[finalizado, estado]);
 
   const actualizarSeries = (nuevaSerie) => {
     console.log('nuevaSerie',nuevaSerie);
@@ -150,7 +150,7 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
             </View>
             <View>
               <Pressable style={{borderRadius:10}} onPress={()=>setModalFormNota(true)}>
-                 <View style={{alignSelf:'flex-end'}}>
+                 <View style={{alignSelf:'flex-end', marginRight:5}}>
                     <Icon name="pencil-outline" size={20}></Icon>
                 </View>
               </Pressable>

@@ -2,6 +2,7 @@ import { Modal, View, Text, Pressable, StyleSheet, Animated, TextInput, ScrollVi
 import { useRef, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { modificarEjercicio } from "../store/rutinasSlice";
+import { KeyboardAvoidingView, Platform } from "react-native";
 
 
 const FormNota = ({onClose, visible, ejercicio})=> {
@@ -51,24 +52,30 @@ const FormNota = ({onClose, visible, ejercicio})=> {
 
     return (
         <Modal visible={visible} transparent animationType="fade">
-            <View style={styles.overlay}>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                style={styles.overlay}
+            >
                 <Animated.View style={[
                     styles.box,
                     { opacity: fade, transform: [{ scale: scale }] }
                 ]}>
                     <Text style={styles.titulo}>Nota</Text>
-                   <ScrollView>
-                        <TextInput
-                            multiline
-                            numberOfLines={4}
-                            textAlignVertical="top"
-                            placeholder="Peso estimado, repeticiones estimadas"
-                            value={nuevaNota}
-                            onChangeText={(valor)=>{handleChange(valor)}}
-                            style={[styles.input,{minHeight:80}]}
-                            placeholderTextColor='#888'
-                        ></TextInput>
-                    </ScrollView> 
+                    
+                   <View style={{ flexGrow: 1 }}>
+                        <ScrollView keyboardShouldPersistTaps="handled">
+                            <TextInput
+                                multiline
+                                numberOfLines={4}
+                                textAlignVertical="top"
+                                placeholder="Peso estimado, repeticiones estimadas"
+                                value={nuevaNota}
+                                onChangeText={(valor)=>{handleChange(valor)}}
+                                style={[styles.input,{minHeight:80}]}
+                                placeholderTextColor='#888'
+                                ></TextInput>
+                        </ScrollView> 
+                    </View>
 
                     <View style={styles.btnRow}>
                         <Pressable style={[styles.btn, styles.cancelar]} onPress={onClose}>
@@ -88,7 +95,7 @@ const FormNota = ({onClose, visible, ejercicio})=> {
                         </Pressable> */}
                     </View>
                 </Animated.View>
-            </View>
+            </KeyboardAvoidingView>
         </Modal>
     );
 }
@@ -109,7 +116,7 @@ const styles = StyleSheet.create({
         padding: 18,
         elevation: 6,
         minWidth:'80%',
-        minHeight:'30%',
+        minHeight: 220,   // 🔑 clave
         borderWidth:2,
         borderColor:'#43d112'
     },
@@ -127,9 +134,8 @@ const styles = StyleSheet.create({
     },
     btnRow: {
         flexDirection: "row",
-        flex:1,
         justifyContent: "space-between",
-        alignItems:'flex-end',
+        marginTop: 12,
     },
     btn: {
         paddingVertical: 8,
