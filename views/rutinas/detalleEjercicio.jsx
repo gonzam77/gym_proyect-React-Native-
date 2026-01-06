@@ -1,14 +1,17 @@
 import { useEffect, useState, useRef } from "react";
-import { Modal, Text, View, ScrollView, Animated, Alert } from "react-native";
+import { Modal, Text, View, ScrollView, Animated, Alert, Pressable } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { styles } from '../../styles/detalleEjercicioStyles';
 import { modificarEjercicio } from '../../store/rutinasSlice';
-import { Boton, BotonPlay, BotonReiniciar, BotonVolver } from "../../components/botones/botones";
+import { Boton, BotonPlay, BotonReiniciar, BotonVolver, BotonEditar } from "../../components/botones/botones";
 import Descanso from "./descanso";
+import FormNota from "../../components/formNota";
+import Icon from "react-native-vector-icons/Ionicons";
 
 const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) => {
 
   const [modalDescanso, setModalDescanso] = useState(false);
+  const [modalFormNota, setModalFormNota] = useState(false);
   
   const [serie, setSerie] = useState(0);
   const [estado, setEstado] = useState(false);
@@ -102,8 +105,6 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
   if (!ejercicioActualizado) {
     return <Text style={{ color: "#fff" }}>Error cargando ejercicio</Text>;
   }
-  console.log('estado',estado);
-  console.log('finalizado',finalizado);
   
   return (
     <View style={styles.container}>
@@ -145,7 +146,14 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
         <View style={styles.card}>
             <View style={styles.header}>
                 <Text style={styles.label2}>Nota:</Text>
-                <Text style={styles.objetivos}>{ejercicio.nota || "-"}</Text>
+                <Text style={styles.objetivos}>{ejercicioActualizado.nota || "-"}</Text>
+            </View>
+            <View>
+              <Pressable style={{borderRadius:10}} onPress={()=>setModalFormNota(true)}>
+                 <View style={{alignSelf:'flex-end'}}>
+                    <Icon name="pencil-outline" size={20}></Icon>
+                </View>
+              </Pressable>
             </View>
         </View>
 
@@ -187,6 +195,13 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
             <BotonPlay onPress={() => setEstado(true)} />
           </View>
         )}
+
+        <FormNota
+          visible={modalFormNota}
+          onClose={()=>setModalFormNota(false)}
+          setModalFormNota={setModalFormNota}
+          ejercicio={ejercicio}
+        />
 
         <Modal visible={modalDescanso} animationType="slide">
           <Descanso
