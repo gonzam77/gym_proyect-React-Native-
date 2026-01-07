@@ -72,13 +72,8 @@ const Notas = () => {
                                         const u = nota.notas.at(-1);
                                         return (
                                             <View key={u?.id} style={styles.commentContainer}>
-<<<<<<< HEAD
-                                                <Text  style={styles.commentDate}>{new Date(u?.fecha).toLocaleString()}</Text>
-                                                <Text numberOfLines={2} ellipsizeMode="tail" style={styles.commentText}>{u?.nota}</Text>
-=======
                                                 <Text style={styles.commentDate}>{new Date(u?.fecha).toLocaleString()}</Text>
                                                 <Text numberOfLines={3} ellipsizeMode="tail" style={styles.commentText}>{u?.nota}</Text>
->>>>>>> a5dfecb1b707ec3c81492ed0a224c1ebf0a28b9b
                                             </View>
                                         );
                                     })() : <Text>¡No ha agregado notas!</Text>
