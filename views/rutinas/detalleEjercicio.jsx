@@ -1,14 +1,17 @@
 import { useEffect, useState, useRef } from "react";
-import { Modal, Text, View, ScrollView, Animated, Alert } from "react-native";
+import { Modal, Text, View, ScrollView, Animated, Alert, Pressable } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { styles } from '../../styles/detalleEjercicioStyles';
 import { modificarEjercicio } from '../../store/rutinasSlice';
-import { Boton, BotonPlay, BotonReiniciar, BotonVolver } from "../../components/botones/botones";
+import { Boton, BotonPlay, BotonReiniciar, BotonVolver, BotonEditar } from "../../components/botones/botones";
 import Descanso from "./descanso";
+import FormNota from "../../components/formNota";
+import Icon from "react-native-vector-icons/Ionicons";
 
 const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) => {
 
   const [modalDescanso, setModalDescanso] = useState(false);
+  const [modalFormNota, setModalFormNota] = useState(false);
   
   const [serie, setSerie] = useState(0);
   const [estado, setEstado] = useState(false);
@@ -23,6 +26,11 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
       ?.ejercicios?.find(e => e.id === ejercicio.id)
   );
 
+  useEffect(()=>{
+    if(ejercicioActualizado.series === ejercicioActualizado.seriesRealizadas)
+      setFinalizado(true);
+  },[])
+
   useEffect(() => {
     if (ejercicioActualizado) {
       setSerie(ejercicioActualizado.seriesRealizadas ?? 0);
@@ -30,7 +38,6 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
   }, [ejercicioActualizado]);
 
   useEffect(() => {
-    if (!estado) return;
 
     fadeAnim.setValue(0);
 
@@ -51,7 +58,7 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
 
     loop.start();
     return () => loop.stop();
-  }, [estado]);
+  },[finalizado, estado]);
 
   const actualizarSeries = (nuevaSerie) => {
     console.log('nuevaSerie',nuevaSerie);
@@ -84,6 +91,7 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
 
     setEstado(false);
     setSerie(0);
+    setFinalizado(false);
 
     dispatch(
       modificarEjercicio({
@@ -97,7 +105,7 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
   if (!ejercicioActualizado) {
     return <Text style={{ color: "#fff" }}>Error cargando ejercicio</Text>;
   }
-
+  
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -138,7 +146,14 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
         <View style={styles.card}>
             <View style={styles.header}>
                 <Text style={styles.label2}>Nota:</Text>
-                <Text style={styles.objetivos}>{ejercicio.nota || "-"}</Text>
+                <Text style={styles.objetivos}>{ejercicioActualizado.nota || "-"}</Text>
+            </View>
+            <View>
+              <Pressable style={{borderRadius:10}} onPress={()=>setModalFormNota(true)}>
+                 <View style={{alignSelf:'flex-end', marginRight:5}}>
+                    <Icon name="pencil-outline" size={20}></Icon>
+                </View>
+              </Pressable>
             </View>
         </View>
 
@@ -180,6 +195,13 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
             <BotonPlay onPress={() => setEstado(true)} />
           </View>
         )}
+
+        <FormNota
+          visible={modalFormNota}
+          onClose={()=>setModalFormNota(false)}
+          setModalFormNota={setModalFormNota}
+          ejercicio={ejercicio}
+        />
 
         <Modal visible={modalDescanso} animationType="slide">
           <Descanso

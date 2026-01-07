@@ -27,7 +27,6 @@ export const styles = StyleSheet.create({
         marginVertical: 10,
     },
     form: {
-        marginVertical: 10,
     },
     label: {
         color: colores.secundario,
@@ -45,7 +44,6 @@ export const styles = StyleSheet.create({
         fontSize: 16,
     },
     listaEjercicios: {
-        marginTop: 10,
         marginBottom: 30,
     },
     ejercicioItem: {

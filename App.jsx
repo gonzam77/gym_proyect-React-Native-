@@ -24,7 +24,6 @@ import MisRutinas from './views/rutinas/misRutinas';
 import Perfil from './views/usuario/perfil';
 import Notas from './views/notas/notas';
 
-
 PushNotification.configure({
   onNotification: function (notification) {
     console.log("Notificación recibida:", notification);
@@ -61,12 +60,6 @@ const App = () => {
 
       inAppUpdates.checkNeedsUpdate().then((result) => {
         if (result.shouldUpdate) {
-          // inAppUpdates.startUpdate({
-          //   updateType:
-          //   Platform.OS === 'android'
-          //   ? InAppUpdates.UPDATE_TYPE.IMMEDIATE
-          //   : InAppUpdates.UPDATE_TYPE.FLEXIBLE,
-          // });
           inAppUpdates.startUpdate({
             updateType: InAppUpdates.UPDATE_TYPE.IMMEDIATE
           });

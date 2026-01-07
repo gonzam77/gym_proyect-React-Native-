@@ -7,48 +7,39 @@ import { styles } from "../../styles/descansoStyles";
 import { Boton, BotonStop } from "../../components/botones/botones";
 
 const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
+  
   const segundosTotales = ejercicio.descanso * 60;
+  
   const [segundos, setSegundos] = useState(segundosTotales);
   const [activo, setActivo] = useState(true);
+  
   const intervaloRef = useRef(null);
+  const inicioRef = useRef(Date.now());
+  const pausadoRef = useRef(0);
+  const notificadoRef = useRef(false);
 
-  useEffect(() => {
-    if (!activo || segundos <= 0) return;
+ const calcularSegundos = () => {
+    const ahora = Date.now();
+    const transcurrido =
+      Math.floor((ahora - inicioRef.current + pausadoRef.current) / 1000);
 
-    intervaloRef.current = BackgroundTimer.setInterval(() => {
-      setSegundos((prev) => {
-        if (prev <= 1) {
-          BackgroundTimer.clearInterval(intervaloRef.current);
-          intervaloRef.current = null;
+    return Math.max(segundosTotales - transcurrido, 0);
+  };
 
-          PushNotification.localNotification({
-            channelId: "descanso-channel",
-            title: "¡Descanso terminado!",
-            message: "Volvé al entrenamiento 💪",
-            playSound: true,
-            soundName: "default",
-            vibrate: true,
-          });
+  const pausar = () => {
+    pausadoRef.current += Date.now() - inicioRef.current;
+    setActivo(false);
+  };
 
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => {
-      if (intervaloRef.current) {
-        BackgroundTimer.clearInterval(intervaloRef.current);
-        intervaloRef.current = null;
-      }
-    };
-  }, [activo, segundos]);
+  const reanudar = () => {
+    inicioRef.current = Date.now();
+    setActivo(true);
+  };
 
   const reiniciar = () => {
-    if (intervaloRef.current) {
-      BackgroundTimer.clearInterval(intervaloRef.current);
-      intervaloRef.current = null;
-    }
+    inicioRef.current = Date.now();
+    pausadoRef.current = 0;
+    notificadoRef.current = false;
     setSegundos(segundosTotales);
     setActivo(true);
   };
@@ -58,6 +49,34 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
     const seg = s % 60;
     return `${String(m).padStart(2, "0")}:${String(seg).padStart(2, "0")}`;
   };
+
+  useEffect(() => {
+    if (!activo) return;
+
+    intervaloRef.current = BackgroundTimer.setInterval(() => {
+      if (segundos === 0) return;
+      setSegundos(calcularSegundos());
+    }, 1000);
+
+    return () => {
+      if (intervaloRef.current) {
+        BackgroundTimer.clearInterval(intervaloRef.current);
+        intervaloRef.current = null;
+      }
+    };
+  }, [activo]);
+
+  useEffect(() => {
+    if (segundos === 0 && !notificadoRef.current) {
+      notificadoRef.current = true;
+
+      PushNotification.localNotification({
+        channelId: "descanso-channel",
+        title: "¡Descanso terminado!",
+        message: "Volvé al entrenamiento 💪",
+      });
+    }
+  }, [segundos]);;
 
   return (
     <View style={styles.container}>
@@ -70,13 +89,18 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
         <Text style={styles.tiempo}>{formatoTiempo(segundos)}</Text>
 
         <View style={styles.botones}>
-          <Pressable onPress={() => setActivo(!activo)}>
-            {activo ? (
+          {activo ? 
+            <Pressable 
+              onPress={pausar}
+            >
               <Icon name="pause-circle-outline" size={60} color="#eefa07" />
-            ) : (
-              <Icon name="play-circle-outline" size={60} color="#43d112" />
-            )}
-          </Pressable>
+            </Pressable> :
+            <Pressable 
+              onPress={reanudar}
+            >
+              <Icon name="play-circle-outline" size={60} color="#eefa07" />
+            </Pressable>
+          }
 
           <Pressable onPress={reiniciar}>
             <Icon name="refresh-outline" size={55} color="#43d112" />

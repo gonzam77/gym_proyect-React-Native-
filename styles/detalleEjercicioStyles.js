@@ -87,7 +87,6 @@ export const styles = StyleSheet.create({
     marginVertical: 20,
   },
   objetivos:{
-    alignSelf:'flex-start',
     fontSize:15,
     paddingTop:10,
   },
@@ -97,6 +96,8 @@ export const styles = StyleSheet.create({
     fontWeight: "600",
   },
   card: {
+    flexDirection:'row',
+    justifyContent:'space-between',
     backgroundColor: "#fff",
     padding: 20,
     borderRadius: 16,
@@ -109,7 +110,7 @@ export const styles = StyleSheet.create({
   },
   header: {
     alignItems: "flex-start",
-    marginBottom: 20,
+    marginVertical: 20,
   },
 
 });
