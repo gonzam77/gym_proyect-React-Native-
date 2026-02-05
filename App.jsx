@@ -18,6 +18,8 @@ import { useEffect } from 'react';
 import {  NavigationContainer  } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
+import notifee, { EventType } from '@notifee/react-native';
+
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 import MisRutinas from './views/rutinas/misRutinas';
@@ -50,6 +52,18 @@ const RootTabs = createBottomTabNavigator({
     Notas: Notas
   },
 });
+
+
+notifee.onBackgroundEvent(async ({ type, detail }) => {
+  if (type === EventType.ACTION_PRESS && detail.pressAction.id === 'stop-alarm') {
+    await notifee.cancelNotification(detail.notification.id);
+  }
+  if (detail.pressAction?.id === 'snooze-30') {
+    await notifee.cancelNotification(detail.notification.id);
+    DeviceEventEmitter.emit("sumarTiempo");
+  }
+});
+
 
 
 const App = () => {
