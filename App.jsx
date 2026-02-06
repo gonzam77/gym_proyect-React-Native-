@@ -53,18 +53,12 @@ const RootTabs = createBottomTabNavigator({
   },
 });
 
-
+// Escuchador de eventos en primer plano
 notifee.onBackgroundEvent(async ({ type, detail }) => {
   if (type === EventType.ACTION_PRESS && detail.pressAction.id === 'stop-alarm') {
     await notifee.cancelNotification(detail.notification.id);
   }
-  if (detail.pressAction?.id === 'snooze-30') {
-    await notifee.cancelNotification(detail.notification.id);
-    DeviceEventEmitter.emit("sumarTiempo");
-  }
 });
-
-
 
 const App = () => {
 

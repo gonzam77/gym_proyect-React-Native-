@@ -1,4 +1,4 @@
-import { Pressable, Text, View, Image, DeviceEventEmitter } from "react-native";
+import { Pressable, Text, View, Image } from "react-native";
 import { useState, useRef, useEffect } from "react";
 import BackgroundTimer from "react-native-background-timer";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -6,8 +6,16 @@ import notifee, { AndroidImportance, AndroidCategory, EventType } from '@notifee
 import { styles } from "../../styles/descansoStyles";
 import { Boton, BotonStop } from "../../components/botones/botones";
 
+// Escuchador de eventos en primer plano
+notifee.onForegroundEvent(({ type, detail }) => {
+  if (type === EventType.ACTION_PRESS && detail.pressAction.id === 'stop-alarm') {
+    // Si presionan el botón "DETENER"
+    notifee.cancelNotification(detail.notification.id);
+  }
+});
+
 const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
-  const segundosTotales = ejercicio.descanso * 60;
+  const segundosTotales = 0.1 * 60//ejercicio.descanso * 60;
   const [segundos, setSegundos] = useState(segundosTotales);
   const [activo, setActivo] = useState(true);
   
@@ -17,52 +25,45 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
   const notificadoRef = useRef(false);
 
   // 1. Función para crear el canal de "Alarma"
-  async function onDisplayNotification(sound) {
+  async function onDisplayNotification(soundName) {
     // Crear un canal (requerido para Android)
     const channelId = await notifee.createChannel({
-      id: `channel-${sound}`, // Un ID único por sonido para evitar conflictos
-      name: `Alarma ${sound}`,
-      importance: AndroidImportance.HIGH,
-      sound: sound, // <--- AQUÍ: 'alarm', 'alarm2' o 'beep'
+      id: `channel-${soundName}`, // Un ID único por sonido para evitar conflictos
+      name: `Alarma ${soundName}`,
+      importance: AndroidImportance.HIGH, // Alta importancia
+      sound: soundName, // Puedes poner un sonido custom si lo agregas a la carpeta raw
       vibration: true,
-      vibrationPattern: [300, 500, 300, 500],
+      vibrationPattern: [300, 500, 300, 500], // Patrón de vibración fuerte
     });
 
-    // Mostrar la notificación
     await notifee.displayNotification({
       title: '¡Descanso terminado! 💪',
       body: `Es hora de la serie de ${ejercicio.nombre || 'ejercicio'}`,
       android: {
         channelId,
-        category: AndroidCategory.ALARM, // ESTO es la clave: lo trata como alarma
-        importance: AndroidImportance.HIGH,
         ongoing: true,
+        autoCancel: false,
+        category: AndroidCategory.ALARM,
+        importance: AndroidImportance.HIGH,
         pressAction: {
           id: 'default',
-        },
-        // Esto hace que aparezca sobre otras apps (Heads up notification)
-        fullScreenAction: {
-          id: 'default',
+          launchActivity: 'default',
         },
         actions: [
           {
-            title: '<b>+30 Seg</b>',
-            pressAction: {
-              id: 'snooze-30',
-            },
-          },
-          {
-            title: '<font color="#f44336"><b>DETENER</b></font>',
+            title: '<font><b>DETENER</b></font>',
             pressAction: {
               id: 'stop-alarm',
             },
           },
         ],
+        fullScreenAction: {
+          id: 'default',
+        },
       },
     });
   }
 
-  // --- Tu lógica de timers se mantiene igual ---
   const calcularSegundos = () => {
     const ahora = Date.now();
     const transcurrido = Math.floor((ahora - inicioRef.current + pausadoRef.current) / 1000);
@@ -94,10 +95,7 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
   };
 
   const detenerTodo = async () => {
-    // 1. Cancelamos todas las notificaciones/alarmas activas de Notifee
     await notifee.cancelAllNotifications();
-    
-    // 2. Cerramos el modal
     setModalDescanso(false);
   };
 
@@ -118,32 +116,9 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
   useEffect(() => {
     if (segundos === 0 && !notificadoRef.current) {
       notificadoRef.current = true;
-      onDisplayNotification('alarm2'); // Llamamos a la "Alarma"
+      onDisplayNotification('alarm2');
     }
   }, [segundos]);
-
-  useEffect(() => {
-    const suscripcion = DeviceEventEmitter.addListener("sumarTiempo", () => {
-      // 1. Ponemos el estado en 30 inmediatamente para que sea visual
-      setSegundos(30);
-      
-      // 2. Reseteamos la marca de notificación
-      notificadoRef.current = false;
-      
-      // 3. LA CLAVE: Ajustamos inicioRef para que el cálculo de 'transcurrido'
-      // nos dé exactamente lo necesario para que queden 30 segundos.
-      // Nueva marca de inicio = Ahora - (Tiempo Total - 30 segundos deseados)
-      const tiempoParaQueQueden30 = (segundosTotales - 30) * 1000;
-      inicioRef.current = Date.now() - tiempoParaQueQueden30;
-      
-      // 4. Limpiamos el acumulador de pausa para que no interfiera
-      pausadoRef.current = 0;
-      
-      setActivo(true);
-    });
-
-    return () => suscripcion.remove();
-  }, [segundosTotales]); // Agregamos segundosTotales a las dependencias
 
   return (
     <View style={styles.container}>
@@ -181,18 +156,3 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
 };
 
 export default Descanso;
-
-notifee.onForegroundEvent(({ type, detail }) => {
-  const { notification, pressAction } = detail;
-
-  if (type === EventType.ACTION_PRESS) {
-    if (pressAction.id === 'stop-alarm') {
-      notifee.cancelNotification(notification.id);
-    } 
-    
-    if (pressAction.id === 'snooze-30') {
-      notifee.cancelNotification(notification.id);
-      DeviceEventEmitter.emit("sumarTiempo");
-    }
-  }
-});
