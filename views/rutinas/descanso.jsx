@@ -15,7 +15,7 @@ notifee.onForegroundEvent(({ type, detail }) => {
 });
 
 const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
-  const segundosTotales = 0.1 * 60//ejercicio.descanso * 60;
+  const segundosTotales = ejercicio.descanso * 60;
   const [segundos, setSegundos] = useState(segundosTotales);
   const [activo, setActivo] = useState(true);
   
