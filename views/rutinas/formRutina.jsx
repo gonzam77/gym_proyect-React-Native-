@@ -29,8 +29,8 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
     })
 
     const generarId = () =>
-    Math.random().toString(36).substring(2, 10) +
-    Date.now().toString(36);
+        Math.random().toString(36).substring(2, 10) +
+        Date.now().toString(36);
 
     //Calcula el tiempo estimado de la rutina
     useEffect(() => {
@@ -87,10 +87,10 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
     };
 
     const handleChange =(campo, valor) =>{
-        setNuevaRutina({
-            ...nuevaRutina,
-            [campo]:valor
-        });
+        setNuevaRutina(prev => ({
+            ...prev,
+            [campo]: valor
+        }));
     };
 
     const editarEjercicio = (id)=>{
