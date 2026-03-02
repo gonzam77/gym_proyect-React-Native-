@@ -1,13 +1,11 @@
-import { PermissionsAndroid, Platform } from "react-native";
+import { PermissionsAndroid, Platform, View, Text, Pressable, Modal, Image, Animated, FlatList } from "react-native";
 import { useEffect, useRef, useState } from "react";
-import { View, Text, Pressable, ScrollView, Modal, Image, Animated, ImageBackground } from "react-native";
 import { useSelector } from "react-redux";
 import { styles } from '../../styles/misRutinasStyles';
 import Icon from 'react-native-vector-icons/Ionicons';
 import formatearTiempo from '../../helpers/formatearTiempo';
 import FormRutina from "./formRutina";
 import DetalleRutina from "./detalleRutina";
-import { colores } from "../../styles/colores";
 
 async function requestNotificationPermission() {
 
@@ -92,26 +90,27 @@ const MisRutinas = () => {
           <Image style={styles.image} source={require('../../assets/img/logo1.png')} />
         </View>
         
-        <ScrollView contentContainerStyle={styles.scroll}>
-          {
-            rutinas?.length ? null : (
-              <View style={styles.leyenda}>
-                <Text style={styles.leyendaTexto}>Aún no ha programado rutinas</Text>
-              </View>
-            )
-          }
-    
-          {
-            rutinas?.map((e, index) => (
-              <EntrenamientoItem
-              nombre={e?.nombre}
-              id={e?.id}
-              key={e?.id}
-              tiempo={e?.tiempo}
-              />
-            ))
-          }
-        </ScrollView>
+        <FlatList
+          data={rutinas} // El array de datos
+          keyExtractor={(item) => item.id.toString()} // Identificador único
+          renderItem={({ item }) => (
+            <EntrenamientoItem
+              nombre={item.nombre}
+              id={item.id}
+              tiempo={item.tiempo}
+            />
+          )}
+          // Esto reemplaza tu lógica de "Aún no ha programado rutinas"
+          ListEmptyComponent={() => (
+            <View style={styles.leyenda}>
+              <Text style={styles.leyendaTexto}>Aún no ha programado rutinas</Text>
+            </View>
+          )}
+          // Estilos del contenedor interno
+          contentContainerStyle={[styles.scroll, { paddingBottom: 100 }]} 
+          // Optimización: evita que el rebote blanco se vea mal
+          showsVerticalScrollIndicator={false}
+        />
 
         <Pressable
           onPressIn={presionarIn}
