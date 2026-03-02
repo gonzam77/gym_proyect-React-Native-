@@ -4,7 +4,7 @@ import { colores } from './colores'
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor:colores.fondo,
+    backgroundColor:colores.negro,
     paddingHorizontal: 20,
     paddingTop:30,
   },
@@ -15,10 +15,11 @@ export const styles = StyleSheet.create({
     color: colores.advertencia
   },
   titulo: {
-    fontSize: 35,
-    fontWeight: "700",
-    color: colores.principal,
+    fontSize: 28,
+    fontWeight: "500",
+    color: colores.blanco,
     textAlign: "center",
+    marginTop:20
   },
   tiempo: {
     fontSize: 20,
@@ -31,19 +32,40 @@ export const styles = StyleSheet.create({
     marginVertical:30
   },
   ejercicioItem: {
-    backgroundColor: colores.fondo,
-    borderRadius: 10,
-    padding: 15,
-    marginBottom: 15,
-    elevation: 10,
-    borderBottomWidth: 2,
-    borderBottomColor: colores.detalle,
-    borderRightWidth: 2,
-    borderRightColor: colores.detalle,
-    opacity:1
+      marginBottom: 16,
+      backgroundColor: 'rgba(255, 255, 255, 0.1)', // Glassmorphism ligero
+      borderRadius: 24,
+      padding: 20,
+      // Sombra sutil para profundidad
+      ...Platform.select({
+        ios: {
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 8 },
+          shadowOpacity: 0.2,
+          shadowRadius: 10,
+        },
+        android: {
+          elevation: 6,
+        }
+      }),
+      borderWidth: 1,
+      borderColor: 'rgba(255, 255, 255, 0.15)',
+      overflow: 'hidden',
   },
+  // ejercicioItem: {
+  //   backgroundColor: colores.fondo,
+  //   borderRadius: 10,
+  //   padding: 15,
+  //   marginBottom: 15,
+  //   elevation: 10,
+  //   borderBottomWidth: 2,
+  //   borderBottomColor: colores.detalle,
+  //   borderRightWidth: 2,
+  //   borderRightColor: colores.detalle,
+  //   opacity:1
+  // },
   ejercicioNombre: {
-    color: colores.principal,
+    color: colores.blanco,
     fontSize: 18,
     fontWeight: "700",
     marginBottom: 5,

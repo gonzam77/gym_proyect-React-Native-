@@ -5,6 +5,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import notifee, { AndroidImportance, AndroidCategory, EventType } from '@notifee/react-native'; // Importamos Notifee
 import { styles } from "../../styles/descansoStyles";
 import { Boton, BotonStop } from "../../components/botones/botones";
+import { colores } from "../../styles/colores";
 
 // Escuchador de eventos en primer plano
 notifee.onForegroundEvent(({ type, detail }) => {
@@ -133,15 +134,15 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
         <View style={styles.botones}>
           {activo ? (
             <Pressable onPress={pausar}>
-              <Icon name="pause-circle-outline" size={60} color="#eefa07" />
+              <Icon name="pause-circle-outline" size={60} color={colores.secundario}/>
             </Pressable>
           ) : (
             <Pressable onPress={reanudar}>
-              <Icon name="play-circle-outline" size={60} color="#eefa07" />
+              <Icon name="play-circle-outline" size={60} color={colores.secundario} />
             </Pressable>
           )}
           <Pressable onPress={reiniciar}>
-            <Icon name="refresh-outline" size={55} color="#43d112" />
+            <Icon name="refresh-outline" size={55} color={colores.principal} />
           </Pressable>
         </View>
       </View>

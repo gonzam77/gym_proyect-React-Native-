@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { View, Pressable, Text, TextInput } from "react-native";
 import { useDispatch } from "react-redux";
 import styles from "../../styles/formNotaStyles";
-import uuid from 'react-native-uuid';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { agregarNotas, modificarNota } from "../../store/notasHistoricasSlice";
 

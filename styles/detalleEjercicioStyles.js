@@ -4,36 +4,50 @@ import {colores} from './colores';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colores.fondo,
+    backgroundColor: colores.negro,
     padding: 20,
     justifyContent: "start",
   },
   titulo: {
-    color: colores.principal,
+    color: colores.blanco,
     fontSize: 28,
     fontWeight: "900",
     textAlign: "center",
     marginVertical: 30,
+    textTransform:'uppercase'
   },
   finalizado :{
     color:colores.advertencia
   },
   infoBox: {
-    backgroundColor: colores.fondo,
-    borderRadius: 15,
-    padding: 20,
-    marginBottom: 30,
-    elevation: 10,
-    borderBottomWidth: 4,
-    borderBottomColor: colores.detalle,
-    borderRightWidth: 4,
-    borderRightColor: colores.detalle,
+    marginBottom: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', // Glassmorphism ligero
+    borderRadius: 24,
+    paddingBottom: 20,
+    paddingTop: 10,
+    paddingHorizontal:20,
+    // Sombra sutil para profundidad
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.2,
+        shadowRadius: 10,
+      },
+      android: {
+        elevation: 6,
+      }
+    }),
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
+    overflow: 'hidden',
   },
   tituloDetalle:{
     textAlign:'center',
     fontSize:25,
-    fontWeight:'700',
-    color:colores.textoPrincipal,
+    fontWeight:'500',
+    color:colores.blanco,
+    paddingBottom:10
   },
   label: {
     fontSize: 18,
@@ -42,11 +56,11 @@ export const styles = StyleSheet.create({
     marginBottom: 10,
   },
   valor: {
-    color: colores.principal,
+    color: colores.blanco,
     fontWeight: "600",
   },
   btn: {
-    backgroundColor: colores.detalle,
+    backgroundColor: colores.principal,
     borderRadius: 30,
     paddingVertical: 12,
     paddingHorizontal: 30,
@@ -66,17 +80,17 @@ export const styles = StyleSheet.create({
   },
   btnTexto: {
     fontSize:18,
-    color: colores.fondo,
+    color: colores.negro,
     fontWeight: "900",
     textAlign: "center",
   },
   estadistica:{
-    fontSize:23,
-    fontWeight:'800'
+    fontSize:18,
+    fontWeight:'500'
   },
   iconButton: {
     marginHorizontal: 10,
-    backgroundColor: colores.fondo,
+    backgroundColor: colores.negro,
     borderRadius: 50,
     elevation: 5,
   },

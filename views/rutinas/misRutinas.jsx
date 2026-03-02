@@ -7,7 +7,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import formatearTiempo from '../../helpers/formatearTiempo';
 import FormRutina from "./formRutina";
 import DetalleRutina from "./detalleRutina";
-import { useNavigation } from "@react-navigation/native";
+import { colores } from "../../styles/colores";
 
 async function requestNotificationPermission() {
 
@@ -35,8 +35,6 @@ const MisRutinas = () => {
   const [rutinaSeleccionada, setRutinaSeleccionada] = useState();
   
   const scaleAnim = useRef(new Animated.Value(1)).current;
-  const navigation = useNavigation();
-  
  
   useEffect(()=>{
     requestNotificationPermission();
@@ -49,27 +47,18 @@ const MisRutinas = () => {
         setRutinaSeleccionada(selectedRutina);
         setModalDetalle(true)
       }} style={styles.entrenamiento}>
-        <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
-
-          <View style={{display:'flex' , flexDirection:'column'}}>
-          
-            <View style={{maxWidth:280}}>
-              <Text style={styles.dia}>
-                <Text style={styles.nombre}>{nombre}</Text>
-              </Text>
-            </View>
-            
+      <View>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+          <View>
+            <Text style={styles.nombre}>{nombre}</Text>
             <View style={styles.tiempoContenedor}>
-              <Text style={styles.tiempo}>
-                {formatearTiempo(tiempo)}
-              </Text>
+              <Icon name="time-outline" size={16} color="#fff" style={{marginRight: 5}} />
+              <Text style={styles.tiempo}>{formatearTiempo(tiempo)}</Text>
             </View>
-
           </View>
-
-          <Icon name="chevron-forward-outline" color={'#fff'} size={25}></Icon>
-
+          <Icon name="chevron-forward-outline" color={'#fff'} size={25} />
         </View>
+      </View>
     </Pressable>
   );
 
@@ -90,60 +79,52 @@ const MisRutinas = () => {
   };
   
   return (
-    <ImageBackground
-          source={require('../../assets/img/fondo.png')}
+    <View
           style={styles.fondo}
           resizeMode=""
         >
-    <View style={styles.container}>
-      <View style={{flexDirection:'row', justifyContent:'space-between', marginHorizontal:30, paddingTop:30}}>
-        <View>
-          <Text style={{fontSize:30, color:'#fff', fontWeight:'800', }}>
-            B i e n v e n i d o
-          </Text>
-
-          <Text style={{fontSize:45, color:'#fff', fontWeight:'800', }}>
-            {usuario?.nombre || ''} 
-          </Text>
-        </View>
-
-        <View>
+      <View style={styles.container}>
+        <View style={styles.headerContainer}>
+          <View>
+            <Text style={styles.saludo}>Bienvenido</Text>
+            <Text style={styles.userName}>{usuario?.nombre || 'Atleta'}</Text>
+          </View>
           <Image style={styles.image} source={require('../../assets/img/logo1.png')} />
-        </View>  
-      </View>
-      
-      <ScrollView contentContainerStyle={styles.scroll}>
-        {
-          rutinas?.length ? null : (
-            <View style={styles.leyenda}>
-              <Text style={styles.leyendaTexto}>Aún no ha programado rutinas</Text>
-            </View>
-          )
-        }
-  
-        {
-          rutinas?.map((e, index) => (
-            <EntrenamientoItem
-            nombre={e?.nombre}
-            id={e?.id}
-            key={e?.id}
-            tiempo={e?.tiempo}
-            />
-          ))
-        }
-      </ScrollView>
+        </View>
+        
+        <ScrollView contentContainerStyle={styles.scroll}>
+          {
+            rutinas?.length ? null : (
+              <View style={styles.leyenda}>
+                <Text style={styles.leyendaTexto}>Aún no ha programado rutinas</Text>
+              </View>
+            )
+          }
+    
+          {
+            rutinas?.map((e, index) => (
+              <EntrenamientoItem
+              nombre={e?.nombre}
+              id={e?.id}
+              key={e?.id}
+              tiempo={e?.tiempo}
+              />
+            ))
+          }
+        </ScrollView>
 
-      <Pressable
-        onPressIn={presionarIn}
-        onPressOut={presionarOut}
-        style={styles.btnCircular}
-        onPress={() => {
-          setRutinaSeleccionada({});
-          setModalFormRutina(true);
-        }}
-      >
-        <Animated.Image style={[styles.agregar, {transform:[{scale: scaleAnim}]}]} source={require('../../assets/img/agregar.png')} />
-      </Pressable>
+        <Pressable
+          onPressIn={presionarIn}
+          onPressOut={presionarOut}
+          style={styles.btnCircular}
+          onPress={() => {
+            setRutinaSeleccionada({});
+            setModalFormRutina(true);
+          }}
+        >
+          <Animated.Image style={[styles.agregar, {transform:[{scale: scaleAnim}]}]} source={require('../../assets/img/agregar.png')} />
+        </Pressable>
+      </View>
 
       <Modal
         visible={modalDetalle}
@@ -172,8 +153,8 @@ const MisRutinas = () => {
           setRutinaSeleccionada={setRutinaSeleccionada}
         />
       </Modal>
+
     </View>
-    </ImageBackground>
 
   );
 };

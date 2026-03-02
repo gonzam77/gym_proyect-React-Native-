@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
         textAlignVertical: "top",
     },
     btn:{
-        backgroundColor:colores.detalle,
+        backgroundColor:colores.principal,
         margin:20,
         borderRadius:5,
     },
@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
         padding:10,
         textAlign:'center',
         fontWeight:600,
-        color:colores.principal,
+        color:colores.blanco,
     }
 
 });

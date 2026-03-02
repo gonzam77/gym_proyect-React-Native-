@@ -52,13 +52,13 @@ const styles = StyleSheet.create({
         color: "#333",
     },
     btn: {
-        backgroundColor: colores.fondoBtn2,
+        backgroundColor: colores.principal,
         borderRadius: 30,
         paddingVertical: 10,
         paddingHorizontal: 10,
         elevation: 3,
         marginHorizontal:10,
-        borderColor:'#43d112',
+        borderColor:colores.principal,
         borderWidth:2
     },
     btnTexto: {

@@ -4,13 +4,13 @@ import {colores} from './colores';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colores.fondo,
+    backgroundColor: colores.negro,
     padding: 20,
   },
   titulo: {
     fontSize: 28,
     fontWeight: "bold",
-    color: colores.textoPrincipal,
+    color: colores.blanco,
     marginBottom: 25,
     textAlign: "center",
   },
@@ -24,8 +24,8 @@ export const styles = StyleSheet.create({
     marginBottom: 5,
   },
   input: {
-    backgroundColor: "#fff",
-    color: "#000",
+    backgroundColor: colores.blanco,
+    color: colores.negro,
     paddingVertical: 10,
     paddingHorizontal: 15,
     borderRadius: 10,
@@ -39,7 +39,7 @@ export const styles = StyleSheet.create({
     marginBottom: 15,
   },
   picker: {
-    color: "#fff",
+    color: colores.blanco,
   },
   error: {
     color: "red",
@@ -48,13 +48,13 @@ export const styles = StyleSheet.create({
   },
   iconButton: {
     marginHorizontal: 10,
-    backgroundColor: colores.fondo,
+    backgroundColor: colores.negro,
     borderRadius: 50,
     elevation: 5,
   },
   botonera: {
     flexDirection: "row",
-    justifyContent: "space-evenly",
+    justifyContent: "space-around",
     alignItems: "center",
     marginBottom: 20,
   },

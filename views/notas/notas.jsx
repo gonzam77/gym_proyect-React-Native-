@@ -113,10 +113,10 @@ const Notas = () => {
             </ScrollView>
 
                 <Pressable
-                    style={[styles.btn, {position:'absolute', bottom:15, right:60}]}
+                    style={[styles.btn, {position:'absolute', bottom:15, right:'50'}]}
                     onPress={()=>setFormModal(true)}
                 >
-                    <Icon name="create-outline" size={30} color={'#fff'}></Icon>
+                    <Icon name="pencil" size={28} color={'#fff'}></Icon>
                 </Pressable>    
         </View>
     );

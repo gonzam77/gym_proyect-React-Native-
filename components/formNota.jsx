@@ -7,8 +7,6 @@ import { KeyboardAvoidingView, Platform } from "react-native";
 
 const FormNota = ({onClose, visible, ejercicio})=> {
     
-    console.log('ejercicio',ejercicio);
-    
     const [nuevaNota, setNuevaNota] = useState('');
 
     const dispatch = useDispatch();
@@ -17,8 +15,6 @@ const FormNota = ({onClose, visible, ejercicio})=> {
 
     const rutinaSeleccionada = rutinas.find(rutina => rutina.ejercicios.some(e => e.id === ejercicio?.id))
 
-    console.log('rutinaSeleccionada',rutinaSeleccionada);
-    
     const fade = useRef(new Animated.Value(0)).current;
     const scale = useRef(new Animated.Value(0.9)).current;
 

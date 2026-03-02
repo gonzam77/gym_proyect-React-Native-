@@ -1,73 +1,113 @@
-import { StyleSheet } from "react-native";
-import {colores} from './colores';
+import { StyleSheet, Platform } from "react-native";
+import { colores } from './colores';
 
 export const styles = StyleSheet.create({
   container: {
-    flex:1,
-  },
-  fondo: {
     flex: 1,
   },
-  scroll:{
-    backgroundColor:'transparent',
-    paddingVertical:50,
-    flexGrow:1
+  fondo: {
+    backgroundColor:'#000',
+    flex: 1,
   },
-  agregar:{
-    width:80,
-    height:80
+  headerContainer: {
+    paddingHorizontal: 25,
+    paddingTop: 10,
+    paddingBottom: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
-  leyenda:{
-    backgroundColor:'#000'
+  saludo: {
+    fontSize: 16,
+    color: 'rgba(255,255,255,0.7)',
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 2,
   },
-  leyendaTexto: {
-    textAlign: 'center',
-    color: colores.secundario,
-    fontSize: 20,
+  userName: {
+    fontSize: 36,
+    color: colores.blanco,
     fontWeight: '900',
-    paddingVertical:5
+    marginTop: -5,
+  },
+  image: {
+    height: 70,
+    width: 70,
+    borderRadius: 35,
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.3)',
+  },
+  scroll: {
+    paddingHorizontal: 15,
+    paddingTop: 10,
+    paddingBottom: 120, // Espacio para que el botón flotante no tape
+    flexGrow: 1,
   },
   entrenamiento: {
-    marginHorizontal: 15,
-    marginVertical: 12,
-    backgroundColor: colores.fondo,
-    borderRadius: 20,
-    padding: 15,
-    paddingVertical:25,
-    elevation: 10,
-    borderBottomWidth: 2,
-    borderBottomColor: colores.detalle,
-    borderRightWidth: 2,
-    borderRightColor: colores.detalle,
-    opacity:0.95
+    marginBottom: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', // Glassmorphism ligero
+    borderRadius: 24,
+    padding: 20,
+    // Sombra sutil para profundidad
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width:0, height:8},
+        shadowOpacity: 0.2,
+        shadowRadius: 10,
+      },
+      android: {
+        elevation: 6,
+      }
+    }),
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
+    overflow: 'hidden',
   },
-  dia: {
-    color: colores.textoPrincipal,
-    fontSize: 26,
-    fontWeight: '600',
+  nombre: {
+    fontSize: 22,
+    fontWeight: '800',
+    color: colores.principal,
+    letterSpacing: 0.5,
+  },
+  tiempoContenedor: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 6,
+    alignSelf: 'flex-start',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
   },
   tiempo: {
-    fontSize: 20,
-    fontWeight: "250",
+    fontSize: 14,
+    fontWeight: "700",
     color: colores.terciario,
-    textAlign: "start"
-  },
-  tiempoContenedor:{
-    marginLeft:"5",
-    marginTop:"5"
-  },  
-  nombre: {
-    fontSize: 26,
-    fontWeight: '600',
-  },
-  image:{
-    height:100,
-    width:100,
-    borderRadius:50
   },
   btnCircular: {
-    position:'absolute',
-    right:30,
-    bottom:30,
+    position: 'absolute',
+    right: 25,
+    bottom: 35,
+    zIndex: 10,
+  },
+  agregar: {
+    width: 75,
+    height: 75,
+    // Brillo sutil al botón de agregar
+    shadowColor: colores.detalle,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 15,
+  },
+  leyenda: {
+    marginTop: 40,
+    padding: 20,
+    alignItems: 'center',
+  },
+  leyendaTexto: {
+    color: 'rgba(255,255,255,0.5)',
+    fontSize: 16,
+    textAlign: 'center',
+    fontWeight: '500',
   },
 });

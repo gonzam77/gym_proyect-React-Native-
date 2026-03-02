@@ -4,15 +4,15 @@ import {colores} from './colores';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colores.fondo,
+    backgroundColor: colores.negro,
     alignItems: "center",
     padding: 20,
   },
   titulo: {
-    fontSize: 36,
+    fontSize: 28,
     fontWeight: "900",
-    color: colores.textoPrincipal,
-    marginVertical: 40,
+    color: colores.blanco,
+    marginVertical: 35,
     textAlign: "center",
   },
   tiempo: {
@@ -21,7 +21,7 @@ export const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   btn: {
-    backgroundColor: colores.detalle,
+    backgroundColor: colores.principal,
     borderRadius: 30,
     paddingVertical: 12,
     paddingHorizontal: 30,
@@ -43,24 +43,40 @@ export const styles = StyleSheet.create({
   contenedor: {
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colores.fondo,
-    marginBottom:30,
-    borderRadius:10,
-    borderColor:colores.detalle,
-    borderWidth:2,
-    padding:20
+    marginBottom: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', // Glassmorphism ligero
+    borderRadius: 24,
+    paddingBottom: 20,
+    paddingTop: 10,
+    paddingHorizontal:20,
+    // Sombra sutil para profundidad
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.2,
+        shadowRadius: 10,
+      },
+      android: {
+        elevation: 6,
+      }
+    }),
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
+    overflow: 'hidden',
   },
   titulo1: {
-    fontSize: 28,
-    color: colores.secundario,
+    fontSize: 24,
+    color: colores.principal,
     marginBottom: 20,
     fontWeight: 'bold',
   },
   titulo2: {
-    fontSize: 28,
+    fontSize: 24,
     color: colores.terciario,
     marginBottom: 20,
     fontWeight: 'bold',
+    paddingHorizontal:15
   },
   tiempo: {
     fontSize: 48,

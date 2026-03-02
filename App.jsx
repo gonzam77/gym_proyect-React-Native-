@@ -82,12 +82,6 @@ const App = () => {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <ImageBackground
-          source={require('./assets/img/fondo.png')}
-          style={styles.fondo}
-          resizeMode=""
-        >
-          
           <SafeAreaView style={styles.container}>
           <NavigationContainer>
             <RootTabs.Navigator
@@ -138,7 +132,6 @@ const App = () => {
             </RootTabs.Navigator>
           </NavigationContainer>
           </SafeAreaView>
-        </ImageBackground>
       </PersistGate>
     </Provider>
   );

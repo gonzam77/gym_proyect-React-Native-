@@ -7,7 +7,6 @@ import { agregarRutina, setRutinas } from '../../store/rutinasSlice';
 import formatearTiempo from '../../helpers/formatearTiempo';
 import { styles } from '../../styles/formRutinaStyles';
 import { BotonGuardar, BotonVolver } from "../../components/botones/botones";
-import uuid from 'react-native-uuid';
 
 const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSeleccionada}) => {
     
@@ -32,7 +31,6 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
         Math.random().toString(36).substring(2, 10) +
         Date.now().toString(36);
 
-    //Calcula el tiempo estimado de la rutina
     useEffect(() => {
         if (nuevaRutina.ejercicios.length > 0) {
             const tiempoTotalSegundos = nuevaRutina.ejercicios.reduce((acumulador, e) => {
@@ -47,7 +45,6 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
         }
     }, [nuevaRutina.ejercicios]);
 
-    //Setea el tiempo estimado de la rutina
     useEffect(()=>{
         setNuevaRutina({
             ...nuevaRutina,
@@ -55,7 +52,6 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
         });
     },[tiempoEstimado])
 
-    //Revisa si va a editar o a crear una rutina nueva
     useEffect(() => {
         if (rutinaSeleccionada?.id) {
             setNuevaRutina(JSON.parse(JSON.stringify(rutinaSeleccionada)));
@@ -119,19 +115,42 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
     return (
         <View style={styles.container}>
             <View style={styles.botonera}>
-                <BotonVolver
+
+                {/*BOTON VOLVER*/}
+                 <Pressable
+                    onPress={() => {
+                        setNuevaRutina({});
+                        setModalFormRutina(false);
+                    }}
+                    >
+                    <Icon name="chevron-back-outline" color={'#fff'} size={35} />
+                </Pressable>
+                {/* <BotonVolver
                     onPress={()=>{
                         setNuevaRutina({});
-                        setModalFormRutina(false)
+                        setModalFormRutina(false);
                     }}
-                />
-                <BotonGuardar
+                /> */}
+
+                {/*BOTON GUARDAR*/}
+                <Pressable
+                    style={{borderRadius:8, backgroundColor:'#277822'}}
                     estaDeshabilitado={estaDeshabilitado}
                     onPress={()=>{
                         setEstaDeshabilitado(true);
                         handleGuardar();
                     }}
-                />
+                >
+                    <Text style={{color:'#fff', fontSize:16, fontWeight:'900', padding:10}}>Guardar</Text>
+                    {/* <Icon name="save-outline" color={'#43d112'} size={35} /> */}
+                </Pressable>
+                {/* <BotonGuardar
+                    estaDeshabilitado={estaDeshabilitado}
+                    onPress={()=>{
+                        setEstaDeshabilitado(true);
+                        handleGuardar();
+                    }}
+                /> */}
             </View>
                 
             <Text style={styles.titulo}>
@@ -143,14 +162,16 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
             </Text>
 
             <View style={styles.form}>
+                
                 <Text style={styles.label}>Nombre de la rutina</Text>
                 <TextInput
-                style={styles.input}
-                value={nuevaRutina.nombre}
-                onChangeText={(valor)=>{handleChange('nombre',valor)}}
-                placeholder="Ej: Pecho, Piernas, Fullbody..."
-                placeholderTextColor="#888"
-            />
+                    style={styles.input}
+                    value={nuevaRutina.nombre}
+                    onChangeText={(valor)=>{handleChange('nombre',valor)}}
+                    placeholder="Ej: Pecho, Piernas, Fullbody..."
+                    placeholderTextColor="#888"
+                />
+
                 <View style={[styles.botonera,{flexDirection:'column'}]}>
                     <Pressable 
                         onPressIn={presionarIn}

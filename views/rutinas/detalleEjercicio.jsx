@@ -2,11 +2,13 @@ import { useEffect, useState, useRef } from "react";
 import { Modal, Text, View, ScrollView, Animated, Alert, Pressable } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { styles } from '../../styles/detalleEjercicioStyles';
+import  stylesBoton  from '../../styles/botonesStyles'
 import { modificarEjercicio } from '../../store/rutinasSlice';
 import { Boton, BotonPlay, BotonReiniciar, BotonVolver, BotonEditar } from "../../components/botones/botones";
 import Descanso from "./descanso";
 import FormNota from "../../components/formNota";
 import Icon from "react-native-vector-icons/Ionicons";
+import { colores } from "../../styles/colores";
 
 const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) => {
 
@@ -103,7 +105,7 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
   };
 
   if (!ejercicioActualizado) {
-    return <Text style={{ color: "#fff" }}>Error cargando ejercicio</Text>;
+    return <Text style={{ color: colores.blanco }}>Error cargando ejercicio</Text>;
   }
   
   return (
@@ -111,11 +113,18 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
       <ScrollView>
 
         {!finalizado && (
-          <BotonVolver 
+          <Pressable
             onPress={() => {
               setModalEjercicio(false);
-            }} 
-          />
+            }}
+            >
+            <Icon name="chevron-back-outline" color={colores.blanco} size={35} />
+          </Pressable>
+          // <BotonVolver 
+          //   onPress={() => {
+          //     setModalEjercicio(false);
+          //   }} 
+          // />
         )}
 
         <Text style={styles.titulo}>{ejercicioActualizado.nombre}</Text>
@@ -123,7 +132,7 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
         {finalizado && (
           <Animated.Text style={{
             opacity: fadeAnim,
-            color: '#FF6B00',
+            color: colores.advertencia,
             textAlign: 'center',
             fontSize: 24,
             fontWeight: '900',
@@ -163,17 +172,28 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
               Serie {serie + 1} en curso
             </Animated.Text>
 
-            <Boton style={{}} onPress={completarSerie}>Descansar</Boton>
+            <Pressable style={stylesBoton.btn} onPress={completarSerie}>
+              <Icon name="pause" color={colores.secundario} size={40} />
+            </Pressable>
+            {/* <Boton style={{}} onPress={completarSerie}>Descansar</Boton> */}
           </View>
         ) : finalizado ? (
           <View>
-            <Text style={[styles.titulo, { color: '#fff' }]}>¡Felicitaciones, terminaste!</Text>
+            <Text style={[styles.titulo, { color: colores.blanco }]}>¡Felicitaciones, terminaste!</Text>
 
             <View style={styles.botonera}>
               
-              <BotonVolver onPress={() => setModalEjercicio(false)} />
+              {/* <BotonVolver onPress={() => setModalEjercicio(false)} /> */}
+              <Pressable
+                onPress={() => {
+                  setModalEjercicio(false);
+                }}
+              >
+                <Icon name="chevron-back-outline" color={colores.blanco} size={35} />
+              </Pressable>
 
-              <BotonReiniciar
+              
+              <Pressable
                 onPress={() => {
                   Alert.alert(
                     "Reiniciar",
@@ -187,12 +207,38 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
                     ]
                   );
                 }}
-              />
+              >
+                <Icon name="refresh-outline" color={colores.principal} size={35} />
+              </Pressable>
+
+              {/* <BotonReiniciar
+                onPress={() => {
+                  Alert.alert(
+                    "Reiniciar",
+                    "¿Desea reiniciar el ejercicio?",
+                    [
+                      { text: "Cancelar" },
+                      {
+                        text: "Ok, Reiniciar ejercicio",
+                        onPress: reiniciarEjercicio,
+                      },
+                    ]
+                  );
+                }}
+              /> */}
             </View>
           </View>
         ) : (
           <View style={styles.botonera}>
-            <BotonPlay onPress={() => setEstado(true)} />
+            <Pressable 
+              style={[stylesBoton.btn, {borderColor:colores.principal}]}
+              onPress={() => {
+                setEstado(true);
+              }}
+            >
+              <Icon name="play" color={colores.principal} size={45} />
+            </Pressable>
+            {/* <BotonPlay onPress={() => setEstado(true)} /> */}
           </View>
         )}
 

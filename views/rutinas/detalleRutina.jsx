@@ -8,6 +8,7 @@ import formatearTiempo from '../../helpers/formatearTiempo';
 import { styles } from '../../styles/detalleRutinaStyles';
 import { eliminarRutina, reiniciarRutina } from "../../store/rutinasSlice";
 import { BotonVolver, BotonEditar, BotonReiniciar, BotonBorrar } from "../../components/botones/botones";
+import { colores } from "../../styles/colores";
 
 const DetalleRutina = (
   {
@@ -41,35 +42,85 @@ const DetalleRutina = (
   const handleReiniciarRutina = () =>{
     dispatch(reiniciarRutina(copiaRutinaActualizada));
   }
-  
+
+  // <IconButton 
+  //   icon="trash-can-outline" 
+  //   iconColor="#FF5252" 
+  //   size={24} 
+  //   onPress={handleEliminarCategoria}
+  // />
+
   return (
     <View style={styles.container}>
       <View style={styles.botonera}>
-        <BotonVolver 
+        {/*BOTON VOLVER*/}
+        <Pressable
+          onPress={() => {
+            setRutinaSeleccionada({});
+            setModalDetalle(false);
+          }}
+          >
+          <Icon name="chevron-back-outline" color={'#fff'} size={35} />
+        </Pressable>
+        {/* <BotonVolver 
           onPress={() => {
               setRutinaSeleccionada({});
               setModalDetalle(false);
           }}
-        />
-        <BotonEditar
+        /> */}
+
+        {/*BOTON EDITAR*/}
+        {/* <Ionicons name="pencil-outline" size={24} color="black" /> */}
+        <Pressable
+          style={{borderRadius:8, backgroundColor:colores.terciario}}
           onPress={() => {
             setModalFormRutina(true);
           }}
-        />
-        <BotonReiniciar 
-          onPress={()=>{
-              Alert.alert("Reiniciar", "Desea reiniciar los ejercicios?", [
-                { text: "Cancelar" },
-                {
-                  text: "Ok, Reiciciar ejercicios",
-                  onPress: () => {
-                    handleReiniciarRutina();
-                  },
+          >
+            <Text style={{color:colores.blanco, fontSize:16, fontWeight:'900', padding:10}}>Editar</Text>
+
+            {/* <Icon name="pencil-outline" color={'#fff'} size={35} /> */}
+        </Pressable>
+        {/* <BotonEditar
+          onPress={() => {
+            }}
+            /> */}
+
+        {/*BOTON REINICIAR*/}
+        <Pressable
+          style={{borderRadius:8, backgroundColor:colores.principal}}
+          onPress={() => {
+            Alert.alert("Reiniciar", "Desea reiniciar los ejercicios?", [
+              { text: "Cancelar" },
+              {
+                text: "Ok, Reiciciar ejercicios",
+                onPress: () => {
+                  handleReiniciarRutina();
                 },
-              ]);
+              },
+            ]);
           }}
-        />
-        <BotonBorrar 
+          >
+            <Text style={{color:colores.blanco, fontSize:16, fontWeight:'900', padding:10}}>Reiniciar</Text>
+            {/* <Icon name="refresh-outline" color={'#43d112'} size={35} /> */}
+        </Pressable>
+        {/* <BotonReiniciar 
+          onPress={()=>{
+            Alert.alert("Reiniciar", "Desea reiniciar los ejercicios?", [
+              { text: "Cancelar" },
+              {
+                text: "Ok, Reiciciar ejercicios",
+                onPress: () => {
+                  handleReiniciarRutina();
+                  },
+                  },
+                  ]);
+                  }}
+                  /> */}
+
+        {/*BOTON BORRAR*/}
+        <Pressable
+          style={{borderRadius:8, backgroundColor:colores.alert}}
           onPress={() => {
             Alert.alert("Eliminar", "Desea eliminar la rutina?", [
               { text: "Cancelar" },
@@ -81,11 +132,29 @@ const DetalleRutina = (
               },
             ]);
           }}
-        />
+          >
+            <Text style={{color:colores.blanco, fontSize:16, fontWeight:'900', padding:10}}>Eliminar</Text>
+            {/* <Icon name="trash-outline" color={'#FF5252'} size={35} /> */}
+        </Pressable>
+        {/* <BotonBorrar 
+          onPress={() => {
+            Alert.alert("Eliminar", "Desea eliminar la rutina?", [
+              { text: "Cancelar" },
+              {
+                text: "Ok, Eliminar",
+                onPress: () => {
+                  handleEliminarRutina(copiaRutinaActualizada.id);
+                },
+              },
+            ]);
+          }}
+        /> */}
       </View>
+
       <View>
         <Text style={styles.titulo}>{copiaRutinaActualizada?.nombre}</Text>
       </View>
+
       <Text style={styles.tiempo}>
         Tiempo Estimado: {formatearTiempo(rutinaSeleccionada.tiempo)}
       </Text>

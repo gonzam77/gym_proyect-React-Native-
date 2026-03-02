@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
 
     },
     btn:{
-        backgroundColor:colores.fondoBtn2,
+        backgroundColor:colores.principal,
         marginHorizontal:30,
         padding:10,
         borderRadius:10
@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
     },
     btnText:{
         textAlign:'center',
-        color:'#fff',
+        color:colores.blanco,
         fontSize:18,
         fontWeight:'600',        
     },

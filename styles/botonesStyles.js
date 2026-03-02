@@ -7,13 +7,12 @@ const size = Dimensions.get("window").width * 0.3;
 const styles = StyleSheet.create({
     iconButton: {
         marginHorizontal: 10,
-        backgroundColor: colores.fondo,
+        backgroundColor: colores.negro,
         borderRadius: 50,
         elevation: 5,
         alignItems:'center'
     },
     btn: {
-        backgroundColor: colores.fondoBtn1,
         width: size,
         height: size,
         borderRadius: size/2,  
@@ -21,12 +20,16 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         elevation: 3,
         alignSelf: 'center',
+        borderColor:colores.secundario,
+        borderWidth: 4,
+        marginTop:20
     },
     btnTexto: {
-        fontSize: 18,
-        color: colores.fondo,
-        fontWeight: "900",
+        fontSize: 16,
+        color: colores.secundario,
+        fontWeight: "600",
         textAlign: "center",
+        textTransform:'uppercase'
     },
     iconos:{
         width:50,

@@ -4,7 +4,7 @@ import { colores } from './colores';
 export const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: colores.fondo,
+        backgroundColor: colores.negro,
         padding: 20,
     },
     scroll:{
@@ -15,28 +15,26 @@ export const styles = StyleSheet.create({
     titulo: {
         fontSize: 30,
         fontWeight: "900",
-        color: colores.textoPrincipal,
+        color: colores.blanco,
         textAlign: "center",
-        marginVertical: 15,
+        marginTop: 25,
     },
     tiempo: {
-        fontSize: 20,
-        fontWeight: "600",
+        fontSize: 18,
+        fontWeight: "500",
         color: colores.terciario,
         textAlign: "center",
-        marginVertical: 10,
-    },
-    form: {
+        marginVertical: 20,
     },
     label: {
-        color: colores.secundario,
+        color: colores.blanco,
         fontSize: 18,
-        fontWeight: "700",
+        fontWeight: "500",
         marginBottom: 5,
     },
     input: {
-        backgroundColor: "#fff",
-        color: "#000",
+        backgroundColor: colores.blanco,
+        color: colores.negro,
         borderRadius: 10,
         paddingVertical: 10,
         paddingHorizontal: 15,
@@ -50,18 +48,27 @@ export const styles = StyleSheet.create({
         flexDirection:'row',
         alignItems:'center',
         justifyContent:'space-between',
-        backgroundColor: "#111111",
-        borderRadius: 10,
-        padding: 15,
-        marginVertical: 15,
-        elevation: 10,
-        borderBottomWidth: 2,
-        borderBottomColor: colores.detalle,
-        borderRightWidth: 2,
-        borderRightColor: colores.detalle,
+        marginBottom: 16,
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        borderRadius: 24,
+        padding: 20,
+        ...Platform.select({
+            ios: {
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 8 },
+            shadowOpacity: 0.2,
+            shadowRadius: 10,
+            },
+            android: {
+            elevation: 6,
+            }
+        }),
+        borderWidth: 1,
+        borderColor: 'rgba(255, 255, 255, 0.15)',
+        overflow: 'hidden',
     },
     ejercicioNombre: {
-        color: colores.principal,
+        color: colores.blanco,
         fontSize: 18,
         fontWeight: "700",
         marginBottom: 5,
@@ -73,13 +80,13 @@ export const styles = StyleSheet.create({
     },
     iconButton: {
         marginHorizontal: 10,
-        backgroundColor: colores.fondo,
+        backgroundColor: colores.negro,
         borderRadius: 50,
         elevation: 5,
     },
     botonera: {
         flexDirection: "row",
-        justifyContent: "space-evenly",
+        justifyContent: "space-around",
         alignItems: "center",
     },
 
