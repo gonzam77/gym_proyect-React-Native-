@@ -1,11 +1,12 @@
 export const colores = {
-  negro: "#000",
+  negro: "#080c14",
   principal: "#46ed34",
   editar: "#27A6F5",
   reiniciar: "#1DBF84",
   blanco: "#fff",
-  secundario: "#eefa07",
+  secundario: "#a3adb7",
   terciario: "#00E0FF",
-  advertencia: "#FF6B00",
-  alert:'#D58691'
+  advertencia: "#dd5c00",
+  alert:'#D58691',
+  pausa:'#44fce1'
 };

@@ -20,13 +20,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         elevation: 3,
         alignSelf: 'center',
-        borderColor:colores.secundario,
+        borderColor:colores.reiniciar,
         borderWidth: 4,
         marginTop:20
     },
     btnTexto: {
         fontSize: 16,
-        color: colores.secundario,
+        color: colores.reiniciar,
         fontWeight: "600",
         textAlign: "center",
         textTransform:'uppercase'

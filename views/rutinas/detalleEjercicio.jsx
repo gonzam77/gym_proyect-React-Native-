@@ -168,7 +168,7 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
             </Animated.Text>
 
             <Pressable style={stylesBoton.btn} onPress={completarSerie}>
-              <Icon name="pause" color={colores.secundario} size={40} />
+              <Icon name="pause" color={colores.pausa} size={40} />
             </Pressable>
           </View>
         ) : finalizado ? (
@@ -209,12 +209,12 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
         ) : (
           <View style={styles.botonera}>
             <Pressable 
-              style={[stylesBoton.btn, {borderColor:colores.principal}]}
+              style={[stylesBoton.btn, {borderColor:colores.reiniciar}]}
               onPress={() => {
                 setEstado(true);
               }}
             >
-              <Icon name="play" color={colores.principal} size={45} />
+              <Icon name="play" color={colores.reiniciar} size={45} />
             </Pressable>
           </View>
         )}
