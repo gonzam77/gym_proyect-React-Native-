@@ -7,10 +7,8 @@ import { styles } from "../../styles/descansoStyles";
 import { Boton, BotonStop } from "../../components/botones/botones";
 import { colores } from "../../styles/colores";
 
-// Escuchador de eventos en primer plano
 notifee.onForegroundEvent(({ type, detail }) => {
   if (type === EventType.ACTION_PRESS && detail.pressAction.id === 'stop-alarm') {
-    // Si presionan el botón "DETENER"
     notifee.cancelNotification(detail.notification.id);
   }
 });
@@ -25,16 +23,14 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
   const pausadoRef = useRef(0);
   const notificadoRef = useRef(false);
 
-  // 1. Función para crear el canal de "Alarma"
   async function onDisplayNotification(soundName) {
-    // Crear un canal (requerido para Android)
     const channelId = await notifee.createChannel({
-      id: `channel-${soundName}`, // Un ID único por sonido para evitar conflictos
+      id: `channel-${soundName}`,
       name: `Alarma ${soundName}`,
-      importance: AndroidImportance.HIGH, // Alta importancia
-      sound: soundName, // Puedes poner un sonido custom si lo agregas a la carpeta raw
+      importance: AndroidImportance.HIGH,
+      sound: soundName,
       vibration: true,
-      vibrationPattern: [300, 500, 300, 500], // Patrón de vibración fuerte
+      vibrationPattern: [300, 500, 300, 500],
     });
 
     await notifee.displayNotification({

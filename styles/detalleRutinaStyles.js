@@ -33,10 +33,9 @@ export const styles = StyleSheet.create({
   },
   ejercicioItem: {
       marginBottom: 16,
-      backgroundColor: 'rgba(255, 255, 255, 0.1)', // Glassmorphism ligero
+      backgroundColor: 'rgba(255, 255, 255, 0.1)', 
       borderRadius: 24,
       padding: 20,
-      // Sombra sutil para profundidad
       ...Platform.select({
         ios: {
           shadowColor: "#000",
@@ -52,18 +51,6 @@ export const styles = StyleSheet.create({
       borderColor: 'rgba(255, 255, 255, 0.15)',
       overflow: 'hidden',
   },
-  // ejercicioItem: {
-  //   backgroundColor: colores.fondo,
-  //   borderRadius: 10,
-  //   padding: 15,
-  //   marginBottom: 15,
-  //   elevation: 10,
-  //   borderBottomWidth: 2,
-  //   borderBottomColor: colores.detalle,
-  //   borderRightWidth: 2,
-  //   borderRightColor: colores.detalle,
-  //   opacity:1
-  // },
   ejercicioNombre: {
     color: colores.blanco,
     fontSize: 18,

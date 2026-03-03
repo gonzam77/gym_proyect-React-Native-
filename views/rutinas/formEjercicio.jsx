@@ -4,8 +4,7 @@ import listadoEjercicios from "../../helpers/ejercicios";
 import { Picker } from "@react-native-picker/picker";
 import { styles } from '../../styles/formEjercicioStyles';
 import Icon from 'react-native-vector-icons/Ionicons';
-
-import { BotonBorrar, BotonVolver, BotonGuardar } from "../../components/botones/botones";
+import { colores } from "../../styles/colores";
  
 const FormEjercicio = ({ nuevaRutina, setNuevaRutina, setModalFormEjercicio, ejercicioSeleccionado, setEjercicioSeleccionado}) => {
 
@@ -120,7 +119,6 @@ const FormEjercicio = ({ nuevaRutina, setNuevaRutina, setModalFormEjercicio, eje
   return (
     <ScrollView style={styles.container}>
       <View style={styles.botonera}>
-        {/*BOTON VOLVER*/}
         <Pressable
           onPress={() => {
             setEjercicioSeleccionado(null);
@@ -130,12 +128,6 @@ const FormEjercicio = ({ nuevaRutina, setNuevaRutina, setModalFormEjercicio, eje
           
           <Icon name="chevron-back-outline" color={'#fff'} size={35} />
         </Pressable>
-        {/* <BotonVolver
-          onPress={()=>{
-            setEjercicioSeleccionado(null);
-            setModalFormEjercicio(false);
-          }}
-        /> */}
 
         {
           ejercicioSeleccionado ?
@@ -144,17 +136,13 @@ const FormEjercicio = ({ nuevaRutina, setNuevaRutina, setModalFormEjercicio, eje
               style={{borderRadius:8, backgroundColor:'#862b2bff'}}
             >
               <Text style={{color:'#fff', fontSize:16, fontWeight:'900', padding:10}}>Eliminar</Text>
-              {/* <Icon name="trash-outline" color={'#FF5252'} size={35} /> */}
             </Pressable>
           :null
         }
-        <Pressable style={{borderRadius:8, backgroundColor:'#277822'}} onPress={handleGuardar}>
+        <Pressable style={{borderRadius:8, backgroundColor:colores.reiniciar}} onPress={handleGuardar}>
             <Text style={{color:'#fff', fontSize:16, fontWeight:'900', padding:10}}>Guardar</Text>
-            {/* <Icon name="save-outline" color={'#43d112'} size={35} /> */}
         </Pressable>
-        {/* <BotonGuardar
-          onPress={handleGuardar}
-        /> */}
+        
       </View>
       <Text style={styles.titulo}>Personalizar Ejercicio</Text>
       <View style={styles.seccion}>

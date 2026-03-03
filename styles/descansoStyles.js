@@ -44,12 +44,10 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 16,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)', // Glassmorphism ligero
-    borderRadius: 24,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', 
     paddingBottom: 20,
     paddingTop: 10,
     paddingHorizontal:20,
-    // Sombra sutil para profundidad
     ...Platform.select({
       ios: {
         shadowColor: "#000",
@@ -67,7 +65,7 @@ export const styles = StyleSheet.create({
   },
   titulo1: {
     fontSize: 24,
-    color: colores.principal,
+    color: colores.secundario,
     marginBottom: 20,
     fontWeight: 'bold',
   },
@@ -80,7 +78,7 @@ export const styles = StyleSheet.create({
   },
   tiempo: {
     fontSize: 48,
-    color: colores.principal,
+    color: colores.blanco,
     marginBottom: 40,
   },
   botones: {

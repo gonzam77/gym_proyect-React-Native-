@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
         textAlignVertical: "top",
     },
     btn:{
-        backgroundColor:colores.principal,
+        backgroundColor:colores.reiniciar,
         margin:20,
         borderRadius:5,
     },

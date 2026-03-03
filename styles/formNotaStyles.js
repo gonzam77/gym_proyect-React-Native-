@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
         borderWidth:2
     },
     btn:{
-        backgroundColor:colores.principal,
+        backgroundColor:colores.reiniciar,
         margin:20,
         borderRadius:5,
     },

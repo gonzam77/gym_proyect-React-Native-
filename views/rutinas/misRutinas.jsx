@@ -50,7 +50,7 @@ const MisRutinas = () => {
           <View>
             <Text style={styles.nombre}>{nombre}</Text>
             <View style={styles.tiempoContenedor}>
-              <Icon name="time-outline" size={16} color="#fff" style={{marginRight: 5}} />
+              <Icon name="time-outline" size={18} color="#fff" style={{marginRight: 5}} />
               <Text style={styles.tiempo}>{formatearTiempo(tiempo)}</Text>
             </View>
           </View>
@@ -91,8 +91,8 @@ const MisRutinas = () => {
         </View>
         
         <FlatList
-          data={rutinas} // El array de datos
-          keyExtractor={(item) => item.id.toString()} // Identificador único
+          data={rutinas} 
+          keyExtractor={(item) => item.id.toString()} 
           renderItem={({ item }) => (
             <EntrenamientoItem
               nombre={item.nombre}
@@ -100,15 +100,12 @@ const MisRutinas = () => {
               tiempo={item.tiempo}
             />
           )}
-          // Esto reemplaza tu lógica de "Aún no ha programado rutinas"
           ListEmptyComponent={() => (
             <View style={styles.leyenda}>
               <Text style={styles.leyendaTexto}>Aún no ha programado rutinas</Text>
             </View>
           )}
-          // Estilos del contenedor interno
           contentContainerStyle={[styles.scroll, { paddingBottom: 100 }]} 
-          // Optimización: evita que el rebote blanco se vea mal
           showsVerticalScrollIndicator={false}
         />
 

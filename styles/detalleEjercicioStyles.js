@@ -21,12 +21,11 @@ export const styles = StyleSheet.create({
   },
   infoBox: {
     marginBottom: 16,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)', // Glassmorphism ligero
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', 
     borderRadius: 24,
     paddingBottom: 20,
     paddingTop: 10,
     paddingHorizontal:20,
-    // Sombra sutil para profundidad
     ...Platform.select({
       ios: {
         shadowColor: "#000",

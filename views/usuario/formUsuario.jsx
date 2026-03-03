@@ -129,13 +129,6 @@ const FormUsuario = ({ usuario, setFormModal })=>{
                     dropdownTextStyles={{color:'#000'}}
                     defaultOption={defaultOptionGenero}
                 />
-                {/* <TextInput
-                    placeholder="Masculino/Femenino/No especificar..."
-                    value={nuevoUsuario.genero}
-                    onChangeText={(valor)=>{handleChange('genero',valor)}}
-                    style={styles.input}
-                    placeholderTextColor='#888'
-                ></TextInput> */}
                 <Text style={styles.label}>Disponibilidad Semanal</Text>
                 <SelectList
                     setSelected={(valor)=>handleSelectList('disponibilidad', valor)}
@@ -149,13 +142,6 @@ const FormUsuario = ({ usuario, setFormModal })=>{
                     dropdownTextStyles={{color:'#000'}}
                     defaultOption={defaultOptionDispo}
                 />
-                {/* <TextInput
-                    placeholder="1 dia, 2 dias, 3 dias a la semana..."
-                    value={nuevoUsuario.disponibilidad}
-                    style={styles.input}
-                    onChangeText={(valor)=>{handleChange('disponibilidad',valor)}}
-                    placeholderTextColor='#888'
-                ></TextInput> */}
                 <Text style={styles.label}>Objetivos</Text>
                 <TextInput
                     multiline

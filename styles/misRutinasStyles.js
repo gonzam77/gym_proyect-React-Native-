@@ -40,15 +40,14 @@ export const styles = StyleSheet.create({
   scroll: {
     paddingHorizontal: 15,
     paddingTop: 10,
-    paddingBottom: 120, // Espacio para que el botón flotante no tape
+    paddingBottom: 120, 
     flexGrow: 1,
   },
   entrenamiento: {
     marginBottom: 16,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)', // Glassmorphism ligero
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', 
     borderRadius: 24,
     padding: 20,
-    // Sombra sutil para profundidad
     ...Platform.select({
       ios: {
         shadowColor: "#000",
@@ -67,7 +66,7 @@ export const styles = StyleSheet.create({
   nombre: {
     fontSize: 22,
     fontWeight: '800',
-    color: colores.principal,
+    color: colores.blanco,
     letterSpacing: 0.5,
   },
   tiempoContenedor: {
@@ -80,7 +79,7 @@ export const styles = StyleSheet.create({
     borderRadius: 12,
   },
   tiempo: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: "700",
     color: colores.terciario,
   },
@@ -93,7 +92,6 @@ export const styles = StyleSheet.create({
   agregar: {
     width: 75,
     height: 75,
-    // Brillo sutil al botón de agregar
     shadowColor: colores.detalle,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.5,

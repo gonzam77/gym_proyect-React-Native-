@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 import { agregarRutina, setRutinas } from '../../store/rutinasSlice';
 import formatearTiempo from '../../helpers/formatearTiempo';
 import { styles } from '../../styles/formRutinaStyles';
-import { BotonGuardar, BotonVolver } from "../../components/botones/botones";
+import { colores } from "../../styles/colores";
 
 const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSeleccionada}) => {
     
@@ -116,7 +116,6 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
         <View style={styles.container}>
             <View style={styles.botonera}>
 
-                {/*BOTON VOLVER*/}
                  <Pressable
                     onPress={() => {
                         setNuevaRutina({});
@@ -125,16 +124,9 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
                     >
                     <Icon name="chevron-back-outline" color={'#fff'} size={35} />
                 </Pressable>
-                {/* <BotonVolver
-                    onPress={()=>{
-                        setNuevaRutina({});
-                        setModalFormRutina(false);
-                    }}
-                /> */}
-
-                {/*BOTON GUARDAR*/}
+               
                 <Pressable
-                    style={{borderRadius:8, backgroundColor:'#277822'}}
+                    style={{borderRadius:8, backgroundColor:colores.reiniciar}}
                     estaDeshabilitado={estaDeshabilitado}
                     onPress={()=>{
                         setEstaDeshabilitado(true);
@@ -142,15 +134,8 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
                     }}
                 >
                     <Text style={{color:'#fff', fontSize:16, fontWeight:'900', padding:10}}>Guardar</Text>
-                    {/* <Icon name="save-outline" color={'#43d112'} size={35} /> */}
                 </Pressable>
-                {/* <BotonGuardar
-                    estaDeshabilitado={estaDeshabilitado}
-                    onPress={()=>{
-                        setEstaDeshabilitado(true);
-                        handleGuardar();
-                    }}
-                /> */}
+               
             </View>
                 
             <Text style={styles.titulo}>
