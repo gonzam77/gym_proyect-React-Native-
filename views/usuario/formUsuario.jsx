@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { View, Text, Pressable, TextInput, Alert, ScrollView } from "react-native";
+import Icon from 'react-native-vector-icons/Ionicons';
 import { useDispatch } from "react-redux";
 import { guardarUsuario } from "../../store/usuarioSlice";
 import styles from "../../styles/usuarioStyles";
@@ -74,6 +75,15 @@ const FormUsuario = ({ usuario, setFormModal })=>{
 
     return(
         <View style={styles.container}>
+            <Pressable
+                    onPress={()=>{
+                        setFormModal(false);
+                    }}
+                    style={{marginTop:20,marginLeft:10,}}
+                >
+                    <Icon name="chevron-back-outline" color={'#fff'} size={25}></Icon>
+                    
+            </Pressable>
             <Text style={styles.titulo}>Perfil</Text>
             <ScrollView style={{marginTop:20}}>
 

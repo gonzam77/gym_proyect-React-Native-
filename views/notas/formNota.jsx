@@ -59,7 +59,7 @@ const FormNota = ({ notaSeleccionada, setFormModal, setNotaSeleccionada }) => {
                 
             </Pressable>
             <Text style={styles.titulo}>
-                { notaSeleccionada.id ? 'Editar Nota' : 'Nueva Nota' }
+                { notaSeleccionada.id ? 'Editar Nota' : 'Nueva Sección' }
             </Text>
             <View style={styles.form}>
                 <TextInput
@@ -76,7 +76,7 @@ const FormNota = ({ notaSeleccionada, setFormModal, setNotaSeleccionada }) => {
             >
                 <Text
                     style={styles.btnTexto}
-                >Guardar Nota</Text>
+                >Guardar Sección</Text>
             </Pressable>
         </View>
     )
