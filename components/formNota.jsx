@@ -3,6 +3,7 @@ import { useRef, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { modificarEjercicio } from "../store/rutinasSlice";
 import { KeyboardAvoidingView, Platform } from "react-native";
+import { colores } from "../styles/colores";
 
 
 const FormNota = ({onClose, visible, ejercicio})=> {
@@ -101,13 +102,13 @@ export default FormNota;
 const styles = StyleSheet.create({
     overlay: {
         flex: 1,
-        backgroundColor: "rgba(0,0,0,0.45)",
+        backgroundColor: colores.negro,
         justifyContent: "center",
         alignItems: "center"
     },
     box: {
         width: 260,
-        backgroundColor: "#000",
+        backgroundColor: colores.negro,
         borderRadius: 15,
         padding: 18,
         elevation: 6,

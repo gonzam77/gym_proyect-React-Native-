@@ -21,7 +21,7 @@ export const styles = StyleSheet.create({
   },
   infoBox: {
     marginBottom: 16,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)', 
+    backgroundColor:colores.negroClaro, 
     borderRadius: 24,
     paddingBottom: 20,
     paddingTop: 10,

@@ -44,7 +44,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 16,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)', 
+    backgroundColor: colores.negroClaro, 
     paddingBottom: 20,
     paddingTop: 10,
     paddingHorizontal:20,
@@ -62,6 +62,7 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.15)',
     overflow: 'hidden',
+    borderRadius:10
   },
   titulo1: {
     fontSize: 24,

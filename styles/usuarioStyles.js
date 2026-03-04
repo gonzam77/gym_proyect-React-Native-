@@ -3,7 +3,7 @@ import { colores } from './colores'
 
 const styles = StyleSheet.create({
     container:{
-        backgroundColor: '#000',
+        backgroundColor: colores.negro,
         flex:1,
         justifyContent:'center'
     },

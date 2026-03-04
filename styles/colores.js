@@ -1,5 +1,6 @@
 export const colores = {
   negro: "#080c14",
+  negroClaro: "#141F33",
   principal: "#46ed34",
   editar: "#27A6F5",
   reiniciar: "#1DBF84",

@@ -4,7 +4,7 @@ import { colores } from "./colores";
 const styles = StyleSheet.create({
     container: {
         padding: 12,
-        backgroundColor: "#000",
+        backgroundColor: colores.negro,
     },
 
     card: {

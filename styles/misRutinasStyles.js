@@ -6,7 +6,7 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   fondo: {
-    backgroundColor:'#000',
+    backgroundColor:colores.negro,
     flex: 1,
   },
   headerContainer: {
@@ -45,7 +45,7 @@ export const styles = StyleSheet.create({
   },
   entrenamiento: {
     marginBottom: 16,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)', 
+    backgroundColor: colores.negroClaro, 
     borderRadius: 24,
     padding: 20,
     ...Platform.select({

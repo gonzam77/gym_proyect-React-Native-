@@ -25,6 +25,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import MisRutinas from './views/rutinas/misRutinas';
 import Perfil from './views/usuario/perfil';
 import Notas from './views/notas/notas';
+import { colores } from './styles/colores';
 
 PushNotification.configure({
   onNotification: function (notification) {
@@ -99,7 +100,7 @@ const App = () => {
                 },
                 headerTitleAlign:'center',
                   headerStyle: {
-                    backgroundColor: '#000',
+                    backgroundColor: colores.negro,
                   },
                   headerTintColor: '#fff',
                   headerTitleStyle: {

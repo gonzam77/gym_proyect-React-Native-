@@ -33,7 +33,7 @@ export const styles = StyleSheet.create({
   },
   ejercicioItem: {
       marginBottom: 16,
-      backgroundColor: 'rgba(255, 255, 255, 0.1)', 
+      backgroundColor: colores.negroClaro, 
       borderRadius: 24,
       padding: 20,
       ...Platform.select({
