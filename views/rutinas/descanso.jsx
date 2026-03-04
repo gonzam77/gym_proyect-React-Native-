@@ -130,7 +130,7 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
         <View style={styles.botones}>
           {activo ? (
             <Pressable onPress={pausar}>
-              <Icon name="pause-circle-outline" size={60} color={colores.pausa}/>
+              <Icon name="pause-circle-outline" size={60} color={colores.turquesa}/>
             </Pressable>
           ) : (
             <Pressable onPress={reanudar}>
@@ -138,7 +138,7 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
             </Pressable>
           )}
           <Pressable onPress={reiniciar}>
-            <Icon name="refresh-outline" size={55} color={colores.pausa} />
+            <Icon name="refresh-outline" size={55} color={colores.turquesa} />
           </Pressable>
         </View>
       </View>

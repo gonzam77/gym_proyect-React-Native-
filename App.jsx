@@ -100,7 +100,7 @@ const App = () => {
                 },
                 headerTitleAlign:'center',
                   headerStyle: {
-                    backgroundColor: colores.negro,
+                    backgroundColor: colores.azulProfundo,
                   },
                   headerTintColor: '#fff',
                   headerTitleStyle: {

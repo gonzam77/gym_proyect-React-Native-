@@ -4,7 +4,7 @@ import { colores } from "./colores";
 const styles = StyleSheet.create({
     container: {
         padding: 12,
-        backgroundColor: colores.negro,
+        backgroundColor: colores.azulProfundo,
     },
 
     card: {
@@ -49,16 +49,16 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: "bold",
         marginVertical: 10,
-        color: "#333",
+        color: colores.blanco,
     },
     btn: {
-        backgroundColor: colores.principal,
+        backgroundColor: colores.verdeOpaco,
         borderRadius: 30,
         paddingVertical: 10,
         paddingHorizontal: 10,
         elevation: 3,
         marginHorizontal:10,
-        borderColor:colores.principal,
+        borderColor:colores.verdeOpaco,
         borderWidth:2
     },
     btnTexto: {

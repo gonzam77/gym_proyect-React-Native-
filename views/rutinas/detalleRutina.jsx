@@ -54,17 +54,17 @@ const DetalleRutina = (
           <Icon name="chevron-back-outline" color={'#fff'} size={35} />
         </Pressable>
         <Pressable
-          style={{borderRadius:8, backgroundColor:colores.editar}}
+          style={{borderRadius:8, backgroundColor:colores.azulClaro}}
           onPress={() => {
             setModalFormRutina(true);
           }}
           >
-            <Text style={{color:colores.blanco, fontSize:16, fontWeight:'900', padding:10}}>Editar</Text>
+            <Text style={{color:'#fff', fontSize:16, fontWeight:'900', padding:10}}>Editar</Text>
 
         </Pressable>
         
         <Pressable
-          style={{borderRadius:8, backgroundColor:colores.reiniciar}}
+          style={{borderRadius:8, backgroundColor:colores.verdeOpaco}}
           onPress={() => {
             Alert.alert("Reiniciar", "Desea reiniciar los ejercicios?", [
               { text: "Cancelar" },
@@ -77,7 +77,7 @@ const DetalleRutina = (
             ]);
           }}
           >
-            <Text style={{color:colores.blanco, fontSize:16, fontWeight:'900', padding:10}}>Reiniciar</Text>
+            <Text style={{color:'#fff', fontSize:16, fontWeight:'900', padding:10}}>Reiniciar</Text>
         </Pressable>
       
         <Pressable
@@ -94,7 +94,7 @@ const DetalleRutina = (
             ]);
           }}
           >
-            <Text style={{color:colores.blanco, fontSize:16, fontWeight:'900', padding:10}}>Eliminar</Text>
+            <Text style={{color:'#fff', fontSize:16, fontWeight:'900', padding:10}}>Eliminar</Text>
         </Pressable>
         
       </View>

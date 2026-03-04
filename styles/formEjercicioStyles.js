@@ -4,7 +4,7 @@ import {colores} from './colores';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colores.negro,
+    backgroundColor:colores.azulProfundo,
     padding: 20,
   },
   titulo: {
@@ -24,8 +24,8 @@ export const styles = StyleSheet.create({
     marginBottom: 5,
   },
   input: {
-    backgroundColor: colores.blanco,
-    color: colores.negro,
+    backgroundColor: '#fff',
+    color: colores.azulProfundo,
     paddingVertical: 10,
     paddingHorizontal: 15,
     borderRadius: 10,
@@ -34,12 +34,12 @@ export const styles = StyleSheet.create({
     textAlignVertical: "top",
   },
   pickerWrapper: {
-    backgroundColor: "#111111",
+    backgroundColor: "#fff",
     borderRadius: 10,
     marginBottom: 15,
   },
   picker: {
-    color: colores.blanco,
+    color: '#000',
   },
   error: {
     color: "red",
@@ -48,7 +48,7 @@ export const styles = StyleSheet.create({
   },
   iconButton: {
     marginHorizontal: 10,
-    backgroundColor: colores.negro,
+    backgroundColor: colores.azulProfundo,
     borderRadius: 50,
     elevation: 5,
   },

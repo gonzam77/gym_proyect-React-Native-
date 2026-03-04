@@ -55,7 +55,7 @@ const FormNota = ({ notaSeleccionada, setFormModal, setNotaSeleccionada }) => {
                 }}
                 style={{marginTop:20,marginLeft:10,}}
             >
-                <Icon name="chevron-back-outline" color={'#000'} size={25}></Icon>
+                <Icon name="chevron-back-outline" color={'#fff'} size={25}></Icon>
                 
             </Pressable>
             <Text style={styles.titulo}>

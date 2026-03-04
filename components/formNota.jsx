@@ -82,14 +82,6 @@ const FormNota = ({onClose, visible, ejercicio})=> {
                         <Pressable style={[styles.btn, styles.editar]} onPress={handleGuardar}>
                             <Text style={styles.txtEditar}>Guardar</Text>
                         </Pressable>
-{/* 
-                        <Pressable style={[styles.btn, styles.editar]} onPress={onEditar}>
-                            <Text style={styles.txtEditar}>Editar</Text>
-                        </Pressable>
-
-                        <Pressable style={[styles.btn, styles.eliminar]} onPress={onEliminar}>
-                            <Text style={styles.txtEliminar}>Eliminar</Text>
-                        </Pressable> */}
                     </View>
                 </Animated.View>
             </KeyboardAvoidingView>
@@ -102,13 +94,13 @@ export default FormNota;
 const styles = StyleSheet.create({
     overlay: {
         flex: 1,
-        backgroundColor: colores.negro,
+        backgroundColor: colores.azulProfundo,
         justifyContent: "center",
         alignItems: "center"
     },
     box: {
         width: 260,
-        backgroundColor: colores.negro,
+        backgroundColor: colores.azulProfundo,
         borderRadius: 15,
         padding: 18,
         elevation: 6,

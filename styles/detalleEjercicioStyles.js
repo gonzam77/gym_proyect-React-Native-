@@ -4,7 +4,7 @@ import {colores} from './colores';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colores.negro,
+    backgroundColor: colores.azulProfundo,
     padding: 20,
     justifyContent: "start",
   },
@@ -21,7 +21,7 @@ export const styles = StyleSheet.create({
   },
   infoBox: {
     marginBottom: 16,
-    backgroundColor:colores.negroClaro, 
+    backgroundColor:colores.azulProfundoClaro, 
     borderRadius: 24,
     paddingBottom: 20,
     paddingTop: 10,
@@ -79,7 +79,7 @@ export const styles = StyleSheet.create({
   },
   btnTexto: {
     fontSize:18,
-    color: colores.negro,
+    color: colores.azulProfundo,
     fontWeight: "900",
     textAlign: "center",
   },
@@ -89,7 +89,7 @@ export const styles = StyleSheet.create({
   },
   iconButton: {
     marginHorizontal: 10,
-    backgroundColor: colores.negro,
+    backgroundColor: colores.azulProfundo,
     borderRadius: 50,
     elevation: 5,
   },

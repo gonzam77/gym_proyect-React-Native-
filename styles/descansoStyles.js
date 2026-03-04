@@ -4,7 +4,7 @@ import {colores} from './colores';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colores.negro,
+    backgroundColor: colores.azulProfundo,
     alignItems: "center",
     padding: 20,
   },
@@ -44,7 +44,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 16,
-    backgroundColor: colores.negroClaro, 
+    backgroundColor: colores.azulProfundoClaro, 
     paddingBottom: 20,
     paddingTop: 10,
     paddingHorizontal:20,
@@ -72,7 +72,7 @@ export const styles = StyleSheet.create({
   },
   titulo2: {
     fontSize: 24,
-    color: colores.terciario,
+    color: colores.cian,
     marginBottom: 20,
     fontWeight: 'bold',
     paddingHorizontal:15

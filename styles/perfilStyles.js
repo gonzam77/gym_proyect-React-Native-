@@ -3,7 +3,7 @@ import { colores } from "./colores";
 
 const styles = StyleSheet.create({
     container:{
-        backgroundColor:colores.negro,
+        backgroundColor:colores.azulProfundo,
         flex:1
     },
     card: {

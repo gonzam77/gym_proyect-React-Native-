@@ -5,6 +5,7 @@ import { agregarComentario } from "../../store/notasHistoricasSlice";
 import Icon from 'react-native-vector-icons/Ionicons';
 import uuid from 'react-native-uuid';
 import styles from "../../styles/formComentarioStyles";
+import { colores } from "../../styles/colores";
 
 const FormComentario = ({ idNota, comentarioSeleccionado, setComentarioSeleccionado, setFormComentarioModal }) => {
 
@@ -41,7 +42,7 @@ const FormComentario = ({ idNota, comentarioSeleccionado, setComentarioSeleccion
     };
 
     return (
-        <View>
+        <View style={{flex:1, backgroundColor:colores.azulProfundo}}>
             <Pressable
                 onPress={()=>{
                     setFormComentarioModal(false);
@@ -49,14 +50,16 @@ const FormComentario = ({ idNota, comentarioSeleccionado, setComentarioSeleccion
                 }}
                 style={{marginTop:20,marginLeft:10,}}
             >
-                <Icon name="chevron-back-outline" color={'#000'} size={25}></Icon>
+                <Icon name="chevron-back-outline" color={'#fff'} size={25}></Icon>
                 
             </Pressable>
+
+            <Text style={styles.titulo}>{idNota ? 'Editar Comentario' : 'Nuevo Comentario' }</Text>
 
             <TextInput
                 multiline
                 placeholder="Escriba lo que desee..."
-                placeholderTextColor={'#6e6e6e'}
+                placeholderTextColor={'#ccc'}
                 onChangeText={(valor)=>handeChange('nota',valor)}
                 numberOfLines={10}
                 style={styles.input}

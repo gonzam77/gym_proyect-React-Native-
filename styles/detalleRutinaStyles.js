@@ -4,7 +4,7 @@ import { colores } from './colores'
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor:colores.negro,
+    backgroundColor:colores.azulProfundo,
     paddingHorizontal: 20,
     paddingTop:30,
   },
@@ -24,7 +24,7 @@ export const styles = StyleSheet.create({
   tiempo: {
     fontSize: 20,
     fontWeight: "600",
-    color: colores.terciario,
+    color: colores.cian,
     textAlign: "center",
     marginVertical: 10,
   },
@@ -33,7 +33,7 @@ export const styles = StyleSheet.create({
   },
   ejercicioItem: {
       marginBottom: 16,
-      backgroundColor: colores.negroClaro, 
+      backgroundColor: colores.azulProfundoClaro, 
       borderRadius: 24,
       padding: 20,
       ...Platform.select({

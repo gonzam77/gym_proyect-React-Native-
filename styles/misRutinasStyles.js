@@ -6,7 +6,7 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   fondo: {
-    backgroundColor:colores.negro,
+    backgroundColor:colores.azulProfundo,
     flex: 1,
   },
   headerContainer: {
@@ -35,7 +35,7 @@ export const styles = StyleSheet.create({
     width: 70,
     borderRadius: 35,
     borderWidth: 2,
-    borderColor: 'rgba(255,255,255,0.3)',
+    borderColor: 'rgba(255, 255, 255, 0.15)',
   },
   scroll: {
     paddingHorizontal: 15,
@@ -45,7 +45,7 @@ export const styles = StyleSheet.create({
   },
   entrenamiento: {
     marginBottom: 16,
-    backgroundColor: colores.negroClaro, 
+    backgroundColor: colores.azulProfundoClaro, 
     borderRadius: 24,
     padding: 20,
     ...Platform.select({
@@ -81,7 +81,7 @@ export const styles = StyleSheet.create({
   tiempo: {
     fontSize: 16,
     fontWeight: "700",
-    color: colores.terciario,
+    color: colores.cian,
   },
   btnCircular: {
     position: 'absolute',

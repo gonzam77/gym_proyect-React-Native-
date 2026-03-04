@@ -3,12 +3,12 @@ import { colores } from "./colores";
 
 const styles = StyleSheet.create({
     container:{
-        backgroundColor: '#fff',
+        backgroundColor: colores.azulProfundo,
         flex:1,
     },
     titulo:{
         fontSize:30,
-        color:"#000",
+        color:colores.blanco,
         fontWeight:'600',
         textAlign:'center',
     },
@@ -28,16 +28,16 @@ const styles = StyleSheet.create({
         borderWidth:2
     },
     btn:{
-        backgroundColor:colores.reiniciar,
+        backgroundColor:colores.verdeOpaco,
         margin:20,
         borderRadius:5,
     },
     btnTexto:{
-        fontSize:15,
+        fontSize:16,
         padding:10,
         textAlign:'center',
         fontWeight:600,
-        color:colores.blanco,
+        color:'#fff',
     }
 })
 

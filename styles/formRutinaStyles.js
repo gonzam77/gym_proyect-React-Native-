@@ -4,7 +4,7 @@ import { colores } from './colores';
 export const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: colores.negro,
+        backgroundColor: colores.azulProfundo,
         padding: 20,
     },
     scroll:{
@@ -22,7 +22,7 @@ export const styles = StyleSheet.create({
     tiempo: {
         fontSize: 18,
         fontWeight: "500",
-        color: colores.terciario,
+        color: colores.cian,
         textAlign: "center",
         marginVertical: 20,
     },
@@ -33,8 +33,8 @@ export const styles = StyleSheet.create({
         marginBottom: 5,
     },
     input: {
-        backgroundColor: colores.blanco,
-        color: colores.negro,
+        backgroundColor: '#fff',
+        color: colores.azulProfundo,
         borderRadius: 10,
         paddingVertical: 10,
         paddingHorizontal: 15,
@@ -49,7 +49,7 @@ export const styles = StyleSheet.create({
         alignItems:'center',
         justifyContent:'space-between',
         marginBottom: 16,
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        backgroundColor: colores.azulProfundoClaro,
         borderRadius: 24,
         padding: 20,
         ...Platform.select({
@@ -80,7 +80,7 @@ export const styles = StyleSheet.create({
     },
     iconButton: {
         marginHorizontal: 10,
-        backgroundColor: colores.negro,
+        backgroundColor: colores.azulProfundo,
         borderRadius: 50,
         elevation: 5,
     },

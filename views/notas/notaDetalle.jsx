@@ -5,6 +5,7 @@ import FormComentario from "./formComentrario";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { eliminarComentario } from "../../store/notasHistoricasSlice";
+import { colores } from "../../styles/colores";
 
 const NotaDetalle = ({ notaSeleccionada, setNotaSeleccionada, setNotaModal })=>{
     
@@ -18,7 +19,7 @@ const NotaDetalle = ({ notaSeleccionada, setNotaSeleccionada, setNotaModal })=>{
     const dispatch = useDispatch();
  
     return (
-        <View style={{flex:1}}>
+        <View style={{flex:1, backgroundColor:colores.azulProfundo}}>
             <View>
                 <Pressable
                     onPress={()=>{
@@ -27,7 +28,7 @@ const NotaDetalle = ({ notaSeleccionada, setNotaSeleccionada, setNotaModal })=>{
                     }}
                     style={{marginTop:20,marginLeft:10,}}
                 >
-                    <Icon name="chevron-back-outline" color={'#000'} size={25}></Icon>
+                    <Icon name="chevron-back-outline" color={'#fff'} size={25}></Icon>
                     
                 </Pressable>
                 <Text

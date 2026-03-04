@@ -74,6 +74,7 @@ const FormUsuario = ({ usuario, setFormModal })=>{
 
     return(
         <View style={styles.container}>
+            <Text style={styles.titulo}>Perfil</Text>
             <ScrollView style={{marginTop:20}}>
 
                 <Text style={styles.label}>Ingrese su nombre</Text>

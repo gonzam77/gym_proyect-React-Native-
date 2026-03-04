@@ -126,7 +126,7 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
                 </Pressable>
                
                 <Pressable
-                    style={{borderRadius:8, backgroundColor:colores.reiniciar}}
+                    style={{borderRadius:8, backgroundColor:colores.verdeOpaco}}
                     estaDeshabilitado={estaDeshabilitado}
                     onPress={()=>{
                         setEstaDeshabilitado(true);

@@ -139,7 +139,7 @@ const FormEjercicio = ({ nuevaRutina, setNuevaRutina, setModalFormEjercicio, eje
             </Pressable>
           :null
         }
-        <Pressable style={{borderRadius:8, backgroundColor:colores.reiniciar}} onPress={handleGuardar}>
+        <Pressable style={{borderRadius:8, backgroundColor:colores.verdeOpaco}} onPress={handleGuardar}>
             <Text style={{color:'#fff', fontSize:16, fontWeight:'900', padding:10}}>Guardar</Text>
         </Pressable>
         
