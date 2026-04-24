@@ -94,27 +94,29 @@ export default FormNota;
 const styles = StyleSheet.create({
     overlay: {
         flex: 1,
-        backgroundColor: colores.azulProfundo,
+        backgroundColor: "rgba(8, 12, 20, 0.72)",
         justifyContent: "center",
-        alignItems: "center"
+        alignItems: "center",
+        paddingHorizontal: 20,
     },
     box: {
-        width: 260,
-        backgroundColor: colores.azulProfundo,
-        borderRadius: 15,
+        width: "100%",
+        maxWidth: 420,
+        backgroundColor: colores.azulProfundoClaro,
+        borderRadius: 24,
         padding: 18,
         elevation: 6,
-        minWidth:'80%',
-        minHeight: 220,   // 🔑 clave
-        borderWidth:2,
-        borderColor:'#43d112'
+        minHeight: 220,
+        borderWidth: 1,
+        borderColor: "rgba(255, 255, 255, 0.15)",
     },
     titulo: {
-        fontSize: 20,
-        fontWeight: "700",
-        color: "#fff",
+        fontSize: 24,
+        fontWeight: "800",
+        color: colores.blanco,
         textAlign: "center",
-        marginBottom: 6
+        marginBottom: 12,
+        textTransform: "uppercase",
     },
     subtitulo: {
         textAlign: "center",
@@ -125,21 +127,34 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         marginTop: 12,
+        gap: 10,
     },
     btn: {
-        paddingVertical: 8,
-        paddingHorizontal: 12,
-        borderRadius: 10
+        paddingVertical: 10,
+        paddingHorizontal: 16,
+        borderRadius: 12,
+        minWidth: 110,
+        alignItems: "center",
     },
     input:{
-        backgroundColor:'#fff',
-        borderRadius:5,
-        paddingLeft:10
+        backgroundColor: colores.azulProfundo,
+        color: colores.blanco,
+        borderRadius: 12,
+        paddingLeft: 12,
+        paddingRight: 12,
+        paddingTop: 10,
+        paddingBottom: 10,
+        borderWidth: 1,
+        borderColor: "rgba(255, 255, 255, 0.2)",
     },
-    cancelar: { backgroundColor: "#eefa07" },
-    editar: { backgroundColor: "#43d112" },
+    cancelar: {
+        backgroundColor: "transparent",
+        borderWidth: 1,
+        borderColor: "rgba(255, 255, 255, 0.35)",
+    },
+    editar: { backgroundColor: colores.verdeOpaco },
     eliminar: { backgroundColor: "#bd1515" },
-    txtCancelar: { color: "#000", fontWeight: "700" },
-    txtEditar: { color: "#000", fontWeight: "700" },
+    txtCancelar: { color: colores.blanco, fontWeight: "700" },
+    txtEditar: { color: colores.blanco, fontWeight: "700" },
     txtEliminar: { color: "#fff", fontWeight: "700" },
 });
