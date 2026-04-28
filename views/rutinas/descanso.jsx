@@ -15,6 +15,7 @@ notifee.onForegroundEvent(({ type, detail }) => {
 
 const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
   const segundosTotales = ejercicio.descanso * 60;
+  
   const [segundos, setSegundos] = useState(segundosTotales);
   const [activo, setActivo] = useState(true);
   
@@ -146,8 +147,8 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
       {segundos > 0 ? (
         <Boton onPress={() => setModalDescanso(false)}>Saltar</Boton>
       ) : (
-        <Pressable onPress={detenerTodo}>
-          <Icon name="stop-circle-outline" size={60} color={colores.alert} />
+        <Pressable onPress={detenerTodo} style={{marginTop:30}}>
+          <Icon name="stop-circle-outline" size={100} color={colores.alert} />
         </Pressable>
       )}
     </View>
