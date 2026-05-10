@@ -27,10 +27,34 @@ const styles = StyleSheet.create({
         fontSize:15,
         textAlignVertical: "top",
     },
+    dateButton:{
+        backgroundColor:'#fff',
+        marginHorizontal:15,
+        marginVertical:10,
+        borderRadius:5,
+        minHeight:44,
+        paddingHorizontal:10,
+        flexDirection:'row',
+        alignItems:'center',
+        justifyContent:'space-between',
+    },
+    dateButtonText:{
+        color:'#000',
+        fontSize:15,
+    },
+    dateButtonPlaceholder:{
+        color:'#888',
+    },
+    scrollContent:{
+        paddingBottom:40,
+    },
     btn:{
         backgroundColor:colores.verdeOpaco,
         margin:20,
         borderRadius:5,
+    },
+    btnDeshabilitado:{
+        opacity:0.65,
     },
     btnTexto:{
         fontSize:16,

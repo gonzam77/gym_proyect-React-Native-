@@ -21,6 +21,12 @@ const usuarioSlice = createSlice({
       guardarSesion: (state, action) => {
         state.sesion = action.payload;
       },
+      actualizarUsuarioSesion: (state, action) => {
+        state.sesion.user = {
+          ...state.sesion.user,
+          ...action.payload,
+        };
+      },
       cerrarSesion: (state) => {
         state.sesion = {
           token: null,
@@ -34,6 +40,7 @@ export const {
   guardarUsuario,
   limpiarUsuario,
   guardarSesion,
+  actualizarUsuarioSesion,
   cerrarSesion,
 } = usuarioSlice.actions;
 
