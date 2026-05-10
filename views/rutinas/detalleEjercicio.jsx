@@ -13,6 +13,9 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
 
   const [modalDescanso, setModalDescanso] = useState(false);
   const [modalFormNota, setModalFormNota] = useState(false);
+
+  console.log('ejercicio',ejercicio);
+  
   
   const [serie, setSerie] = useState(0);
   const [estado, setEstado] = useState(false);
@@ -28,9 +31,12 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
   );
 
   useEffect(()=>{
-    if(ejercicioActualizado.series === ejercicioActualizado.seriesRealizadas)
-      setFinalizado(true);
-  },[])
+    if (!ejercicioActualizado) {
+      return;
+    }
+
+    setFinalizado(ejercicioActualizado.series === ejercicioActualizado.seriesRealizadas);
+  },[ejercicioActualizado])
 
   useEffect(() => {
     if (ejercicioActualizado) {
@@ -59,7 +65,7 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
 
     loop.start();
     return () => loop.stop();
-  },[finalizado, estado]);
+  },[fadeAnim, finalizado, estado]);
 
   const actualizarSeries = (nuevaSerie) => {
     console.log('nuevaSerie',nuevaSerie);
@@ -109,7 +115,12 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
   
   return (
     <View style={styles.container}>
-      <ScrollView>
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
 
         {!finalizado && (
           <Pressable

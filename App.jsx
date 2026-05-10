@@ -23,6 +23,7 @@ import notifee, { EventType } from '@notifee/react-native';
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 import MisRutinas from './views/rutinas/misRutinas';
+import RutinasAsignadas from './views/rutinas/rutinasAsignadas';
 import Perfil from './views/usuario/perfil';
 import Notas from './views/notas/notas';
 import Login from './views/usuario/login';
@@ -71,6 +72,8 @@ const AppContent = () => {
           let iconName;
           if(route.name === 'MisRutinas'){
             iconName = focused ? 'fitness' : 'fitness-outline'
+          } else if (route.name === 'RutinasAsignadas') {
+            iconName = focused ? 'clipboard' : 'clipboard-outline'
           } else if (route.name === 'Notas') {
             iconName = focused ? 'create' : 'create-outline'
           } else if (route.name === 'Perfil')
@@ -103,6 +106,19 @@ const AppContent = () => {
             fontWeight: 'bold',
           },
 
+        }}
+      />
+      <RootTabs.Screen
+        name='RutinasAsignadas'
+        component={RutinasAsignadas}
+        options={{
+          tabBarLabel:'Asignadas',
+          headerTitle: 'Rutinas Asignadas',
+          headerTitleAlign:'center',
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
         }}
       />
       <RootTabs.Screen

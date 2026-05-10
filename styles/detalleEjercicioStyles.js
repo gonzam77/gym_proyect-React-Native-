@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Platform } from "react-native";
 import {colores} from './colores';
 
 export const styles = StyleSheet.create({
@@ -6,7 +6,13 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colores.azulProfundo,
     padding: 20,
-    justifyContent: "start",
+  },
+  scroll: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 80,
   },
   titulo: {
     color: colores.blanco,

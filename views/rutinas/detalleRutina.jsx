@@ -22,24 +22,36 @@ const DetalleRutina = (
     state.rutinas.rutinas.find(r => r.id === rutinaSeleccionada?.id)
   );
 
-  const copiaRutinaActualizada = JSON.parse(JSON.stringify(rutinaActualizada));
+  const copiaRutinaActualizada = rutinaActualizada
+    ? JSON.parse(JSON.stringify(rutinaActualizada))
+    : null;
 
   const dispatch = useDispatch();
   const [ejercicio, setEjercicio] = useState({});
   const [modalEjercicio, setModalEjercicio] = useState(false);
 
   const handleEliminarRutina  = (id)=>{
-    dispatch(eliminarRutina(id));
     setRutinaSeleccionada({});
     setModalDetalle(false);
+    dispatch(eliminarRutina(id));
   };
   
-  useEffect(()=>{  
-    setRutinaSeleccionada(rutinaActualizada);
-  },[copiaRutinaActualizada]);
+  useEffect(()=>{
+    if (rutinaActualizada) {
+      setRutinaSeleccionada(rutinaActualizada);
+    }
+  },[rutinaActualizada, setRutinaSeleccionada]);
 
   const handleReiniciarRutina = () =>{
+    if (!copiaRutinaActualizada) {
+      return;
+    }
+
     dispatch(reiniciarRutina(copiaRutinaActualizada));
+  }
+
+  if (!copiaRutinaActualizada) {
+    return <View style={styles.container} />;
   }
 
   return (
@@ -104,7 +116,7 @@ const DetalleRutina = (
       </View>
 
       <Text style={styles.tiempo}>
-        Tiempo Estimado: {formatearTiempo(rutinaSeleccionada.tiempo)}
+        Tiempo Estimado: {formatearTiempo(copiaRutinaActualizada.tiempo)}
       </Text>
       
       <ScrollView 

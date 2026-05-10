@@ -91,7 +91,7 @@ const Login = () => {
                         onChangeText={setUsername}
                         autoCapitalize="characters"
                         autoCorrect={false}
-                        placeholder="GMEDINA"
+                        placeholder="Usuario"
                         placeholderTextColor="#777"
                         returnKeyType="next"
                     />

@@ -1,12 +1,19 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Platform } from "react-native";
 import {colores} from './colores';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colores.azulProfundo,
+  },
+  scroll: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
     alignItems: "center",
     padding: 20,
+    paddingBottom: 70,
   },
   titulo: {
     fontSize: 28,
@@ -14,11 +21,6 @@ export const styles = StyleSheet.create({
     color: colores.blanco,
     marginVertical: 35,
     textAlign: "center",
-  },
-  tiempo: {
-    fontSize: 50,
-    color: colores.secundario,
-    fontWeight: "bold",
   },
   btn: {
     backgroundColor: colores.principal,
@@ -91,5 +93,8 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 24,
     borderRadius: 8,
     marginHorizontal: 5,
+  },
+  stopButton: {
+    marginTop: 30,
   },
 });
