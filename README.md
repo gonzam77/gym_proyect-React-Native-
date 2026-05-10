@@ -113,6 +113,7 @@ adb -s ZN3223Q45V install -r android/app/build/outputs/apk/release/app-release.a
     ./gradlew clean
     cd ..
     npx react-native run-android
+    
 
 
 <!-- Estructura de commits --> 
