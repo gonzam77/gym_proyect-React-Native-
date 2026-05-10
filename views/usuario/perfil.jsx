@@ -1,20 +1,38 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Image, Pressable, Modal } from "react-native";
+import { View, Text, Pressable, Modal, Alert, ScrollView } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import FormUsuario from "./formUsuario";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import styles from "../../styles/perfilStyles";
+import { cerrarSesion } from "../../store/usuarioSlice";
 
 const Perfil = () => {
 
     const [formModal, setFormModal] = useState(false);
 
+    const dispatch = useDispatch();
     const usuario = useSelector(state => state.usuario.usuario);
-    console.log('usuario', usuario);
+    const sesion = useSelector(state => state.usuario.sesion);
+    const usuarioBackend = sesion?.user;
+
+    const confirmarCerrarSesion = () => {
+        Alert.alert(
+            "Cerrar sesion",
+            "Desea cerrar la sesion actual?",
+            [
+                { text: "Cancelar", style: "cancel" },
+                {
+                    text: "Cerrar sesion",
+                    style: "destructive",
+                    onPress: () => dispatch(cerrarSesion()),
+                },
+            ],
+        );
+    };
     
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
 
         <View style={styles.card}>
             <Pressable
@@ -29,13 +47,13 @@ const Perfil = () => {
             {/* Foto o icono */}
             <View style={styles.header}>
                 <Icon name="person-circle-outline" size={80} color="#4A90E2" />
-                <Text style={styles.nombre}>{usuario.nombre || "Usuario"}</Text>
+                <Text style={styles.nombre}>{usuario.nombre || usuarioBackend?.username || "Usuario"}</Text>
             </View>
 
             {/* Datos */}
             <View style={styles.row}>
                 <Text style={styles.label}>Correo:</Text>
-                <Text style={styles.value}>{usuario.correo || "-"}</Text>
+                <Text style={styles.value}>{usuario.correo || usuarioBackend?.email || "-"}</Text>
             </View>
 
             <View style={styles.row}>
@@ -71,6 +89,24 @@ const Perfil = () => {
             </View>
         </View>
 
+        <View style={styles.card}>
+            <View style={styles.row}>
+                <Text style={styles.label}>Cuenta:</Text>
+                <Text style={styles.value}>{usuarioBackend?.username || "-"}</Text>
+            </View>
+            <View style={styles.row}>
+                <Text style={styles.label}>Rol:</Text>
+                <Text style={styles.value}>{usuarioBackend?.Rol?.name || "-"}</Text>
+            </View>
+            <Pressable
+                style={styles.logoutButton}
+                onPress={confirmarCerrarSesion}
+            >
+                <Icon name="log-out-outline" size={20} color="#fff" />
+                <Text style={styles.logoutText}>Cerrar sesion</Text>
+            </Pressable>
+        </View>
+
         <Modal
             visible={formModal}
             animationType="slide"
@@ -81,7 +117,7 @@ const Perfil = () => {
                 setFormModal={setFormModal}
             />
         </Modal>
-    </View>
+    </ScrollView>
   );
 };
 

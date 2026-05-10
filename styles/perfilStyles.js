@@ -6,6 +6,9 @@ const styles = StyleSheet.create({
         backgroundColor:colores.azulProfundo,
         flex:1
     },
+    content: {
+        paddingBottom: 24,
+    },
     card: {
         backgroundColor: "#fff",
         padding: 20,
@@ -42,12 +45,30 @@ const styles = StyleSheet.create({
     value: {
         fontSize: 16,
         color: "#333",
+        flexShrink: 1,
+        textAlign: "right",
     },
     objetivos:{
         alignSelf:'flex-start',
         fontSize:15,
         paddingTop:10,
-    }
+    },
+    logoutButton: {
+        backgroundColor: colores.alert,
+        borderRadius: 6,
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+        marginTop: 18,
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: 8,
+    },
+    logoutText: {
+        color: "#fff",
+        fontSize: 16,
+        fontWeight: "700",
+    },
 });
 
 export default styles;

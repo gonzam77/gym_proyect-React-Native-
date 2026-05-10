@@ -1,7 +1,6 @@
 import {
   SafeAreaView,
   StyleSheet,
-  ImageBackground
 } from 'react-native';
 
 import PushNotification from "react-native-push-notification";
@@ -10,6 +9,7 @@ import { Platform } from "react-native";
 import InAppUpdates from 'react-native-in-app-updates';
 
 import { Provider } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { store, persistor } from './store/store';
 
@@ -25,6 +25,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import MisRutinas from './views/rutinas/misRutinas';
 import Perfil from './views/usuario/perfil';
 import Notas from './views/notas/notas';
+import Login from './views/usuario/login';
 import { colores } from './styles/colores';
 
 PushNotification.configure({
@@ -46,13 +47,7 @@ PushNotification.createChannel(
   (created) => console.log(`Canal creado: ${created}`)
 );
 
-const RootTabs = createBottomTabNavigator({
-  screens: {
-    Perfil: Perfil,
-    Home: MisRutinas,
-    Notas: Notas
-  },
-});
+const RootTabs = createBottomTabNavigator();
 
 // Escuchador de eventos en primer plano
 notifee.onBackgroundEvent(async ({ type, detail }) => {
@@ -60,6 +55,63 @@ notifee.onBackgroundEvent(async ({ type, detail }) => {
     await notifee.cancelNotification(detail.notification.id);
   }
 });
+
+const AppContent = () => {
+  const token = useSelector(state => state.usuario.sesion?.token);
+
+  if (!token) {
+    return <Login />;
+  }
+
+  return (
+    <RootTabs.Navigator
+      initialRouteName='MisRutinas'
+      screenOptions={({route})=>({
+        tabBarIcon:({focused,color, size})=>{
+          let iconName;
+          if(route.name === 'MisRutinas'){
+            iconName = focused ? 'fitness' : 'fitness-outline'
+          } else if (route.name === 'Notas') {
+            iconName = focused ? 'create' : 'create-outline'
+          } else if (route.name === 'Perfil')
+          iconName = focused ? 'person' : 'person-outline'
+          return <Ionicons name={iconName} size={size} color={color}/>
+        },
+        headerTitleAlign:'center',
+          headerStyle: {
+            backgroundColor: colores.azulProfundo,
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+      })}
+    >
+      <RootTabs.Screen
+        name='Perfil'
+        component={Perfil}
+        />
+      <RootTabs.Screen
+        name='MisRutinas'
+        component={MisRutinas}
+        options={{
+          tabBarLabel:'Mis Rutinas',
+          headerTitle: 'Mis Rutinas',
+          headerTitleAlign:'center',
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+
+        }}
+      />
+      <RootTabs.Screen
+        name='Notas'
+        component={Notas}
+      />
+    </RootTabs.Navigator>
+  );
+};
 
 const App = () => {
 
@@ -85,52 +137,7 @@ const App = () => {
       <PersistGate loading={null} persistor={persistor}>
           <SafeAreaView style={styles.container}>
           <NavigationContainer>
-            <RootTabs.Navigator
-              initialRouteName='MisRutinas'
-              screenOptions={({route})=>({
-                tabBarIcon:({focused,color, size})=>{
-                  let iconName;
-                  if(route.name === 'MisRutinas'){
-                    iconName = focused ? 'fitness' : 'fitness-outline'
-                  } else if (route.name === 'Notas') {
-                    iconName = focused ? 'create' : 'create-outline'
-                  } else if (route.name === 'Perfil')
-                  iconName = focused ? 'person' : 'person-outline'
-                  return <Ionicons name={iconName} size={size} color={color}/>
-                },
-                headerTitleAlign:'center',
-                  headerStyle: {
-                    backgroundColor: colores.azulProfundo,
-                  },
-                  headerTintColor: '#fff',
-                  headerTitleStyle: {
-                    fontWeight: 'bold',
-                  },
-              })}
-            >
-              <RootTabs.Screen
-                name='Perfil'
-                component={Perfil}
-                />
-              <RootTabs.Screen
-                name='MisRutinas'
-                component={MisRutinas}
-                options={{
-                  tabBarLabel:'Mis Rutinas',
-                  headerTitle: 'Mis Rutinas',
-                  headerTitleAlign:'center',
-                  headerTintColor: '#fff',
-                  headerTitleStyle: {
-                    fontWeight: 'bold',
-                  },
-    
-                }}
-              />
-              <RootTabs.Screen
-                name='Notas'
-                component={Notas}
-              />
-            </RootTabs.Navigator>
+            <AppContent />
           </NavigationContainer>
           </SafeAreaView>
       </PersistGate>

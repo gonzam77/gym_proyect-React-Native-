@@ -29,7 +29,7 @@ const MisRutinas = () => {
   
   const rutinas = useSelector(state => state.rutinas.rutinas);
   const usuario = useSelector(state => state.usuario.usuario);
-  console.log('rutinas', rutinas);
+  const usuarioBackend = useSelector(state => state.usuario.sesion?.user);
   
   const [modalFormRutina, setModalFormRutina] = useState(false);
   const [modalDetalle, setModalDetalle] = useState(false);
@@ -88,7 +88,7 @@ const MisRutinas = () => {
         <View style={styles.headerContainer}>
           <View>
             <Text style={styles.saludo}>Bienvenido</Text>
-            <Text style={styles.userName}>{usuario?.nombre || 'Atleta'}</Text>
+            <Text style={styles.userName}>{usuario?.nombre || usuarioBackend?.username || 'Atleta'}</Text>
           </View>
           <Image style={styles.image} source={require('../../assets/img/logo1.png')} />
         </View>

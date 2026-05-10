@@ -2,6 +2,10 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   usuario: {},
+  sesion: {
+    token: null,
+    user: null,
+  },
 };
 
 const usuarioSlice = createSlice({
@@ -14,12 +18,23 @@ const usuarioSlice = createSlice({
       limpiarUsuario: (state) => {
         state.usuario = {};
       },
+      guardarSesion: (state, action) => {
+        state.sesion = action.payload;
+      },
+      cerrarSesion: (state) => {
+        state.sesion = {
+          token: null,
+          user: null,
+        };
+      },
     }
 })
 
 export const {
   guardarUsuario,
-  limpiarUsuario
+  limpiarUsuario,
+  guardarSesion,
+  cerrarSesion,
 } = usuarioSlice.actions;
 
 export default usuarioSlice.reducer;
