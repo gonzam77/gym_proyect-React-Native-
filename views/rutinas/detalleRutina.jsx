@@ -11,13 +11,13 @@ import { colores } from "../../styles/colores";
 
 const DetalleRutina = (
   {
-    rutinaSeleccionada, 
-    setRutinaSeleccionada, 
-    modalFormRutina, 
-    setModalFormRutina, 
+    rutinaSeleccionada,
+    setRutinaSeleccionada,
+    modalFormRutina,
+    setModalFormRutina,
     setModalDetalle
-  })=>{  
-    
+  })=>{
+
   const rutinaActualizada = useSelector(state =>
     state.rutinas.rutinas.find(r => r.id === rutinaSeleccionada?.id)
   );
@@ -35,7 +35,7 @@ const DetalleRutina = (
     setModalDetalle(false);
     dispatch(eliminarRutina(id));
   };
-  
+
   useEffect(()=>{
     if (rutinaActualizada) {
       setRutinaSeleccionada(rutinaActualizada);
@@ -74,7 +74,7 @@ const DetalleRutina = (
             <Text style={{color:'#fff', fontSize:16, fontWeight:'900', padding:10}}>Editar</Text>
 
         </Pressable>
-        
+
         <Pressable
           style={{borderRadius:8, backgroundColor:colores.verdeOpaco}}
           onPress={() => {
@@ -91,7 +91,7 @@ const DetalleRutina = (
           >
             <Text style={{color:'#fff', fontSize:16, fontWeight:'900', padding:10}}>Reiniciar</Text>
         </Pressable>
-      
+
         <Pressable
           style={{borderRadius:8, backgroundColor:colores.alert}}
           onPress={() => {
@@ -108,7 +108,7 @@ const DetalleRutina = (
           >
             <Text style={{color:'#fff', fontSize:16, fontWeight:'900', padding:10}}>Eliminar</Text>
         </Pressable>
-        
+
       </View>
 
       <View>
@@ -118,8 +118,8 @@ const DetalleRutina = (
       <Text style={styles.tiempo}>
         Tiempo Estimado: {formatearTiempo(copiaRutinaActualizada.tiempo)}
       </Text>
-      
-      <ScrollView 
+
+      <ScrollView
         style={styles.scroll}
         contentContainerStyle={{ paddingBottom: 120, flexGrow: 1, minHeight: '120%' }}
         showsVerticalScrollIndicator={false}
@@ -127,13 +127,13 @@ const DetalleRutina = (
         <View style={styles.listaEjercicios}>
           {
             copiaRutinaActualizada?.ejercicios?.map((e, index) => (
-              <Pressable 
-                key={e.id} 
+              <Pressable
+                key={e.id}
                 style={styles.ejercicioItem}
                 onPress={() => {
                   setEjercicio(e);
                   setModalEjercicio(true)
-                }} 
+                }}
               >
                 <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
                   <View style={{maxWidth:280}}>
@@ -142,20 +142,20 @@ const DetalleRutina = (
                     {e.seriesRealizadas >= e.series ? <Text style={styles.finalizado}>FINALIZADO</Text> : null}
                   </View>
                   <Icon name="chevron-forward-outline" color={'#fff'} size={25} />
-                </View>  
+                </View>
               </Pressable>
             ))
           }
         </View>
-        
+
       </ScrollView>
-      
+
       <Modal
         visible={modalFormRutina}
         animationType="slide"
         onRequestClose={() => setModalFormRutina(false)}
       >
-        <FormRutina 
+        <FormRutina
           rutinaSeleccionada={copiaRutinaActualizada}
           setModalFormRutina={setModalFormRutina}
         />

@@ -23,27 +23,25 @@ async function requestNotificationPermission() {
   return true;
 }
 
-
-
 const MisRutinas = () => {
-  
+
   const rutinas = useSelector(state => state.rutinas.rutinas);
   const usuario = useSelector(state => state.usuario.usuario);
   const usuarioBackend = useSelector(state => state.usuario.sesion?.user);
-  
+
   const [modalFormRutina, setModalFormRutina] = useState(false);
   const [modalDetalle, setModalDetalle] = useState(false);
   const [rutinaSeleccionada, setRutinaSeleccionada] = useState();
-  
+
   const scaleAnim = useRef(new Animated.Value(1)).current;
- 
+
   useEffect(()=>{
     requestNotificationPermission();
   },[]);
 
   const EntrenamientoItem = ({ nombre, id, tiempo }) => (
     <Pressable onPress={()=>{
-        const selectedRutina = 
+        const selectedRutina =
           rutinas?.find(e => e.id === id);
         setRutinaSeleccionada(selectedRutina);
         setModalDetalle(true)
@@ -78,7 +76,7 @@ const MisRutinas = () => {
     useNativeDriver: true,
     }).start();
   };
-  
+
   return (
     <View
           style={styles.fondo}
@@ -92,10 +90,10 @@ const MisRutinas = () => {
           </View>
           <Image style={styles.image} source={require('../../assets/img/logo1.png')} />
         </View>
-        
+
         <FlatList
-          data={rutinas} 
-          keyExtractor={(item) => item.id.toString()} 
+          data={rutinas}
+          keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
             <EntrenamientoItem
               nombre={item.nombre}
@@ -105,10 +103,10 @@ const MisRutinas = () => {
           )}
           ListEmptyComponent={() => (
             <View style={styles.leyenda}>
-              <Text style={styles.leyendaTexto}>Aún no ha programado rutinas</Text>
+              <Text style={styles.leyendaTexto}>Aun no ha programado rutinas</Text>
             </View>
           )}
-          contentContainerStyle={[styles.scroll, { paddingBottom: 100 }]} 
+          contentContainerStyle={[styles.scroll, { paddingBottom: 100 }]}
           showsVerticalScrollIndicator={false}
         />
 
@@ -158,4 +156,4 @@ const MisRutinas = () => {
   );
 };
 
-export default MisRutinas; 
+export default MisRutinas;

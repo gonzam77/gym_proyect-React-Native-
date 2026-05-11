@@ -14,9 +14,6 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
   const [modalDescanso, setModalDescanso] = useState(false);
   const [modalFormNota, setModalFormNota] = useState(false);
 
-  console.log('ejercicio',ejercicio);
-  
-  
   const [serie, setSerie] = useState(0);
   const [estado, setEstado] = useState(false);
   const [finalizado, setFinalizado] = useState(false);
@@ -68,7 +65,6 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
   },[fadeAnim, finalizado, estado]);
 
   const actualizarSeries = (nuevaSerie) => {
-    console.log('nuevaSerie',nuevaSerie);
     dispatch(
       modificarEjercicio({
         idEjercicio: ejercicioActualizado.id,
