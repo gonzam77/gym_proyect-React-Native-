@@ -18,7 +18,8 @@ const styles = StyleSheet.create({
         padding: 10,
         textAlignVertical: "top",
         minHeight: 100,
-        margin:30
+        margin:30,
+        backgroundColor:'#fff'
 
     },
     btn:{
