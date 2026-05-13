@@ -18,16 +18,16 @@ const AUTH_URL = "https://rutina360-server.onrender.com/users/auth";
 
 const Login = () => {
     const dispatch = useDispatch();
-    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [cargando, setCargando] = useState(false);
     const [error, setError] = useState("");
 
-    const camposIncompletos = !username.trim() || !password;
+    const camposIncompletos = !email.trim() || !password;
 
     const iniciarSesion = async () => {
         if (camposIncompletos || cargando) {
-            setError("Ingrese usuario y contrasena.");
+            setError("Ingrese email y contrasena.");
             return;
         }
 
@@ -41,7 +41,7 @@ const Login = () => {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    username: username.trim(),
+                    email: email.trim(),
                     password,
                 }),
             });
@@ -84,14 +84,15 @@ const Login = () => {
                 <Text style={styles.subtitulo}>Ingresa con tu cuenta para continuar</Text>
 
                 <View style={styles.formulario}>
-                    <Text style={styles.label}>Usuario</Text>
+                    <Text style={styles.label}>Email</Text>
                     <TextInput
                         style={styles.input}
-                        value={username}
-                        onChangeText={setUsername}
-                        autoCapitalize="characters"
+                        value={email}
+                        onChangeText={setEmail}
+                        autoCapitalize="none"
                         autoCorrect={false}
-                        placeholder="Usuario"
+                        placeholder="correo@email.com"
+                        keyboardType="email-address"
                         placeholderTextColor="#777"
                         returnKeyType="next"
                     />
