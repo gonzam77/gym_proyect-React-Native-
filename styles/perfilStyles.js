@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
         paddingTop:10,
     },
     logoutButton: {
-        backgroundColor: colores.alert,
+        backgroundColor: "#E53935",
         borderRadius: 6,
         paddingVertical: 12,
         paddingHorizontal: 16,
