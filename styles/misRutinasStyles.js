@@ -83,6 +83,25 @@ export const styles = StyleSheet.create({
     fontWeight: "700",
     color: colores.cian,
   },
+  actionsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  reorderButtonsContainer: {
+    gap: 6,
+  },
+  reorderButton: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: 'rgba(255, 255, 255, 0.18)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  reorderButtonDisabled: {
+    opacity: 0.35,
+  },
   btnCircular: {
     position: 'absolute',
     right: 25,

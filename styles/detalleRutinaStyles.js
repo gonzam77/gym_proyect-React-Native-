@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 import { colores } from './colores'
 
 export const styles = StyleSheet.create({
@@ -67,5 +67,24 @@ export const styles = StyleSheet.create({
     justifyContent: "space-evenly",
     alignItems: "center",
     marginVertical: 10,
+  },
+  actionsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  reorderButtonsContainer: {
+    gap: 6,
+  },
+  reorderButton: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: 'rgba(255, 255, 255, 0.18)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  reorderButtonDisabled: {
+    opacity: 0.35,
   },
 })

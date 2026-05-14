@@ -6,7 +6,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { useDispatch, useSelector } from "react-redux";
 import formatearTiempo from '../../helpers/formatearTiempo';
 import { styles } from '../../styles/detalleRutinaStyles';
-import { eliminarRutina, reiniciarRutina } from "../../store/rutinasSlice";
+import { eliminarRutina, reiniciarRutina, reordenarEjercicio } from "../../store/rutinasSlice";
 import { colores } from "../../styles/colores";
 
 const DetalleRutina = (
@@ -49,6 +49,18 @@ const DetalleRutina = (
 
     dispatch(reiniciarRutina(copiaRutinaActualizada));
   }
+  
+  const moverEjercicio = (indexActual, direccion) => {
+    if (!copiaRutinaActualizada?.id) {
+      return;
+    }
+
+    dispatch(reordenarEjercicio({
+      idRutina: copiaRutinaActualizada.id,
+      indexActual,
+      direccion,
+    }));
+  };
 
   if (!copiaRutinaActualizada) {
     return <View style={styles.container} />;
@@ -141,7 +153,34 @@ const DetalleRutina = (
                     <Text style={styles.ejercicioDetalle}>{e.series} series</Text>
                     {e.seriesRealizadas >= e.series ? <Text style={styles.finalizado}>FINALIZADO</Text> : null}
                   </View>
-                  <Icon name="chevron-forward-outline" color={'#fff'} size={25} />
+                  <View style={styles.actionsContainer}>
+                    <View style={styles.reorderButtonsContainer}>
+                      <Pressable
+                        style={[styles.reorderButton, index === 0 && styles.reorderButtonDisabled]}
+                        disabled={index === 0}
+                        onPress={(event) => {
+                          event.stopPropagation();
+                          moverEjercicio(index, -1);
+                        }}
+                      >
+                        <Icon name="chevron-up-outline" size={18} color="#fff" />
+                      </Pressable>
+                      <Pressable
+                        style={[
+                          styles.reorderButton,
+                          index === copiaRutinaActualizada.ejercicios.length - 1 && styles.reorderButtonDisabled,
+                        ]}
+                        disabled={index === copiaRutinaActualizada.ejercicios.length - 1}
+                        onPress={(event) => {
+                          event.stopPropagation();
+                          moverEjercicio(index, 1);
+                        }}
+                      >
+                        <Icon name="chevron-down-outline" size={18} color="#fff" />
+                      </Pressable>
+                    </View>
+                    <Icon name="chevron-forward-outline" color={'#fff'} size={25} />
+                  </View>
                 </View>
               </Pressable>
             ))

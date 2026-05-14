@@ -1,11 +1,12 @@
 import { PermissionsAndroid, Platform, View, Text, Pressable, Modal, Image, Animated, FlatList } from "react-native";
 import { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { styles } from '../../styles/misRutinasStyles';
 import Icon from 'react-native-vector-icons/Ionicons';
 import formatearTiempo from '../../helpers/formatearTiempo';
 import FormRutina from "./formRutina";
 import DetalleRutina from "./detalleRutina";
+import { reordenarRutina } from "../../store/rutinasSlice";
 
 async function requestNotificationPermission() {
 
@@ -25,6 +26,7 @@ async function requestNotificationPermission() {
 
 const MisRutinas = () => {
 
+  const dispatch = useDispatch();
   const rutinas = useSelector(state => state.rutinas.rutinas);
   const usuario = useSelector(state => state.usuario.usuario);
   const usuarioBackend = useSelector(state => state.usuario.sesion?.user);
@@ -39,7 +41,11 @@ const MisRutinas = () => {
     requestNotificationPermission();
   },[]);
 
-  const EntrenamientoItem = ({ nombre, id, tiempo }) => (
+  const moverRutina = (indexActual, direccion) => {
+    dispatch(reordenarRutina({ indexActual, direccion }));
+  };
+
+  const EntrenamientoItem = ({ nombre, id, tiempo, index }) => (
     <Pressable onPress={()=>{
         const selectedRutina =
           rutinas?.find(e => e.id === id);
@@ -55,7 +61,31 @@ const MisRutinas = () => {
               <Text style={styles.tiempo}>{formatearTiempo(tiempo)}</Text>
             </View>
           </View>
-          <Icon name="chevron-forward-outline" color={'#fff'} size={25} />
+          <View style={styles.actionsContainer}>
+            <View style={styles.reorderButtonsContainer}>
+              <Pressable
+                style={[styles.reorderButton, index === 0 && styles.reorderButtonDisabled]}
+                disabled={index === 0}
+                onPress={(event) => {
+                  event.stopPropagation();
+                  moverRutina(index, -1);
+                }}
+              >
+                <Icon name="chevron-up-outline" size={18} color="#fff" />
+              </Pressable>
+              <Pressable
+                style={[styles.reorderButton, index === rutinas.length - 1 && styles.reorderButtonDisabled]}
+                disabled={index === rutinas.length - 1}
+                onPress={(event) => {
+                  event.stopPropagation();
+                  moverRutina(index, 1);
+                }}
+              >
+                <Icon name="chevron-down-outline" size={18} color="#fff" />
+              </Pressable>
+            </View>
+            <Icon name="chevron-forward-outline" color={'#fff'} size={25} />
+          </View>
         </View>
       </View>
     </Pressable>
@@ -94,11 +124,12 @@ const MisRutinas = () => {
         <FlatList
           data={rutinas}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
+          renderItem={({ item, index }) => (
             <EntrenamientoItem
               nombre={item.nombre}
               id={item.id}
               tiempo={item.tiempo}
+              index={index}
             />
           )}
           ListEmptyComponent={() => (
