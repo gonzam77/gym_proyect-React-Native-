@@ -13,6 +13,7 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
     const dispatch = useDispatch();
 
     const scaleAnim = useRef(new Animated.Value(1)).current;
+    const rutinaInicialRef = useRef("");
     
     const [modalFormEjercicio, setModalFormEjercicio] = useState(false);
     const [estaDeshabilitado, setEstaDeshabilitado] = useState(false);
@@ -54,17 +55,54 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
 
     useEffect(() => {
         if (rutinaSeleccionada?.id) {
-            setNuevaRutina(JSON.parse(JSON.stringify(rutinaSeleccionada)));
+            const copiaRutina = JSON.parse(JSON.stringify(rutinaSeleccionada));
+            setNuevaRutina(copiaRutina);
+            rutinaInicialRef.current = JSON.stringify(copiaRutina);
         } else {
-            setNuevaRutina({
+            const rutinaNueva = {
                 id: generarId(),
                 nombre: '',
                 ejercicios: [],
                 estado: 0,
                 tiempo:0
-            });
+            };
+            setNuevaRutina(rutinaNueva);
+            rutinaInicialRef.current = JSON.stringify(rutinaNueva);
         }
     }, [rutinaSeleccionada]);
+
+    const cerrarFormulario = () => {
+        setNuevaRutina({});
+        setModalFormRutina(false);
+    };
+
+    const tieneCambiosSinGuardar = () => {
+        if (!nuevaRutina || Object.keys(nuevaRutina).length === 0) {
+            return false;
+        }
+
+        return JSON.stringify(nuevaRutina) !== rutinaInicialRef.current;
+    };
+
+    const confirmarSalirSinGuardar = () => {
+        if (!tieneCambiosSinGuardar()) {
+            cerrarFormulario();
+            return;
+        }
+
+        Alert.alert(
+            "Salir sin guardar",
+            "Tenes cambios sin guardar. Queres salir y perderlos?",
+            [
+                { text: "Seguir editando", style: "cancel" },
+                {
+                    text: "Salir",
+                    style: "destructive",
+                    onPress: cerrarFormulario,
+                },
+            ],
+        );
+    };
 
     const presionarIn = () => {
         Animated.spring(scaleAnim, {
@@ -108,8 +146,7 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
             dispatch(agregarRutina(nuevaRutina));
         }
 
-        setNuevaRutina({});
-        setModalFormRutina(false);
+        cerrarFormulario();
     };
 
     return (
@@ -117,10 +154,7 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
             <View style={styles.botonera}>
 
                  <Pressable
-                    onPress={() => {
-                        setNuevaRutina({});
-                        setModalFormRutina(false);
-                    }}
+                    onPress={confirmarSalirSinGuardar}
                     >
                     <Icon name="chevron-back-outline" color={'#fff'} size={35} />
                 </Pressable>
