@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -14,7 +14,11 @@ import { useDispatch, useSelector } from "react-redux";
 import Icon from "react-native-vector-icons/Ionicons";
 import { styles } from "../../styles/rutinasAsignadasStyles";
 import { colores } from "../../styles/colores";
-import { agregarRutina } from "../../store/rutinasSlice";
+import {
+  actualizarRutinaAsignadaLocal,
+  agregarRutina,
+  sincronizarEstadoRutinasAsignadas,
+} from "../../store/rutinasSlice";
 import listadoEjercicios from "../../helpers/ejercicios";
 
 const API_URL = "https://rutina360-server.onrender.com/routine/assign/athlete";
@@ -66,6 +70,28 @@ const buscarEjercicioLocal = ejercicioBackend => {
     || listadoEjercicios.find(e => e.idEjercicio === idBackend);
 };
 
+const construirHuellaAsignacion = asignacion => {
+  const rutina = asignacion?.Routine;
+  const ejercicios = (rutina?.Routine_Ejercices || [])
+    .map(item => ({
+      id: item?.id || 0,
+      idEjercicio: item?.Ejercice?.id || 0,
+      nombre: normalizarTexto(item?.Ejercice?.name) || "",
+      series: Number(item?.series) || 0,
+      descanso: Number(item?.rest) || 0,
+      comentarios: (item?.comments || "").trim(),
+    }))
+    .sort((a, b) => a.id - b.id);
+
+  return JSON.stringify({
+    idAsignacion: asignacion?.id || 0,
+    idRoutine: rutina?.id || 0,
+    nombre: normalizarTexto(rutina?.name) || "",
+    tiempo: Number(rutina?.time) || 0,
+    ejercicios,
+  });
+};
+
 const convertirAsignacionEnRutinaLocal = asignacion => {
   const rutina = asignacion?.Routine;
   const ejerciciosBackend = rutina?.Routine_Ejercices || [];
@@ -102,6 +128,9 @@ const convertirAsignacionEnRutinaLocal = asignacion => {
     id: generarId(),
     idAsignacionBackend: asignacion?.id,
     idRoutineBackend: rutina?.id,
+    huellaAsignacion: construirHuellaAsignacion(asignacion),
+    huellaAsignacionActual: construirHuellaAsignacion(asignacion),
+    tieneCambiosAsignados: false,
     origen: "asignada",
     nombre: rutina?.name || "Rutina asignada",
     ejercicios,
@@ -110,7 +139,15 @@ const convertirAsignacionEnRutinaLocal = asignacion => {
   };
 };
 
-const RutinaAsignadaDetalle = ({ asignacion, visible, onClose, onAgregar, yaAgregada }) => {
+const RutinaAsignadaDetalle = ({
+  asignacion,
+  visible,
+  onClose,
+  onAgregar,
+  onActualizar,
+  yaAgregada,
+  tieneCambios,
+}) => {
   const rutina = asignacion?.Routine;
   const ejercicios = rutina?.Routine_Ejercices || [];
 
@@ -147,18 +184,24 @@ const RutinaAsignadaDetalle = ({ asignacion, visible, onClose, onAgregar, yaAgre
             style={[
               styles.addButton,
               styles.detailAddButton,
-              yaAgregada && styles.addButtonDisabled,
+              yaAgregada && !tieneCambios && styles.addButtonDisabled,
             ]}
-            disabled={yaAgregada}
-            onPress={() => onAgregar(asignacion)}
+            disabled={yaAgregada && !tieneCambios}
+            onPress={() => (tieneCambios ? onActualizar(asignacion) : onAgregar(asignacion))}
           >
             <Icon
-              name={yaAgregada ? "checkmark-circle-outline" : "add-circle-outline"}
+              name={
+                tieneCambios
+                  ? "sync-outline"
+                  : yaAgregada
+                    ? "checkmark-circle-outline"
+                    : "add-circle-outline"
+              }
               color="#fff"
               size={20}
             />
             <Text style={styles.addButtonText}>
-              {yaAgregada ? "Agregada a mis rutinas" : "Agregar a mis rutinas"}
+              {tieneCambios ? "Actualizar en mis rutinas" : yaAgregada ? "Agregada a mis rutinas" : "Agregar a mis rutinas"}
             </Text>
           </Pressable>
 
@@ -207,6 +250,7 @@ const RutinasAsignadas = () => {
   const [errorCoach, setErrorCoach] = useState("");
   const [asignacionSeleccionada, setAsignacionSeleccionada] = useState(null);
   const gym = usuarioBackend?.adminOwner;
+  const cambiosNotificadosRef = useRef(0);
 
   const obtenerRutinas = useCallback(async ({ refresh = false } = {}) => {
     if (refresh) {
@@ -317,6 +361,33 @@ const RutinasAsignadas = () => {
     obtenerCoach();
   }, [obtenerCoach, obtenerRutinas]);
 
+  useEffect(() => {
+    if (!asignaciones.length) {
+      return;
+    }
+
+    const estadoAsignaciones = asignaciones.map(asignacion => ({
+      idAsignacionBackend: asignacion?.id,
+      idRoutineBackend: asignacion?.Routine?.id,
+      huellaAsignacion: construirHuellaAsignacion(asignacion),
+    }));
+
+    dispatch(sincronizarEstadoRutinasAsignadas(estadoAsignaciones));
+  }, [asignaciones, dispatch]);
+
+  useEffect(() => {
+    const totalCambios = rutinasLocales.filter(r => r.tieneCambiosAsignados).length;
+    if (totalCambios > 0 && totalCambios !== cambiosNotificadosRef.current) {
+      Alert.alert(
+        "Rutinas actualizadas",
+        `Tenes ${totalCambios} rutina${totalCambios > 1 ? "s" : ""} en Mis Rutinas con cambios del coach.`
+      );
+      cambiosNotificadosRef.current = totalCambios;
+    } else if (totalCambios === 0) {
+      cambiosNotificadosRef.current = 0;
+    }
+  }, [rutinasLocales]);
+
   const rutinaYaAgregada = asignacion => {
     const idAsignacion = asignacion?.id;
     const idRoutine = asignacion?.Routine?.id;
@@ -347,10 +418,26 @@ const RutinasAsignadas = () => {
     Alert.alert("Rutina agregada", "La rutina fue agregada a Mis Rutinas.");
   };
 
+  const actualizarRutinaLocal = asignacion => {
+    if (!asignacion?.Routine) {
+      Alert.alert("Error", "No se pudo leer la rutina asignada.");
+      return;
+    }
+
+    const rutinaLocal = convertirAsignacionEnRutinaLocal(asignacion);
+    dispatch(actualizarRutinaAsignadaLocal({ rutinaActualizada: rutinaLocal }));
+    Alert.alert("Rutina actualizada", "La rutina en Mis Rutinas se actualizo con los cambios del coach.");
+  };
+
   const renderRutina = ({ item }) => {
     const rutina = item.Routine;
     const ejercicios = rutina?.Routine_Ejercices || [];
     const yaAgregada = rutinaYaAgregada(item);
+    const rutinaLocalVinculada = rutinasLocales.find(r =>
+      (item?.id && r.idAsignacionBackend === item.id)
+      || (item?.Routine?.id && r.idRoutineBackend === item.Routine.id)
+    );
+    const tieneCambios = Boolean(rutinaLocalVinculada?.tieneCambiosAsignados);
 
     return (
       <View style={styles.card}>
@@ -373,17 +460,23 @@ const RutinasAsignadas = () => {
         </Pressable>
 
         <Pressable
-          style={[styles.addButton, yaAgregada && styles.addButtonDisabled]}
-          disabled={yaAgregada}
-          onPress={() => agregarAMisRutinas(item)}
+          style={[styles.addButton, yaAgregada && !tieneCambios && styles.addButtonDisabled]}
+          disabled={yaAgregada && !tieneCambios}
+          onPress={() => (tieneCambios ? actualizarRutinaLocal(item) : agregarAMisRutinas(item))}
         >
           <Icon
-            name={yaAgregada ? "checkmark-circle-outline" : "add-circle-outline"}
+            name={
+              tieneCambios
+                ? "sync-outline"
+                : yaAgregada
+                  ? "checkmark-circle-outline"
+                  : "add-circle-outline"
+            }
             color="#fff"
             size={20}
           />
           <Text style={styles.addButtonText}>
-            {yaAgregada ? "Agregada" : "Agregar a mis rutinas"}
+            {tieneCambios ? "Actualizar" : yaAgregada ? "Agregada" : "Agregar a mis rutinas"}
           </Text>
         </Pressable>
       </View>
@@ -473,7 +566,12 @@ const RutinasAsignadas = () => {
         asignacion={asignacionSeleccionada}
         onClose={() => setAsignacionSeleccionada(null)}
         onAgregar={agregarAMisRutinas}
+        onActualizar={actualizarRutinaLocal}
         yaAgregada={rutinaYaAgregada(asignacionSeleccionada)}
+        tieneCambios={Boolean(rutinasLocales.find(r =>
+          (asignacionSeleccionada?.id && r.idAsignacionBackend === asignacionSeleccionada.id)
+          || (asignacionSeleccionada?.Routine?.id && r.idRoutineBackend === asignacionSeleccionada.Routine.id)
+        )?.tieneCambiosAsignados)}
       />
     </View>
   );

@@ -45,7 +45,7 @@ const MisRutinas = () => {
     dispatch(reordenarRutina({ indexActual, direccion }));
   };
 
-  const EntrenamientoItem = ({ nombre, id, tiempo, index }) => (
+  const EntrenamientoItem = ({ nombre, id, tiempo, index, tieneCambiosAsignados }) => (
     <Pressable onPress={()=>{
         const selectedRutina =
           rutinas?.find(e => e.id === id);
@@ -56,6 +56,12 @@ const MisRutinas = () => {
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
           <View>
             <Text style={styles.nombre}>{nombre}</Text>
+            {tieneCambiosAsignados ? (
+              <View style={styles.syncBadge}>
+                <Icon name="notifications-outline" size={14} color="#fff" />
+                <Text style={styles.syncBadgeText}>Actualizada por el coach</Text>
+              </View>
+            ) : null}
             <View style={styles.tiempoContenedor}>
               <Icon name="time-outline" size={18} color="#fff" style={{marginRight: 5}} />
               <Text style={styles.tiempo}>{formatearTiempo(tiempo)}</Text>
@@ -130,6 +136,7 @@ const MisRutinas = () => {
               id={item.id}
               tiempo={item.tiempo}
               index={index}
+              tieneCambiosAsignados={item.tieneCambiosAsignados}
             />
           )}
           ListEmptyComponent={() => (

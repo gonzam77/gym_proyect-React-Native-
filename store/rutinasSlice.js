@@ -17,6 +17,29 @@ const rutinasSlice = createSlice({
         agregarRutina: (state, action) => {
             state.rutinas.push(action.payload);
         },
+        actualizarRutinaAsignadaLocal: (state, action) => {
+            const { rutinaActualizada } = action.payload;
+            if (!rutinaActualizada) {
+                return;
+            }
+
+            const indexRutina = state.rutinas.findIndex(rutina =>
+                (rutinaActualizada.idAsignacionBackend && rutina.idAsignacionBackend === rutinaActualizada.idAsignacionBackend)
+                || (rutinaActualizada.idRoutineBackend && rutina.idRoutineBackend === rutinaActualizada.idRoutineBackend)
+            );
+
+            if (indexRutina < 0) {
+                return;
+            }
+
+            const rutinaExistente = state.rutinas[indexRutina];
+
+            state.rutinas[indexRutina] = {
+                ...rutinaActualizada,
+                id: rutinaExistente.id,
+                estado: rutinaExistente.estado || 0,
+            };
+        },
         eliminarRutina: (state, action) => {
             state.rutinas = state.rutinas.filter(r => r.id !== action.payload);
         },
@@ -35,6 +58,42 @@ const rutinasSlice = createSlice({
 
             [state.rutinas[indexActual], state.rutinas[indexDestino]] =
                 [state.rutinas[indexDestino], state.rutinas[indexActual]];
+        },
+        sincronizarEstadoRutinasAsignadas: (state, action) => {
+            const asignaciones = Array.isArray(action.payload) ? action.payload : [];
+
+            state.rutinas = state.rutinas.map(rutina => {
+                if (rutina.origen !== "asignada") {
+                    return rutina;
+                }
+
+                const match = asignaciones.find(item =>
+                    (item.idAsignacionBackend && item.idAsignacionBackend === rutina.idAsignacionBackend)
+                    || (item.idRoutineBackend && item.idRoutineBackend === rutina.idRoutineBackend)
+                );
+
+                if (!match) {
+                    return rutina;
+                }
+
+                const huellaAnterior = rutina.huellaAsignacion || "";
+                const huellaActual = match.huellaAsignacion || "";
+                const tieneCambiosAsignados = Boolean(huellaAnterior) && Boolean(huellaActual) && huellaAnterior !== huellaActual;
+                const huellaAsignacionActual = huellaActual;
+
+                if (
+                    rutina.tieneCambiosAsignados === tieneCambiosAsignados
+                    && (rutina.huellaAsignacionActual || "") === huellaAsignacionActual
+                ) {
+                    return rutina;
+                }
+
+                return {
+                    ...rutina,
+                    tieneCambiosAsignados,
+                    huellaAsignacionActual,
+                };
+            });
         },
         agregarEjercicio: (state, action) => {
             const { idRutina, nuevoEjercicio } = action.payload;
@@ -98,8 +157,10 @@ const rutinasSlice = createSlice({
 export const {
   setRutinas,
   agregarRutina,
+  actualizarRutinaAsignadaLocal,
   eliminarRutina,
   reordenarRutina,
+  sincronizarEstadoRutinasAsignadas,
   agregarEjercicio,
   reordenarEjercicio,
   modificarEjercicio,
