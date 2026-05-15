@@ -8,8 +8,9 @@ const styles = StyleSheet.create({
     },
     scroll: {
         flexGrow: 1,
-        justifyContent: "center",
+        justifyContent: "flex-start",
         padding: 24,
+        paddingTop: 56,
     },
     logo: {
         width: 110,
