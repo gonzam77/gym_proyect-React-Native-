@@ -122,7 +122,7 @@ const MisRutinas = () => {
         <View style={styles.headerContainer}>
           <View>
             <Text style={styles.saludo}>Bienvenido</Text>
-            <Text style={styles.userName}>{usuario?.nombre || usuarioBackend?.username || 'Atleta'}</Text>
+            <Text style={styles.userName}>{usuarioBackend?.username || usuario?.nombre || 'Atleta'}</Text>
           </View>
           <Image style={styles.image} source={require('../../assets/img/logo1.png')} />
         </View>

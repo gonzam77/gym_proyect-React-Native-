@@ -5,10 +5,27 @@ import { Picker } from "@react-native-picker/picker";
 import { styles } from '../../styles/formEjercicioStyles';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { colores } from "../../styles/colores";
+import { useSelector } from "react-redux";
+
+const MUSCLE_GROUPS_URL = "https://rutina360-server.onrender.com/muscleGroup";
+const EXERCISES_URL = "https://rutina360-server.onrender.com/ejercice";
+const DEFAULT_EXERCISE_SECONDS = 40;
+
+const normalizarTexto = texto =>
+  texto
+    ?.toString()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim();
  
 const FormEjercicio = ({ nuevaRutina, setNuevaRutina, setModalFormEjercicio, ejercicioSeleccionado, setEjercicioSeleccionado}) => {
+  const sesion = useSelector(state => state.usuario.sesion);
+  const usuarioBackend = sesion?.user;
 
   const [ejerciciosFiltrados, setEjerciciosFiltrados] = useState([]);
+  const [catalogoEjercicios, setCatalogoEjercicios] = useState(listadoEjercicios);
+  const [categorias, setCategorias] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [errores, setErrores] = useState("");
 
@@ -22,28 +39,120 @@ const FormEjercicio = ({ nuevaRutina, setNuevaRutina, setModalFormEjercicio, eje
   });
 
   useEffect(() => {
+    const allowedOwnerIds = Array.from(new Set(
+      [1, usuarioBackend?.id, usuarioBackend?.idAdminOwner, usuarioBackend?.adminOwner?.id]
+        .map(id => Number(id))
+        .filter(Number.isFinite)
+    ));
+
+    const aplicarFallback = () => {
+      setCatalogoEjercicios(listadoEjercicios);
+      setCategorias(
+        Array.from(new Set(listadoEjercicios.map(item => item.categoria))).sort((a, b) => a.localeCompare(b))
+      );
+    };
+
+    const fetchCatalogo = async () => {
+      try {
+        const [resGroups, resExercises] = await Promise.all([
+          fetch(MUSCLE_GROUPS_URL),
+          fetch(EXERCISES_URL),
+        ]);
+
+        let groupsBody = {};
+        let exercisesBody = {};
+
+        try {
+          groupsBody = await resGroups.json();
+        } catch {
+          groupsBody = {};
+        }
+
+        try {
+          exercisesBody = await resExercises.json();
+        } catch {
+          exercisesBody = {};
+        }
+
+        if (!resGroups.ok || !resExercises.ok) {
+          throw new Error("No se pudo cargar el catalogo.");
+        }
+
+        const groups = Array.isArray(groupsBody?.data) ? groupsBody.data : [];
+        const exercises = Array.isArray(exercisesBody?.data) ? exercisesBody.data : [];
+
+        const groupsMap = new Map(
+          groups.map(group => [
+            group.id,
+            {
+              ...group,
+              categoriaNormalizada: normalizarTexto(group.name),
+            },
+          ])
+        );
+
+        const ejerciciosConOwnerValido = exercises.filter(item => {
+          const ownerId = Number(item?.idOwner);
+          return Number.isFinite(ownerId) && allowedOwnerIds.includes(ownerId);
+        });
+
+        const catalogoNormalizado = ejerciciosConOwnerValido.map(item => {
+          const grupo = groupsMap.get(item?.idMuscleGroup);
+          return {
+            idEjercicio: item.id,
+            categoria: grupo?.categoriaNormalizada || "",
+            nombre: item.name || "Ejercicio",
+            tiempoEjecucion: DEFAULT_EXERCISE_SECONDS,
+            idOwner: item.idOwner,
+            idMuscleGroup: item.idMuscleGroup,
+          };
+        });
+
+        const categoriasUnicas = Array.from(
+          new Set(
+            catalogoNormalizado
+              .map(item => item.categoria)
+              .filter(Boolean)
+          )
+        ).sort((a, b) => a.localeCompare(b));
+
+        if (!catalogoNormalizado.length) {
+          aplicarFallback();
+          return;
+        }
+
+        setCatalogoEjercicios(catalogoNormalizado);
+        setCategorias(categoriasUnicas);
+      } catch {
+        aplicarFallback();
+      }
+    };
+
+    fetchCatalogo();
+  }, [usuarioBackend?.adminOwner?.id, usuarioBackend?.id, usuarioBackend?.idAdminOwner]);
+
+  useEffect(() => {
     if (ejercicioSeleccionado) {
       const seleccionado = nuevaRutina.ejercicios.find(e => e.id === ejercicioSeleccionado);
       if (seleccionado) {
         setEjercicioNuevo(JSON.parse(JSON.stringify(seleccionado)));
-        const categoria = listadoEjercicios.find(e => e.idEjercicio === seleccionado.ejercicio.idEjercicio
-        )?.categoria;
+        const categoria = catalogoEjercicios.find(e => e.idEjercicio === seleccionado.ejercicio.idEjercicio)?.categoria;
         if (categoria) {
           setSelectedCategory(categoria);
         }
       }
     }
-  },[ejercicioSeleccionado]);
+  },[catalogoEjercicios, ejercicioSeleccionado, nuevaRutina.ejercicios]);
 
   useEffect(() => {
     if (selectedCategory) {
       setEjerciciosFiltrados(
-        listadoEjercicios.filter(e => e.categoria === selectedCategory)
+        catalogoEjercicios.filter(e => e.categoria === selectedCategory)
       );
     } else {
       setEjerciciosFiltrados([]);
     }
-  }, [selectedCategory]);
+  }, [catalogoEjercicios, selectedCategory]);
 
   const eliminarEjercicio = ()=>{
     Alert.alert(
@@ -63,7 +172,7 @@ const FormEjercicio = ({ nuevaRutina, setNuevaRutina, setModalFormEjercicio, eje
   };
 
   const validarFormulario = () => {   
-    if (!selectedCategory) return "Debe seleccionar una categoría.";
+    if (!selectedCategory) return "Debe seleccionar una categoria.";
     if (!ejercicioNuevo.ejercicio?.idEjercicio) return "Debe seleccionar un ejercicio.";
     if (!ejercicioNuevo.series || ejercicioNuevo.series <= 0 ||
         !ejercicioNuevo.descanso || ejercicioNuevo.descanso <= 0)
@@ -146,7 +255,7 @@ const FormEjercicio = ({ nuevaRutina, setNuevaRutina, setModalFormEjercicio, eje
       </View>
       <Text style={styles.titulo}>Personalizar Ejercicio</Text>
       <View style={styles.seccion}>
-        <Text style={styles.label}>Categoría</Text>
+        <Text style={styles.label}>Categoria</Text>
         <View style={styles.pickerWrapper}>
           <Picker
             selectedValue={selectedCategory}
@@ -155,18 +264,13 @@ const FormEjercicio = ({ nuevaRutina, setNuevaRutina, setModalFormEjercicio, eje
             style={styles.picker}
           >
             <Picker.Item label="--Seleccione Categoria--" value="" />
-           {[
-                "Pecho", "Espalda", "Hombros", "Bíceps", "Tríceps", "Antebrazos", "Cuádriceps",
-                "Isquiotibiales", "Glúteos", "Aductores", "Gemelos", "Abdominales", "Lumbares"
-            ].map(c => {
-                const valorSinAcentos = c
-                .toLowerCase()
-                .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, ""); 
-                return (
-                    <Picker.Item key={valorSinAcentos} label={c} value={valorSinAcentos} />
-                );
-            })}
+            {categorias.map(categoria => (
+              <Picker.Item
+                key={categoria}
+                label={categoria.charAt(0).toUpperCase() + categoria.slice(1)}
+                value={categoria}
+              />
+            ))}
           </Picker>
         </View>
       </View>
