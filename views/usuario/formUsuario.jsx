@@ -15,6 +15,7 @@ import { actualizarUsuarioSesion, guardarUsuario } from "../../store/usuarioSlic
 import styles from "../../styles/usuarioStyles";
 import { SelectList } from "react-native-dropdown-select-list";
 import disponibilidades from "../../helpers/disponibilidades";
+import { guardarUsuarioBackup } from "../../helpers/usuarioBackup";
 
 const USERS_URL = "https://rutina360-server.onrender.com/users";
 
@@ -146,6 +147,8 @@ const FormUsuario = ({ usuario, setFormModal }) => {
     );
     const [guardando, setGuardando] = useState(false);
     const [datePickerAbierto, setDatePickerAbierto] = useState(false);
+    const [nuevaContrasena, setNuevaContrasena] = useState("");
+    const [confirmarContrasena, setConfirmarContrasena] = useState("");
 
     useEffect(() => {
         setNuevoUsuario(crearEstadoInicial(usuario, usuarioBackend));
@@ -166,18 +169,27 @@ const FormUsuario = ({ usuario, setFormModal }) => {
         }));
     };
 
-    const armarPayload = () => ({
-        username: nuevoUsuario.nombre.trim(),
-        email: nuevoUsuario.correo.trim(),
-        birthDate: normalizarFechaPayload(nuevoUsuario.birthDate),
-        gender: textoONull(nuevoUsuario.genero),
-        phone: textoONull(nuevoUsuario.telefono),
-        height: numeroONull(nuevoUsuario.altura),
-        weight: numeroONull(nuevoUsuario.peso),
-        address: textoONull(nuevoUsuario.direccion),
-        goal: textoONull(nuevoUsuario.objetivos),
-        weeklyAvailability: textoONull(nuevoUsuario.disponibilidad),
-    });
+    const armarPayload = () => {
+        const payload = {
+            username: nuevoUsuario.nombre.trim(),
+            email: nuevoUsuario.correo.trim(),
+            birthDate: normalizarFechaPayload(nuevoUsuario.birthDate),
+            gender: textoONull(nuevoUsuario.genero),
+            phone: textoONull(nuevoUsuario.telefono),
+            height: numeroONull(nuevoUsuario.altura),
+            weight: numeroONull(nuevoUsuario.peso),
+            address: textoONull(nuevoUsuario.direccion),
+            goal: textoONull(nuevoUsuario.objetivos),
+            weeklyAvailability: textoONull(nuevoUsuario.disponibilidad),
+        };
+
+        const password = nuevaContrasena.trim();
+        if (password) {
+            payload.password = password;
+        }
+
+        return payload;
+    };
 
     const sincronizarEstado = (payload, body) => {
         const usuarioRespuesta = obtenerUsuarioRespuesta(body);
@@ -198,6 +210,7 @@ const FormUsuario = ({ usuario, setFormModal }) => {
 
         dispatch(actualizarUsuarioSesion(usuarioSesionActualizado));
         dispatch(guardarUsuario(usuarioLocal));
+        guardarUsuarioBackup(usuarioLocal);
     };
 
     const guardar = async () => {
@@ -219,6 +232,21 @@ const FormUsuario = ({ usuario, setFormModal }) => {
         if (!usuarioBackend?.id) {
             Alert.alert("Error", "No se pudo identificar el usuario autenticado.");
             return;
+        }
+
+        const password = nuevaContrasena.trim();
+        const passwordConfirm = confirmarContrasena.trim();
+
+        if (password || passwordConfirm) {
+            if (password.length < 6) {
+                Alert.alert("Error", "La nueva contrasena debe tener al menos 6 caracteres.");
+                return;
+            }
+
+            if (password !== passwordConfirm) {
+                Alert.alert("Error", "La confirmacion de contrasena no coincide.");
+                return;
+            }
         }
 
         setGuardando(true);
@@ -247,6 +275,8 @@ const FormUsuario = ({ usuario, setFormModal }) => {
             }
 
             sincronizarEstado(payload, body);
+            setNuevaContrasena("");
+            setConfirmarContrasena("");
             Alert.alert("Perfil actualizado", "Tus datos fueron guardados correctamente.");
             setFormModal(false);
         } catch (error) {
@@ -293,6 +323,30 @@ const FormUsuario = ({ usuario, setFormModal }) => {
                     placeholderTextColor="#888"
                     keyboardType="email-address"
                     autoCapitalize="none"
+                />
+
+                <Text style={styles.label}>Nueva contrasena (opcional)</Text>
+                <TextInput
+                    placeholder="Ingrese nueva contrasena"
+                    value={nuevaContrasena}
+                    onChangeText={setNuevaContrasena}
+                    style={styles.input}
+                    placeholderTextColor="#888"
+                    secureTextEntry
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                />
+
+                <Text style={styles.label}>Confirmar nueva contrasena</Text>
+                <TextInput
+                    placeholder="Repita la nueva contrasena"
+                    value={confirmarContrasena}
+                    onChangeText={setConfirmarContrasena}
+                    style={styles.input}
+                    placeholderTextColor="#888"
+                    secureTextEntry
+                    autoCapitalize="none"
+                    autoCorrect={false}
                 />
 
                 <Text style={styles.label}>Fecha de nacimiento</Text>

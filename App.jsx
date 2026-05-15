@@ -9,7 +9,7 @@ import { Platform } from "react-native";
 import InAppUpdates from 'react-native-in-app-updates';
 
 import { Provider } from 'react-redux';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { store, persistor } from './store/store';
 
@@ -28,6 +28,8 @@ import Perfil from './views/usuario/perfil';
 import Notas from './views/notas/notas';
 import Login from './views/usuario/login';
 import { colores } from './styles/colores';
+import { cargarUsuarioBackup, guardarUsuarioBackup, mapearUsuarioBackendALocal } from './helpers/usuarioBackup';
+import { guardarUsuario } from './store/usuarioSlice';
 
 PushNotification.configure({
   onNotification: function (notification) {
@@ -58,7 +60,34 @@ notifee.onBackgroundEvent(async ({ type, detail }) => {
 });
 
 const AppContent = () => {
+  const dispatch = useDispatch();
   const token = useSelector(state => state.usuario.sesion?.token);
+  const usuarioSesion = useSelector(state => state.usuario.sesion?.user);
+  const usuarioLocal = useSelector(state => state.usuario.usuario);
+
+  useEffect(() => {
+    const restaurarUsuario = async () => {
+      const tieneUsuarioLocal = usuarioLocal && Object.keys(usuarioLocal).length > 0;
+
+      if (tieneUsuarioLocal) {
+        return;
+      }
+
+      if (usuarioSesion?.id) {
+        const usuarioMapeado = mapearUsuarioBackendALocal(usuarioSesion);
+        dispatch(guardarUsuario(usuarioMapeado));
+        await guardarUsuarioBackup(usuarioMapeado);
+        return;
+      }
+
+      const usuarioBackup = await cargarUsuarioBackup();
+      if (usuarioBackup && Object.keys(usuarioBackup).length > 0) {
+        dispatch(guardarUsuario(usuarioBackup));
+      }
+    };
+
+    restaurarUsuario();
+  }, [dispatch, usuarioLocal, usuarioSesion]);
 
   if (!token) {
     return <Login />;

@@ -11,8 +11,9 @@ import {
     View,
 } from "react-native";
 import { useDispatch } from "react-redux";
-import { guardarSesion } from "../../store/usuarioSlice";
+import { guardarSesion, guardarUsuario } from "../../store/usuarioSlice";
 import styles from "../../styles/loginStyles";
+import { guardarUsuarioBackup, mapearUsuarioBackendALocal } from "../../helpers/usuarioBackup";
 
 const AUTH_URL = "https://rutina360-server.onrender.com/users/auth";
 
@@ -62,6 +63,9 @@ const Login = () => {
             }
 
             dispatch(guardarSesion({ token, user }));
+            const usuarioLocal = mapearUsuarioBackendALocal(user);
+            dispatch(guardarUsuario(usuarioLocal));
+            await guardarUsuarioBackup(usuarioLocal);
             setPassword("");
         } catch (err) {
             setError(err.message || "Revise los datos e intente nuevamente.");
