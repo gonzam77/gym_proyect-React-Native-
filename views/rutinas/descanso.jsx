@@ -1,44 +1,30 @@
-import { Pressable, Text, View, Image, ScrollView } from "react-native";
-import { useCallback, useState, useRef, useEffect } from "react";
-import BackgroundTimer from "react-native-background-timer";
-import Icon from "react-native-vector-icons/Ionicons";
-import notifee, { AndroidImportance, AndroidCategory, EventType } from '@notifee/react-native'; // Importamos Notifee
-import { styles } from "../../styles/descansoStyles";
-import { Boton } from "../../components/botones/botones";
-import { colores } from "../../styles/colores";
-
-notifee.onForegroundEvent(({ type, detail }) => {
-  if (type === EventType.ACTION_PRESS && detail.pressAction.id === 'stop-alarm') {
-    notifee.cancelNotification(detail.notification.id);
-  }
-});
+import { Pressable, Text, View, Image, ScrollView } from 'react-native';
+import { useCallback, useState, useRef, useEffect } from 'react';
+import BackgroundTimer from 'react-native-background-timer';
+import Icon from 'react-native-vector-icons/Ionicons';
+import notifee, { AndroidCategory, AndroidImportance } from '@notifee/react-native';
+import { styles } from '../../styles/descansoStyles';
+import { Boton } from '../../components/botones/botones';
+import { colores } from '../../styles/colores';
+import { DESCANSO_CHANNEL_ID } from '../../helpers/notificationConstants';
 
 const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
-  const segundosTotales = (Number(ejercicio?.descanso) || 0) * 60;
-  
+  const segundosTotales = 5 //(Number(ejercicio?.descanso) || 0) * 60;
+
   const [segundos, setSegundos] = useState(segundosTotales);
   const [activo, setActivo] = useState(true);
-  
+
   const intervaloRef = useRef(null);
   const inicioRef = useRef(Date.now());
   const pausadoRef = useRef(0);
   const notificadoRef = useRef(false);
 
-  const onDisplayNotification = useCallback(async (soundName) => {
-    const channelId = await notifee.createChannel({
-      id: `channel-${soundName}`,
-      name: `Alarma ${soundName}`,
-      importance: AndroidImportance.HIGH,
-      sound: soundName,
-      vibration: true,
-      vibrationPattern: [300, 500, 300, 500],
-    });
-
+  const onDisplayNotification = useCallback(async () => {
     await notifee.displayNotification({
-      title: '¡Descanso terminado! 💪',
+      title: 'Descanso terminado',
       body: `Es hora de la serie de ${ejercicio.nombre || 'ejercicio'}`,
       android: {
-        channelId,
+        channelId: DESCANSO_CHANNEL_ID,
         ongoing: true,
         autoCancel: false,
         category: AndroidCategory.ALARM,
@@ -89,7 +75,7 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
   const formatoTiempo = (s) => {
     const m = Math.floor(s / 60);
     const seg = s % 60;
-    return `${String(m).padStart(2, "0")}:${String(seg).padStart(2, "0")}`;
+    return `${String(m).padStart(2, '0')}:${String(seg).padStart(2, '0')}`;
   };
 
   const detenerTodo = async () => {
@@ -111,6 +97,7 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
 
   useEffect(() => {
     if (!activo) return;
+
     intervaloRef.current = BackgroundTimer.setInterval(() => {
       setSegundos(calcularSegundos());
     }, 1000);
@@ -126,7 +113,7 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
     if (segundos === 0 && !notificadoRef.current) {
       notificadoRef.current = true;
       setActivo(false);
-      onDisplayNotification('alarm2');
+      onDisplayNotification();
     }
   }, [onDisplayNotification, segundos]);
 
@@ -137,7 +124,7 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <Image style={styles.image} source={require("../../assets/img/descanso.png")} />
+        <Image style={styles.image} source={require('../../assets/img/descanso.png')} />
         <Text style={styles.titulo}>DESCANSO</Text>
         <Text style={styles.titulo1}>Series realizadas {serie} de {ejercicio.series}</Text>
 
@@ -148,15 +135,15 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
           <View style={styles.botones}>
             {activo ? (
               <Pressable onPress={pausar}>
-                <Icon name="pause-circle-outline" size={60} color={colores.turquesa}/>
+                <Icon name='pause-circle-outline' size={60} color={colores.turquesa} />
               </Pressable>
             ) : (
               <Pressable onPress={reanudar} disabled={segundos === 0}>
-                <Icon name="play-circle-outline" size={60} color={colores.secundario} />
+                <Icon name='play-circle-outline' size={60} color={colores.secundario} />
               </Pressable>
             )}
             <Pressable onPress={reiniciar}>
-              <Icon name="refresh-outline" size={55} color={colores.turquesa} />
+              <Icon name='refresh-outline' size={55} color={colores.turquesa} />
             </Pressable>
           </View>
         </View>
@@ -165,7 +152,7 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
           <Boton onPress={saltarDescanso}>Saltar</Boton>
         ) : (
           <Pressable onPress={detenerTodo} style={styles.stopButton}>
-            <Icon name="stop-circle-outline" size={100} color={colores.alert} />
+            <Icon name='stop-circle-outline' size={100} color={colores.alert} />
           </Pressable>
         )}
       </ScrollView>

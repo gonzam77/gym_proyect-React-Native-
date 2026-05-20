@@ -3,9 +3,6 @@ import {
   StyleSheet,
 } from 'react-native';
 
-import PushNotification from "react-native-push-notification";
-import { Platform } from "react-native";
-
 import InAppUpdates from 'react-native-in-app-updates';
 
 import { Provider } from 'react-redux';
@@ -15,12 +12,12 @@ import { store, persistor } from './store/store';
 
 import { useEffect } from 'react';
 
-import {  NavigationContainer  } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-import notifee, { EventType } from '@notifee/react-native';
+import notifee, { AndroidImportance, EventType } from '@notifee/react-native';
 
-import Ionicons from "react-native-vector-icons/Ionicons";
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import MisRutinas from './views/rutinas/misRutinas';
 import RutinasAsignadas from './views/rutinas/rutinasAsignadas';
@@ -30,32 +27,13 @@ import Login from './views/usuario/login';
 import { colores } from './styles/colores';
 import { cargarUsuarioBackup, guardarUsuarioBackup, mapearUsuarioBackendALocal } from './helpers/usuarioBackup';
 import { guardarUsuario } from './store/usuarioSlice';
-
-PushNotification.configure({
-  onNotification: function (notification) {
-    console.log("Notificación recibida:", notification);
-  },
-  requestPermissions: Platform.OS === 'ios',
-});
-
-PushNotification.createChannel(
-  {
-    channelId: "descanso-channel",
-    channelName: "Notificaciones de Descanso",
-    importance: 4,
-    vibrate: true,
-    soundName: 'default',
-    playSound: true,
-  },
-  (created) => console.log(`Canal creado: ${created}`)
-);
+import { DESCANSO_CHANNEL_ID } from './helpers/notificationConstants';
 
 const RootTabs = createBottomTabNavigator();
 
-// Escuchador de eventos en primer plano
 notifee.onBackgroundEvent(async ({ type, detail }) => {
   if (type === EventType.ACTION_PRESS && detail.pressAction.id === 'stop-alarm') {
-    await notifee.cancelNotification(detail.notification.id);
+    await notifee.cancelNotification(detail.notification?.id);
   }
 });
 
@@ -96,40 +74,41 @@ const AppContent = () => {
   return (
     <RootTabs.Navigator
       initialRouteName='MisRutinas'
-      screenOptions={({route})=>({
-        tabBarIcon:({focused,color, size})=>{
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
           let iconName;
-          if(route.name === 'MisRutinas'){
-            iconName = focused ? 'fitness' : 'fitness-outline'
+          if (route.name === 'MisRutinas') {
+            iconName = focused ? 'fitness' : 'fitness-outline';
           } else if (route.name === 'RutinasAsignadas') {
-            iconName = focused ? 'clipboard' : 'clipboard-outline'
+            iconName = focused ? 'clipboard' : 'clipboard-outline';
           } else if (route.name === 'Notas') {
-            iconName = focused ? 'create' : 'create-outline'
-          } else if (route.name === 'Perfil')
-          iconName = focused ? 'person' : 'person-outline'
-          return <Ionicons name={iconName} size={size} color={color}/>
+            iconName = focused ? 'create' : 'create-outline';
+          } else if (route.name === 'Perfil') {
+            iconName = focused ? 'person' : 'person-outline';
+          }
+          return <Ionicons name={iconName} size={size} color={color} />;
         },
-        headerTitleAlign:'center',
-          headerStyle: {
-            backgroundColor: colores.azulProfundo,
-          },
-          headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
+        headerTitleAlign: 'center',
+        headerStyle: {
+          backgroundColor: colores.azulProfundo,
+        },
+        headerTintColor: '#fff',
+        headerTitleStyle: {
+          fontWeight: 'bold',
+        },
       })}
     >
       <RootTabs.Screen
         name='Perfil'
         component={Perfil}
-        />
+      />
       <RootTabs.Screen
         name='MisRutinas'
         component={MisRutinas}
         options={{
-          tabBarLabel:'Mis Rutinas',
+          tabBarLabel: 'Mis Rutinas',
           headerTitle: 'Mis Rutinas',
-          headerTitleAlign:'center',
+          headerTitleAlign: 'center',
           headerTintColor: '#fff',
           headerTitleStyle: {
             fontWeight: 'bold',
@@ -141,9 +120,9 @@ const AppContent = () => {
         name='RutinasAsignadas'
         component={RutinasAsignadas}
         options={{
-          tabBarLabel:'Asignadas',
+          tabBarLabel: 'Asignadas',
           headerTitle: 'Rutinas Asignadas',
-          headerTitleAlign:'center',
+          headerTitleAlign: 'center',
           headerTintColor: '#fff',
           headerTitleStyle: {
             fontWeight: 'bold',
@@ -159,6 +138,29 @@ const AppContent = () => {
 };
 
 const App = () => {
+  useEffect(() => {
+    const prepararNotificaciones = async () => {
+      await notifee.requestPermission();
+      await notifee.createChannel({
+        id: DESCANSO_CHANNEL_ID,
+        name: 'Descanso',
+        importance: AndroidImportance.HIGH,
+        sound: 'alarm2',
+        vibration: true,
+        vibrationPattern: [300, 500, 300, 500],
+        bypassDnd: true,
+      });
+    };
+
+    const unsubscribeForeground = notifee.onForegroundEvent(async ({ type, detail }) => {
+      if (type === EventType.ACTION_PRESS && detail.pressAction.id === 'stop-alarm') {
+        await notifee.cancelNotification(detail.notification?.id);
+      }
+    });
+
+    prepararNotificaciones();
+    return unsubscribeForeground;
+  }, []);
 
   useEffect(() => {
     try {
@@ -167,24 +169,23 @@ const App = () => {
       inAppUpdates.checkNeedsUpdate().then((result) => {
         if (result.shouldUpdate) {
           inAppUpdates.startUpdate({
-            updateType: InAppUpdates.UPDATE_TYPE.IMMEDIATE
+            updateType: InAppUpdates.UPDATE_TYPE.IMMEDIATE,
           });
         }
       });
     } catch (error) {
-      console.log("In-App Updates no disponible en desarrollo:", error);
+      console.log('In-App Updates no disponible en desarrollo:', error);
     }
   }, []);
-
 
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-          <SafeAreaView style={styles.container}>
+        <SafeAreaView style={styles.container}>
           <NavigationContainer>
             <AppContent />
           </NavigationContainer>
-          </SafeAreaView>
+        </SafeAreaView>
       </PersistGate>
     </Provider>
   );
@@ -193,15 +194,8 @@ const App = () => {
 export default App;
 
 const styles = StyleSheet.create({
-  fondo: {
-    flex: 1,
-  },
   container: {
     flex: 1,
     backgroundColor: 'transparent',
-  },
-  titulo: {
-    textAlign: 'center',
-    color: 'green',
   },
 });
