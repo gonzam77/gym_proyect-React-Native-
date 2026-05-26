@@ -64,10 +64,32 @@ const styles = StyleSheet.create({
         alignItems: "center",
         gap: 8,
     },
+    catalogButton: {
+        backgroundColor: "#1DBF84",
+        borderRadius: 6,
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+        marginTop: 18,
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: 8,
+    },
     logoutText: {
         color: "#fff",
         fontSize: 16,
         fontWeight: "700",
+    },
+    logoutAllButton: {
+        backgroundColor: "#4B5563",
+        borderRadius: 6,
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+        marginTop: 10,
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: 8,
     },
 });
 

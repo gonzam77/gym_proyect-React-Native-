@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   usuario: {},
+  authInitializing: true,
   sesion: {
     token: null,
     user: null,
@@ -19,7 +20,10 @@ const usuarioSlice = createSlice({
         state.usuario = {};
       },
       guardarSesion: (state, action) => {
-        state.sesion = action.payload;
+        state.sesion = {
+          token: action.payload?.token || null,
+          user: action.payload?.user || null,
+        };
       },
       actualizarUsuarioSesion: (state, action) => {
         state.sesion.user = {
@@ -33,6 +37,9 @@ const usuarioSlice = createSlice({
           user: null,
         };
       },
+      setAuthInitializing: (state, action) => {
+        state.authInitializing = action.payload;
+      },
     }
 })
 
@@ -42,6 +49,7 @@ export const {
   guardarSesion,
   actualizarUsuarioSesion,
   cerrarSesion,
+  setAuthInitializing,
 } = usuarioSlice.actions;
 
 export default usuarioSlice.reducer;

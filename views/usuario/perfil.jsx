@@ -4,7 +4,9 @@ import Icon from "react-native-vector-icons/Ionicons";
 import FormUsuario from "./formUsuario";
 import { useDispatch, useSelector } from "react-redux";
 import styles from "../../styles/perfilStyles";
-import { cerrarSesion } from "../../store/usuarioSlice";
+import { cerrarSesion, limpiarUsuario } from "../../store/usuarioSlice";
+import CatalogoEjercicios from "./catalogoEjercicios";
+import { logoutAllAuth, logoutAuth } from "../../services/authService";
 
 const tieneValor = valor => valor !== undefined && valor !== null && valor !== "";
 
@@ -49,6 +51,7 @@ const valorPerfil = (local, remoto) => {
 const Perfil = () => {
 
     const [formModal, setFormModal] = useState(false);
+    const [catalogoModal, setCatalogoModal] = useState(false);
 
     const dispatch = useDispatch();
     const usuario = useSelector(state => state.usuario.usuario);
@@ -99,7 +102,30 @@ const Perfil = () => {
                 {
                     text: "Cerrar sesion",
                     style: "destructive",
-                    onPress: () => dispatch(cerrarSesion()),
+                    onPress: async () => {
+                        await logoutAuth();
+                        dispatch(cerrarSesion());
+                        dispatch(limpiarUsuario());
+                    },
+                },
+            ],
+        );
+    };
+
+    const confirmarCerrarSesionGlobal = () => {
+        Alert.alert(
+            "Cerrar sesion en todos los dispositivos",
+            "Esto cerrara todas tus sesiones activas. Deseas continuar?",
+            [
+                { text: "Cancelar", style: "cancel" },
+                {
+                    text: "Cerrar todas",
+                    style: "destructive",
+                    onPress: async () => {
+                        await logoutAllAuth();
+                        dispatch(cerrarSesion());
+                        dispatch(limpiarUsuario());
+                    },
                 },
             ],
         );
@@ -188,11 +214,25 @@ const Perfil = () => {
                 <Text style={styles.value}>{usuarioBackend?.adminOwner?.username || "-"}</Text>
             </View>
             <Pressable
+                style={styles.catalogButton}
+                onPress={() => setCatalogoModal(true)}
+            >
+                <Icon name="barbell-outline" size={20} color="#fff" />
+                <Text style={styles.logoutText}>Catalogo de ejercicios</Text>
+            </Pressable>
+            <Pressable
                 style={styles.logoutButton}
                 onPress={confirmarCerrarSesion}
             >
                 <Icon name="log-out-outline" size={20} color="#fff" />
                 <Text style={styles.logoutText}>Cerrar sesion</Text>
+            </Pressable>
+            <Pressable
+                style={styles.logoutAllButton}
+                onPress={confirmarCerrarSesionGlobal}
+            >
+                <Icon name="shield-outline" size={20} color="#fff" />
+                <Text style={styles.logoutText}>Cerrar en todos</Text>
             </Pressable>
         </View>
 
@@ -205,6 +245,22 @@ const Perfil = () => {
                 usuario={usuarioPerfil}
                 setFormModal={setFormModal}
             />
+        </Modal>
+
+        <Modal
+            visible={catalogoModal}
+            animationType="slide"
+            onRequestClose={() => setCatalogoModal(false)}
+        >
+            <View style={{ flexDirection: "row", alignItems: "center", backgroundColor: "#080c14", padding: 12 }}>
+                <Pressable onPress={() => setCatalogoModal(false)}>
+                    <Icon name="chevron-back-outline" color="#fff" size={32} />
+                </Pressable>
+                <Text style={{ color: "#fff", fontWeight: "800", fontSize: 18, marginLeft: 8 }}>
+                    Configuracion de Catalogo
+                </Text>
+            </View>
+            <CatalogoEjercicios />
         </Modal>
     </ScrollView>
   );

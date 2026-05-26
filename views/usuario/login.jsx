@@ -14,8 +14,7 @@ import { useDispatch } from "react-redux";
 import { guardarSesion, guardarUsuario } from "../../store/usuarioSlice";
 import styles from "../../styles/loginStyles";
 import { guardarUsuarioBackup, mapearUsuarioBackendALocal } from "../../helpers/usuarioBackup";
-
-const AUTH_URL = "https://rutina360-server.onrender.com/users/auth";
+import { loginAuth } from "../../services/authService";
 
 const Login = () => {
     const dispatch = useDispatch();
@@ -36,33 +35,12 @@ const Login = () => {
         setError("");
 
         try {
-            const response = await fetch(AUTH_URL, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    email: email.trim(),
-                    password,
-                }),
+            const { accessToken, user } = await loginAuth({
+                email: email.trim(),
+                password,
             });
 
-            let body = {};
-
-            try {
-                body = await response.json();
-            } catch {
-                body = {};
-            }
-
-            const token = body?.data?.token;
-            const user = body?.data?.user;
-
-            if (!response.ok || !token) {
-                throw new Error(body?.message || body?.error || "No se pudo iniciar sesion.");
-            }
-
-            dispatch(guardarSesion({ token, user }));
+            dispatch(guardarSesion({ token: accessToken, user }));
             const usuarioLocal = mapearUsuarioBackendALocal(user);
             dispatch(guardarUsuario(usuarioLocal));
             await guardarUsuarioBackup(usuarioLocal);

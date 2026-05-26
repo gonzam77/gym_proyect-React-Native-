@@ -26,8 +26,10 @@ import Notas from './views/notas/notas';
 import Login from './views/usuario/login';
 import { colores } from './styles/colores';
 import { cargarUsuarioBackup, guardarUsuarioBackup, mapearUsuarioBackendALocal } from './helpers/usuarioBackup';
-import { guardarUsuario } from './store/usuarioSlice';
+import { cerrarSesion, guardarSesion, guardarUsuario, limpiarUsuario, setAuthInitializing } from './store/usuarioSlice';
 import { DESCANSO_CHANNEL_ID } from './helpers/notificationConstants';
+import { bootstrapAuth, limpiarAuthLocal } from './services/authService';
+import { setAccessTokenUpdateHandler, setGlobalAuthFailureHandler } from './services/apiClient';
 
 const RootTabs = createBottomTabNavigator();
 
@@ -42,6 +44,46 @@ const AppContent = () => {
   const token = useSelector(state => state.usuario.sesion?.token);
   const usuarioSesion = useSelector(state => state.usuario.sesion?.user);
   const usuarioLocal = useSelector(state => state.usuario.usuario);
+  const authInitializing = useSelector(state => state.usuario.authInitializing);
+
+  useEffect(() => {
+    const bootstrapSesion = async () => {
+      dispatch(setAuthInitializing(true));
+      try {
+        const refresh = await bootstrapAuth();
+        if (refresh?.accessToken) {
+          dispatch(guardarSesion({
+            token: refresh.accessToken,
+            user: usuarioSesion || null,
+          }));
+        } else {
+          dispatch(cerrarSesion());
+        }
+      } catch {
+        await limpiarAuthLocal();
+        dispatch(cerrarSesion());
+        dispatch(limpiarUsuario());
+      } finally {
+        dispatch(setAuthInitializing(false));
+      }
+    };
+
+    bootstrapSesion();
+  }, [dispatch]);
+
+  useEffect(() => {
+    setGlobalAuthFailureHandler(async () => {
+      await limpiarAuthLocal();
+      dispatch(cerrarSesion());
+      dispatch(limpiarUsuario());
+    });
+    setAccessTokenUpdateHandler((nuevoAccessToken) => {
+      dispatch(guardarSesion({
+        token: nuevoAccessToken,
+        user: store.getState().usuario.sesion?.user || null,
+      }));
+    });
+  }, [dispatch]);
 
   useEffect(() => {
     const restaurarUsuario = async () => {
@@ -66,6 +108,10 @@ const AppContent = () => {
 
     restaurarUsuario();
   }, [dispatch, usuarioLocal, usuarioSesion]);
+
+  if (authInitializing) {
+    return <SafeAreaView style={styles.container} />;
+  }
 
   if (!token) {
     return <Login />;

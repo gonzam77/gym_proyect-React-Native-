@@ -16,8 +16,7 @@ import styles from "../../styles/usuarioStyles";
 import { SelectList } from "react-native-dropdown-select-list";
 import disponibilidades from "../../helpers/disponibilidades";
 import { guardarUsuarioBackup } from "../../helpers/usuarioBackup";
-
-const USERS_URL = "https://rutina360-server.onrender.com/users";
+import { apiJson } from "../../services/apiClient";
 
 const generos = [
     { key: "masculino", value: "masculino" },
@@ -139,7 +138,6 @@ const obtenerUsuarioRespuesta = body => {
 const FormUsuario = ({ usuario, setFormModal }) => {
     const dispatch = useDispatch();
     const sesion = useSelector(state => state.usuario.sesion);
-    const token = sesion?.token;
     const usuarioBackend = sesion?.user;
 
     const [nuevoUsuario, setNuevoUsuario] = useState(() =>
@@ -224,11 +222,6 @@ const FormUsuario = ({ usuario, setFormModal }) => {
             return;
         }
 
-        if (!token) {
-            Alert.alert("Error", "No hay una sesion activa para actualizar el perfil.");
-            return;
-        }
-
         if (!usuarioBackend?.id) {
             Alert.alert("Error", "No se pudo identificar el usuario autenticado.");
             return;
@@ -253,26 +246,10 @@ const FormUsuario = ({ usuario, setFormModal }) => {
 
         try {
             const payload = armarPayload();
-            const response = await fetch(`${USERS_URL}/${usuarioBackend.id}`, {
+            const body = await apiJson(`/users/${usuarioBackend.id}`, {
                 method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
                 body: JSON.stringify(payload),
             });
-
-            let body = {};
-
-            try {
-                body = await response.json();
-            } catch {
-                body = {};
-            }
-
-            if (!response.ok) {
-                throw new Error(body?.message || body?.error || "No se pudo actualizar el perfil.");
-            }
 
             sincronizarEstado(payload, body);
             setNuevaContrasena("");

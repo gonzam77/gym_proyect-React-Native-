@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   persistStore,
   persistReducer,
+  createTransform,
   FLUSH,
   REHYDRATE,
   PAUSE,
@@ -12,10 +13,39 @@ import {
 } from 'redux-persist';
 import rootReducer from './rootReducer';
 
+const usuarioTransform = createTransform(
+  (inboundState, key) => {
+    if (key !== 'usuario') return inboundState;
+
+    return {
+      ...inboundState,
+      authInitializing: true,
+      sesion: {
+        ...inboundState.sesion,
+        token: null,
+      },
+    };
+  },
+  (outboundState, key) => {
+    if (key !== 'usuario') return outboundState;
+
+    return {
+      ...outboundState,
+      authInitializing: true,
+      sesion: {
+        ...outboundState.sesion,
+        token: null,
+      },
+    };
+  },
+  { whitelist: ['usuario'] }
+);
+
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
   whitelist: ['rutinas', 'usuario', 'notasHistoricas'],
+  transforms: [usuarioTransform],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

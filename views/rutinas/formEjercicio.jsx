@@ -1,30 +1,21 @@
 import { useEffect, useState } from "react";
 import { Text, TextInput, View, ScrollView, Alert, Pressable } from "react-native";
-import listadoEjercicios from "../../helpers/ejercicios";
 import { Picker } from "@react-native-picker/picker";
 import { styles } from '../../styles/formEjercicioStyles';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { colores } from "../../styles/colores";
 import { useSelector } from "react-redux";
-
-const MUSCLE_GROUPS_URL = "https://rutina360-server.onrender.com/muscleGroup";
-const EXERCISES_URL = "https://rutina360-server.onrender.com/ejercice";
-const DEFAULT_EXERCISE_SECONDS = 40;
-
-const normalizarTexto = texto =>
-  texto
-    ?.toString()
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .trim();
+import {
+  getCatalogoLocalConRefresh,
+  refrescarCatalogoRemoto,
+} from "../../helpers/catalogoEjercicios";
  
 const FormEjercicio = ({ nuevaRutina, setNuevaRutina, setModalFormEjercicio, ejercicioSeleccionado, setEjercicioSeleccionado}) => {
   const sesion = useSelector(state => state.usuario.sesion);
   const usuarioBackend = sesion?.user;
 
   const [ejerciciosFiltrados, setEjerciciosFiltrados] = useState([]);
-  const [catalogoEjercicios, setCatalogoEjercicios] = useState(listadoEjercicios);
+  const [catalogoEjercicios, setCatalogoEjercicios] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [errores, setErrores] = useState("");
@@ -39,96 +30,26 @@ const FormEjercicio = ({ nuevaRutina, setNuevaRutina, setModalFormEjercicio, eje
   });
 
   useEffect(() => {
-    const allowedOwnerIds = Array.from(new Set(
-      [1, usuarioBackend?.id, usuarioBackend?.idAdminOwner, usuarioBackend?.adminOwner?.id]
-        .map(id => Number(id))
-        .filter(Number.isFinite)
-    ));
-
-    const aplicarFallback = () => {
-      setCatalogoEjercicios(listadoEjercicios);
-      setCategorias(
-        Array.from(new Set(listadoEjercicios.map(item => item.categoria))).sort((a, b) => a.localeCompare(b))
-      );
+    const aplicarCatalogo = ({ catalogo, categorias }) => {
+      setCatalogoEjercicios(catalogo || []);
+      setCategorias(categorias || []);
     };
 
-    const fetchCatalogo = async () => {
+    const hidratarYActualizar = async () => {
       try {
-        const [resGroups, resExercises] = await Promise.all([
-          fetch(MUSCLE_GROUPS_URL),
-          fetch(EXERCISES_URL),
-        ]);
+        const local = await getCatalogoLocalConRefresh({ usuarioBackend });
+        aplicarCatalogo(local);
 
-        let groupsBody = {};
-        let exercisesBody = {};
-
-        try {
-          groupsBody = await resGroups.json();
-        } catch {
-          groupsBody = {};
+        if (local.needsRefresh) {
+          const remoto = await refrescarCatalogoRemoto(usuarioBackend);
+          aplicarCatalogo(remoto);
         }
-
-        try {
-          exercisesBody = await resExercises.json();
-        } catch {
-          exercisesBody = {};
-        }
-
-        if (!resGroups.ok || !resExercises.ok) {
-          throw new Error("No se pudo cargar el catalogo.");
-        }
-
-        const groups = Array.isArray(groupsBody?.data) ? groupsBody.data : [];
-        const exercises = Array.isArray(exercisesBody?.data) ? exercisesBody.data : [];
-
-        const groupsMap = new Map(
-          groups.map(group => [
-            group.id,
-            {
-              ...group,
-              categoriaNormalizada: normalizarTexto(group.name),
-            },
-          ])
-        );
-
-        const ejerciciosConOwnerValido = exercises.filter(item => {
-          const ownerId = Number(item?.idOwner);
-          return Number.isFinite(ownerId) && allowedOwnerIds.includes(ownerId);
-        });
-
-        const catalogoNormalizado = ejerciciosConOwnerValido.map(item => {
-          const grupo = groupsMap.get(item?.idMuscleGroup);
-          return {
-            idEjercicio: item.id,
-            categoria: grupo?.categoriaNormalizada || "",
-            nombre: item.name || "Ejercicio",
-            tiempoEjecucion: DEFAULT_EXERCISE_SECONDS,
-            idOwner: item.idOwner,
-            idMuscleGroup: item.idMuscleGroup,
-          };
-        });
-
-        const categoriasUnicas = Array.from(
-          new Set(
-            catalogoNormalizado
-              .map(item => item.categoria)
-              .filter(Boolean)
-          )
-        ).sort((a, b) => a.localeCompare(b));
-
-        if (!catalogoNormalizado.length) {
-          aplicarFallback();
-          return;
-        }
-
-        setCatalogoEjercicios(catalogoNormalizado);
-        setCategorias(categoriasUnicas);
       } catch {
-        aplicarFallback();
+        // Se mantiene lo que ya este visible en pantalla.
       }
     };
 
-    fetchCatalogo();
+    hidratarYActualizar();
   }, [usuarioBackend?.adminOwner?.id, usuarioBackend?.id, usuarioBackend?.idAdminOwner]);
 
   useEffect(() => {

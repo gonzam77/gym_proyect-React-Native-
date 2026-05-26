@@ -20,9 +20,8 @@ import {
   sincronizarEstadoRutinasAsignadas,
 } from "../../store/rutinasSlice";
 import listadoEjercicios from "../../helpers/ejercicios";
+import { apiJson } from "../../services/apiClient";
 
-const API_URL = "https://rutina360-server.onrender.com/routine/assign/athlete";
-const USER_LINK_URL = "https://rutina360-server.onrender.com/users/link";
 const FALLBACK_ATHLETE_ID = 10;
 const DEFAULT_EXERCISE_SECONDS = 40;
 
@@ -235,7 +234,6 @@ const RutinasAsignadas = () => {
   const dispatch = useDispatch();
   const sesion = useSelector(state => state.usuario.sesion);
   const rutinasLocales = useSelector(state => state.rutinas.rutinas);
-  const token = sesion?.token;
   const usuarioBackend = sesion?.user;
   const athleteId = usuarioBackend?.idRole === 4 && usuarioBackend?.id
     ? usuarioBackend.id
@@ -262,30 +260,9 @@ const RutinasAsignadas = () => {
     setError("");
 
     try {
-      const headers = {
-        "Content-Type": "application/json",
-      };
-
-      if (token) {
-        headers.Authorization = `Bearer ${token}`;
-      }
-
-      const response = await fetch(`${API_URL}/${athleteId}`, {
+      const body = await apiJson(`/routine/assign/athlete/${athleteId}`, {
         method: "GET",
-        headers,
       });
-
-      let body = {};
-
-      try {
-        body = await response.json();
-      } catch {
-        body = {};
-      }
-
-      if (!response.ok) {
-        throw new Error(body?.message || body?.error || "No se pudieron cargar las rutinas.");
-      }
 
       setAsignaciones(Array.isArray(body?.data) ? body.data : []);
     } catch (err) {
@@ -294,37 +271,16 @@ const RutinasAsignadas = () => {
       setCargando(false);
       setRefrescando(false);
     }
-  }, [athleteId, token]);
+  }, [athleteId]);
 
   const obtenerCoach = useCallback(async () => {
     setCargandoCoach(true);
     setErrorCoach("");
 
     try {
-      const headers = {
-        "Content-Type": "application/json",
-      };
-
-      if (token) {
-        headers.Authorization = `Bearer ${token}`;
-      }
-
-      const response = await fetch(USER_LINK_URL, {
+      const body = await apiJson("/users/link", {
         method: "GET",
-        headers,
       });
-
-      let body = {};
-
-      try {
-        body = await response.json();
-      } catch {
-        body = {};
-      }
-
-      if (!response.ok) {
-        throw new Error(body?.message || body?.error || "No se pudo cargar el coach.");
-      }
 
       const relaciones = Array.isArray(body?.data) ? body.data : [];
       const relacionActiva = relaciones.find(item =>
@@ -349,7 +305,7 @@ const RutinasAsignadas = () => {
     } finally {
       setCargandoCoach(false);
     }
-  }, [athleteId, token]);
+  }, [athleteId]);
 
   const refrescarDatos = useCallback(() => {
     obtenerRutinas({ refresh: true });
