@@ -9,7 +9,7 @@ import { colores } from '../../styles/colores';
 import { DESCANSO_CHANNEL_ID } from '../../helpers/notificationConstants';
 
 const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
-  const segundosTotales = 5 //(Number(ejercicio?.descanso) || 0) * 60;
+  const segundosTotales = (Number(ejercicio?.descanso) || 0) * 60;
 
   const [segundos, setSegundos] = useState(segundosTotales);
   const [activo, setActivo] = useState(true);

@@ -24,6 +24,7 @@ import RutinasAsignadas from './views/rutinas/rutinasAsignadas';
 import Perfil from './views/usuario/perfil';
 import Notas from './views/notas/notas';
 import Login from './views/usuario/login';
+import StartupLoader from './components/StartupLoader';
 import { colores } from './styles/colores';
 import { cargarUsuarioBackup, guardarUsuarioBackup, mapearUsuarioBackendALocal } from './helpers/usuarioBackup';
 import { cerrarSesion, guardarSesion, guardarUsuario, limpiarUsuario, setAuthInitializing } from './store/usuarioSlice';
@@ -110,7 +111,7 @@ const AppContent = () => {
   }, [dispatch, usuarioLocal, usuarioSesion]);
 
   if (authInitializing) {
-    return <SafeAreaView style={styles.container} />;
+    return <StartupLoader message='Validando sesion...' />;
   }
 
   if (!token) {
@@ -226,7 +227,7 @@ const App = () => {
 
   return (
     <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
+      <PersistGate loading={<StartupLoader message='Preparando tu app...' />} persistor={persistor}>
         <SafeAreaView style={styles.container}>
           <NavigationContainer>
             <AppContent />

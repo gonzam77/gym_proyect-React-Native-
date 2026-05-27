@@ -1,6 +1,18 @@
 pluginManagement { includeBuild("../node_modules/@react-native/gradle-plugin") }
 plugins { id("com.facebook.react.settings") }
-extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
+extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
+    ex.autolinkLibrariesFromCommand(
+        ["npm.cmd", "exec", "@react-native-community/cli", "config"],
+        file("../"),
+        files(
+            "../yarn.lock",
+            "../package-lock.json",
+            "../package.json",
+            "../react-native.config.js",
+            "settings.gradle"
+        )
+    )
+}
 rootProject.name = 'MiApp'
 include ':app'
 includeBuild('../node_modules/@react-native/gradle-plugin')
