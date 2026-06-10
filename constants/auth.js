@@ -1,4 +1,4 @@
-export const API_BASE_URL = "https://rutina360-server.onrender.com";
+export { API_BASE_URL } from './api';
 
 export const AUTH_ENDPOINTS = {
   login: "/users/auth",

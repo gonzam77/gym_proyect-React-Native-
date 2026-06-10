@@ -1,8 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { API_ENDPOINTS } from '../constants/api';
+import { apiJson } from '../services/apiClient';
 import listadoEjercicios from "./ejercicios";
 
-const MUSCLE_GROUPS_URL = "https://rutina360-server.onrender.com/muscleGroup";
-const EXERCISES_URL = "https://rutina360-server.onrender.com/ejercice";
 const DEFAULT_EXERCISE_SECONDS = 40;
 const CATALOG_CACHE_KEY = "@rutina360/catalogo_ejercicios_v1";
 export const CATALOG_REFRESH_MS = 12 * 60 * 60 * 1000;
@@ -94,17 +94,10 @@ export const guardarCatalogoCache = async ({ catalogo, categorias }) => {
 };
 
 export const refrescarCatalogoRemoto = async (usuarioBackend) => {
-  const [resGroups, resExercises] = await Promise.all([
-    fetch(MUSCLE_GROUPS_URL),
-    fetch(EXERCISES_URL),
+  const [groupsBody, exercisesBody] = await Promise.all([
+    apiJson(API_ENDPOINTS.muscleGroups),
+    apiJson(API_ENDPOINTS.exercises),
   ]);
-
-  if (!resGroups.ok || !resExercises.ok) {
-    throw new Error("No se pudo cargar el catalogo.");
-  }
-
-  const groupsBody = await resGroups.json().catch(() => ({}));
-  const exercisesBody = await resExercises.json().catch(() => ({}));
 
   const groups = Array.isArray(groupsBody?.data) ? groupsBody.data : [];
   const exercises = Array.isArray(exercisesBody?.data) ? exercisesBody.data : [];

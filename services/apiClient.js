@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "../constants/auth";
+import { API_BASE_URL } from '../constants/api';
 import { getAccessToken, refreshAuthTokens } from "./authService";
 
 let isRefreshing = false;
