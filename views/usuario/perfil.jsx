@@ -141,7 +141,7 @@ const Perfil = () => {
             >
 
                 <View style={{alignSelf:'flex-end'}}>
-                    <Icon name="pencil-outline" size={25}></Icon>
+                    <Icon name="pencil-outline" size={25} color="#000"></Icon>
                 </View>
             </Pressable>
 

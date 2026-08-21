@@ -19,7 +19,8 @@ const styles = StyleSheet.create({
         textAlignVertical: "top",
         minHeight: 100,
         margin:30,
-        backgroundColor:'#fff'
+        backgroundColor:'#fff',
+        color:colores.azulProfundo
 
     },
     btn:{

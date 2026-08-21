@@ -55,7 +55,7 @@ const Notas = () => {
                                             )
                                         }}
                                     >
-                                        <Icon name="ellipsis-vertical-outline" size={20}></Icon>
+                                        <Icon name="ellipsis-vertical-outline" size={23} color='#000' ></Icon>
                                     </Pressable>
                                 </View>
                                 

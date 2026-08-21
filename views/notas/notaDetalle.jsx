@@ -74,7 +74,7 @@ const NotaDetalle = ({ notaSeleccionada, setNotaSeleccionada, setNotaModal })=>{
                                                 )
                                             }}
                                         >
-                                            <Icon name="ellipsis-vertical-outline" size={20}></Icon>
+                                            <Icon name="ellipsis-vertical-outline" size={25} color="#000"></Icon>
                                         </Pressable>
                                     </View>
                                     <View>

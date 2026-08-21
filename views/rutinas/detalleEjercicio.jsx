@@ -162,7 +162,7 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
             <View>
               <Pressable style={{borderRadius:10}} onPress={()=>setModalFormNota(true)}>
                  <View style={{alignSelf:'flex-end', marginRight:5}}>
-                    <Icon name="pencil-outline" size={20}></Icon>
+                    <Icon name="pencil-outline" size={25} color="#000"></Icon>
                 </View>
               </Pressable>
             </View>

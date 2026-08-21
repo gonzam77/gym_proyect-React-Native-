@@ -59,7 +59,7 @@ const FormComentario = ({ idNota, comentarioSeleccionado, setComentarioSeleccion
             <TextInput
                 multiline
                 placeholder="Escriba lo que desee..."
-                placeholderTextColor={'#ccc'}
+                placeholderTextColor={'#000'}
                 onChangeText={(valor)=>handeChange('nota',valor)}
                 numberOfLines={10}
                 style={styles.input}

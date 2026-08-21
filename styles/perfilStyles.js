@@ -52,6 +52,7 @@ const styles = StyleSheet.create({
         alignSelf:'flex-start',
         fontSize:15,
         paddingTop:10,
+        color:'#000'
     },
     logoutButton: {
         backgroundColor: "#E53935",
