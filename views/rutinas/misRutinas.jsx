@@ -171,7 +171,6 @@ const MisRutinas = () => {
           setRutinaSeleccionada={setRutinaSeleccionada}
           rutinas={rutinas}
           setModalFormRutina={setModalFormRutina}
-          modalFormRutina={modalFormRutina}
           setModalDetalle={setModalDetalle}
         />
       </Modal>

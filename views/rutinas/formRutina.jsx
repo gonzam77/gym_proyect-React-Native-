@@ -141,7 +141,7 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
 
         if (rutinaSeleccionada?.id) {
             dispatch(setRutinas(nuevaRutina))
-            setRutinaSeleccionada(nuevaRutina);
+            setRutinaSeleccionada?.(nuevaRutina);
         } else {
             dispatch(agregarRutina(nuevaRutina));
         }

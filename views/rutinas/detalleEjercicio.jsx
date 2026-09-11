@@ -157,7 +157,7 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
         <View style={styles.card}>
             <View style={styles.header}>
                 <Text style={styles.label2}>Nota:</Text>
-                <Text style={styles.objetivos}>{ejercicioActualizado.nota || "-"}</Text>
+                <Text style={styles.label2}>{ejercicioActualizado.nota || "-"}</Text>
             </View>
             <View>
               <Pressable style={{borderRadius:10}} onPress={()=>setModalFormNota(true)}>

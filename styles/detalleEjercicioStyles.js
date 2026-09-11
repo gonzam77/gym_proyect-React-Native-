@@ -105,7 +105,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 20,
   },
-  objetivos:{
+  label2objetivos:{
     fontSize:15,
     paddingTop:10,
   },

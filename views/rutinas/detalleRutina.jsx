@@ -1,6 +1,5 @@
 import { Modal, Pressable, Text, View, Alert, ScrollView } from "react-native";
 import { useEffect, useState } from "react";
-import FormRutina from "./formRutina";
 import DetalleEjercicio from "./detalleEjercicio";
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useDispatch, useSelector } from "react-redux";
@@ -13,7 +12,6 @@ const DetalleRutina = (
   {
     rutinaSeleccionada,
     setRutinaSeleccionada,
-    modalFormRutina,
     setModalFormRutina,
     setModalDetalle
   })=>{
@@ -188,17 +186,6 @@ const DetalleRutina = (
         </View>
 
       </ScrollView>
-
-      <Modal
-        visible={modalFormRutina}
-        animationType="slide"
-        onRequestClose={() => setModalFormRutina(false)}
-      >
-        <FormRutina
-          rutinaSeleccionada={copiaRutinaActualizada}
-          setModalFormRutina={setModalFormRutina}
-        />
-      </Modal>
 
       <Modal
         visible={modalEjercicio}
