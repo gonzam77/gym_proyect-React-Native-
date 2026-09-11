@@ -16,7 +16,7 @@ import { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-import notifee, { AndroidImportance, EventType } from '@notifee/react-native';
+import notifee, { EventType } from '@notifee/react-native';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -29,17 +29,46 @@ import StartupLoader from './components/StartupLoader';
 import { colores } from './styles/colores';
 import { cargarUsuarioBackup, guardarUsuarioBackup, mapearUsuarioBackendALocal } from './helpers/usuarioBackup';
 import { cerrarSesion, guardarSesion, guardarUsuario, limpiarUsuario, setAuthInitializing } from './store/usuarioSlice';
-import { DESCANSO_CHANNEL_ID } from './helpers/notificationConstants';
 import { bootstrapAuth, limpiarAuthLocal } from './services/authService';
 import { setAccessTokenUpdateHandler, setGlobalAuthFailureHandler } from './services/apiClient';
+import { DESCANSO_PROGRESO_ID } from './helpers/notificationConstants';
+import {
+  cancelarDescanso,
+  esNotificacionDeDescanso,
+  prepararNotificacionesDescanso,
+} from './services/descansoAlarma';
 
 const RootTabs = createBottomTabNavigator();
 
-notifee.onBackgroundEvent(async ({ type, detail }) => {
-  if (type === EventType.ACTION_PRESS && detail.pressAction.id === 'stop-alarm') {
-    await notifee.cancelNotification(detail.notification?.id);
+/**
+ * Handler unico de eventos de notificacion.
+ *
+ * Cancela la alarma del descanso por id fijo, sin depender de que el modal de
+ * descanso siga montado: cuando la alarma suena con la app cerrada, Android
+ * levanta este handler en headless JS y desde aca se puede apagar.
+ */
+const manejarEventoNotificacion = async ({ type, detail }) => {
+  const idNotificacion = detail?.notification?.id;
+  const idAccion = detail?.pressAction?.id;
+
+  if (!esNotificacionDeDescanso(idNotificacion, idAccion)) {
+    return;
   }
-});
+
+  // Tocar la notificacion, DETENER o Saltar terminan el descanso.
+  if (type === EventType.PRESS || type === EventType.ACTION_PRESS) {
+    await cancelarDescanso();
+    return;
+  }
+
+  // Descartar la cuenta regresiva solo saca esa notificacion de la barra; la
+  // alarma sigue en pie. Solo descartar la alarma misma la apaga.
+  if (type === EventType.DISMISSED && idNotificacion !== DESCANSO_PROGRESO_ID) {
+    await cancelarDescanso();
+  }
+};
+
+notifee.onBackgroundEvent(manejarEventoNotificacion);
 
 const AppContent = () => {
   const dispatch = useDispatch();
@@ -187,26 +216,9 @@ const AppContent = () => {
 
 const App = () => {
   useEffect(() => {
-    const prepararNotificaciones = async () => {
-      await notifee.requestPermission();
-      await notifee.createChannel({
-        id: DESCANSO_CHANNEL_ID,
-        name: 'Descanso',
-        importance: AndroidImportance.HIGH,
-        sound: 'alarm2',
-        vibration: true,
-        vibrationPattern: [300, 500, 300, 500],
-        bypassDnd: true,
-      });
-    };
+    const unsubscribeForeground = notifee.onForegroundEvent(manejarEventoNotificacion);
 
-    const unsubscribeForeground = notifee.onForegroundEvent(async ({ type, detail }) => {
-      if (type === EventType.ACTION_PRESS && detail.pressAction.id === 'stop-alarm') {
-        await notifee.cancelNotification(detail.notification?.id);
-      }
-    });
-
-    prepararNotificaciones();
+    prepararNotificacionesDescanso();
     return unsubscribeForeground;
   }, []);
 

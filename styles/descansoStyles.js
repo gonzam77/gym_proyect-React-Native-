@@ -95,6 +95,30 @@ export const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   stopButton: {
-    marginTop: 30,
+    marginTop: 10,
+  },
+  aviso: {
+    fontSize: 16,
+    color: colores.advertencia,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: 20,
+  },
+  bannerPermiso: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 20,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: colores.advertencia,
+    backgroundColor: colores.azulProfundoClaro,
+  },
+  bannerPermisoTexto: {
+    flex: 1,
+    fontSize: 14,
+    color: colores.blanco,
   },
 });

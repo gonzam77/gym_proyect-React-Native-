@@ -236,7 +236,9 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
           ejercicio={ejercicio}
         />
 
-        <Modal visible={modalDescanso} animationType="slide">
+        {/* El boton atras no cierra el descanso a proposito: la salida tiene que
+            pasar por Saltar o Detener, que ademas cancelan la alarma programada. */}
+        <Modal visible={modalDescanso} animationType="slide" onRequestClose={() => {}}>
           <Descanso
             ejercicio={ejercicioActualizado}
             setModalDescanso={setModalDescanso}

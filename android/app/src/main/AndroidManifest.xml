@@ -4,6 +4,16 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
 
+    <!-- Alarma del descanso -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- Necesario para que fullScreenAction abra la app sobre la pantalla de bloqueo -->
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <!-- Android 12+: permite AlarmType.SET_ALARM_CLOCK, el unico exento de Doze.
+         Si el usuario lo revoca, el servicio cae a una alarma inexacta. -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <!-- Reprograma las alarmas pendientes despues de reiniciar el telefono -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <application
       android:enableOnBackInvokedCallback="false"
       android:name=".MainApplication"
