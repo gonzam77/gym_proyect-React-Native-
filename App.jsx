@@ -1,9 +1,10 @@
 import {
+  Platform,
   SafeAreaView,
   StyleSheet,
 } from 'react-native';
 
-import InAppUpdates from 'react-native-in-app-updates';
+import { checkForUpdate, UpdateFlow } from 'react-native-in-app-updates';
 
 import { Provider } from 'react-redux';
 import { useDispatch, useSelector } from 'react-redux';
@@ -210,19 +211,19 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    try {
-      const inAppUpdates = new InAppUpdates(false);
-
-      inAppUpdates.checkNeedsUpdate().then((result) => {
-        if (result.shouldUpdate) {
-          inAppUpdates.startUpdate({
-            updateType: InAppUpdates.UPDATE_TYPE.IMMEDIATE,
-          });
-        }
-      });
-    } catch (error) {
-      console.log('In-App Updates no disponible en desarrollo:', error);
+    if (Platform.OS !== 'android') {
+      return;
     }
+
+    const verificarActualizacion = async () => {
+      try {
+        await checkForUpdate(UpdateFlow.IMMEDIATE);
+      } catch (error) {
+        console.log('In-App Updates no disponible:', error?.message || error);
+      }
+    };
+
+    verificarActualizacion();
   }, []);
 
   return (
