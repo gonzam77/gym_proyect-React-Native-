@@ -22,7 +22,6 @@ import {
 import listadoEjercicios from "../../helpers/ejercicios";
 import { apiJson } from "../../services/apiClient";
 
-const FALLBACK_ATHLETE_ID = 10;
 const DEFAULT_EXERCISE_SECONDS = 40;
 
 const generarId = () =>
@@ -235,9 +234,10 @@ const RutinasAsignadas = () => {
   const sesion = useSelector(state => state.usuario.sesion);
   const rutinasLocales = useSelector(state => state.rutinas.rutinas);
   const usuarioBackend = sesion?.user;
-  const athleteId = usuarioBackend?.idRole === 4 && usuarioBackend?.id
-    ? usuarioBackend.id
-    : FALLBACK_ATHLETE_ID;
+  const athleteId = usuarioBackend?.id ?? null;
+  const mensajeSinRutinas = athleteId
+    ? "No hay rutinas asignadas para este atleta."
+    : "No pudimos identificar tu usuario. Volve a iniciar sesion.";
 
   const [asignaciones, setAsignaciones] = useState([]);
   const [cargando, setCargando] = useState(false);
@@ -251,6 +251,12 @@ const RutinasAsignadas = () => {
   const cambiosNotificadosRef = useRef(0);
 
   const obtenerRutinas = useCallback(async ({ refresh = false } = {}) => {
+    if (!athleteId) {
+      setAsignaciones([]);
+      setError("");
+      return;
+    }
+
     if (refresh) {
       setRefrescando(true);
     } else {
@@ -274,6 +280,12 @@ const RutinasAsignadas = () => {
   }, [athleteId]);
 
   const obtenerCoach = useCallback(async () => {
+    if (!athleteId) {
+      setCoach(null);
+      setErrorCoach("");
+      return;
+    }
+
     setCargandoCoach(true);
     setErrorCoach("");
 
@@ -447,7 +459,7 @@ const RutinasAsignadas = () => {
             <Text style={styles.eyebrow}>Plan del entrenador</Text>
             <Text style={styles.title}>Rutinas asignadas</Text>
             <Text style={styles.subtitle}>
-              Atleta #{athleteId}
+              {athleteId ? `Atleta #${athleteId}` : "Sin atleta identificado"}
             </Text>
           </View>
 
@@ -511,7 +523,7 @@ const RutinasAsignadas = () => {
           }
           ListEmptyComponent={() => (
             <View style={styles.emptyBox}>
-              <Text style={styles.emptyText}>No hay rutinas asignadas para este atleta.</Text>
+              <Text style={styles.emptyText}>{mensajeSinRutinas}</Text>
             </View>
           )}
         />

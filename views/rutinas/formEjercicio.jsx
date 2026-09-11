@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Text, TextInput, View, ScrollView, Alert, Pressable } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { styles } from '../../styles/formEjercicioStyles';
@@ -52,18 +52,31 @@ const FormEjercicio = ({ nuevaRutina, setNuevaRutina, setModalFormEjercicio, eje
     hidratarYActualizar();
   }, [usuarioBackend?.adminOwner?.id, usuarioBackend?.id, usuarioBackend?.idAdminOwner]);
 
+  const idCargadoRef = useRef(null);
+
   useEffect(() => {
-    if (ejercicioSeleccionado) {
-      const seleccionado = nuevaRutina.ejercicios.find(e => e.id === ejercicioSeleccionado);
-      if (seleccionado) {
-        setEjercicioNuevo(JSON.parse(JSON.stringify(seleccionado)));
-        const categoria = catalogoEjercicios.find(e => e.idEjercicio === seleccionado.ejercicio.idEjercicio)?.categoria;
-        if (categoria) {
-          setSelectedCategory(categoria);
-        }
+    if (!ejercicioSeleccionado) {
+      idCargadoRef.current = null;
+      return;
+    }
+
+    const seleccionado = nuevaRutina.ejercicios.find(e => e.id === ejercicioSeleccionado);
+    if (!seleccionado) {
+      return;
+    }
+
+    if (idCargadoRef.current !== ejercicioSeleccionado) {
+      setEjercicioNuevo(JSON.parse(JSON.stringify(seleccionado)));
+      idCargadoRef.current = ejercicioSeleccionado;
+    }
+
+    if (!selectedCategory) {
+      const categoria = catalogoEjercicios.find(e => e.idEjercicio === seleccionado.ejercicio?.idEjercicio)?.categoria;
+      if (categoria) {
+        setSelectedCategory(categoria);
       }
     }
-  },[catalogoEjercicios, ejercicioSeleccionado, nuevaRutina.ejercicios]);
+  },[catalogoEjercicios, ejercicioSeleccionado, nuevaRutina.ejercicios, selectedCategory]);
 
   useEffect(() => {
     if (selectedCategory) {
@@ -202,17 +215,17 @@ const FormEjercicio = ({ nuevaRutina, setNuevaRutina, setModalFormEjercicio, eje
             selectedValue={ejercicioNuevo.ejercicio?.nombre || ""}
             dropdownIconColor="#fff"
             onValueChange={valor => {
-              const ejercicioSeleccionado = ejerciciosFiltrados.find(e => e.nombre === valor);
-              if (ejercicioSeleccionado) {
+              const ejercicioDelCatalogo = ejerciciosFiltrados.find(e => e.nombre === valor);
+              if (ejercicioDelCatalogo) {
                 setEjercicioNuevo(prev => ({
                   ...prev,
-                  ejercicio: ejercicioSeleccionado,
-                  nombre: ejercicioSeleccionado.nombre
+                  ejercicio: ejercicioDelCatalogo,
+                  nombre: ejercicioDelCatalogo.nombre
                 }));
               } else {
                 setEjercicioNuevo(prev => ({
                   ...prev,
-                  id: "",
+                  ejercicio: {},
                   nombre: ""
                 }));
               }

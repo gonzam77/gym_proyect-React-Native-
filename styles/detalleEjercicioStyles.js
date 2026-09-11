@@ -105,10 +105,6 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 20,
   },
-  label2objetivos:{
-    fontSize:15,
-    paddingTop:10,
-  },
   label2: {
     fontSize: 18,
     color: "#555",
