@@ -14,6 +14,7 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
 
     const scaleAnim = useRef(new Animated.Value(1)).current;
     const rutinaInicialRef = useRef("");
+    const guardandoRef = useRef(false);
     
     const [modalFormEjercicio, setModalFormEjercicio] = useState(false);
     const [estaDeshabilitado, setEstaDeshabilitado] = useState(false);
@@ -133,9 +134,15 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
     }
 
     const handleGuardar = () => {
+        if (guardandoRef.current) {
+            return;
+        }
+        guardandoRef.current = true;
+
         if (!nuevaRutina.nombre.trim()) {
             Alert.alert('Error', 'El nombre de la rutina es obligatorio.');
             setEstaDeshabilitado(false);
+            guardandoRef.current = false;
             return;
         }
 
@@ -161,7 +168,7 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
                
                 <Pressable
                     style={{borderRadius:8, backgroundColor:colores.verdeOpaco}}
-                    estaDeshabilitado={estaDeshabilitado}
+                    disabled={estaDeshabilitado}
                     onPress={()=>{
                         setEstaDeshabilitado(true);
                         handleGuardar();

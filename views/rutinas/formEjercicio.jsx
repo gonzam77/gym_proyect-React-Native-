@@ -121,9 +121,10 @@ const FormEjercicio = ({ nuevaRutina, setNuevaRutina, setModalFormEjercicio, eje
             [campo]: valor
       }));
     } else {
+      const soloNumeros = String(valor).replace(/[^0-9]/g, "");
       setEjercicioNuevo(prev => ({
         ...prev,
-        [campo]: valor === "" ? "" : Number(valor),
+        [campo]: soloNumeros === "" ? "" : Number(soloNumeros),
       }))
     };
   };

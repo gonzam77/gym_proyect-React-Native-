@@ -10,8 +10,10 @@ import { colores } from "../../styles/colores";
 const NotaDetalle = ({ notaSeleccionada, setNotaSeleccionada, setNotaModal })=>{
     
     const notaActualizada = useSelector(state => state.notasHistoricas.notasHistoricas.find(n => n.id === notaSeleccionada?.id))
-    const copiaNotaActualizada = JSON.parse(JSON.stringify(notaActualizada));
-    const listadoNotas = copiaNotaActualizada?.notas?.reverse();
+    const copiaNotaActualizada = notaActualizada
+        ? JSON.parse(JSON.stringify(notaActualizada))
+        : null;
+    const listadoNotas = copiaNotaActualizada?.notas?.reverse() || [];
 
     const [formComentarioModal, setFormComentarioModal] = useState(false);
     const [comentarioSeleccionado, setComentarioSeleccionado] = useState({});
@@ -90,7 +92,10 @@ const NotaDetalle = ({ notaSeleccionada, setNotaSeleccionada, setNotaModal })=>{
 
             <Pressable
                 style={[styles.btn,{position:'absolute', bottom:20, right:10}]}
-                onPress={()=>setFormComentarioModal(true)}
+                onPress={()=>{
+                    setComentarioSeleccionado({});
+                    setFormComentarioModal(true);
+                }}
             >
                 <Icon name="chatbubble-ellipses-outline" size={30} color={'#fff'}></Icon>
             </Pressable>
@@ -98,7 +103,10 @@ const NotaDetalle = ({ notaSeleccionada, setNotaSeleccionada, setNotaModal })=>{
             <Modal
                 visible={formComentarioModal}
                 animationType="slide"
-                onRequestClose={()=>setFormComentarioModal(false)}    
+                onRequestClose={()=>{
+                    setFormComentarioModal(false);
+                    setComentarioSeleccionado({});
+                }}
             >
                 <FormComentario
                     comentarioSeleccionado={comentarioSeleccionado}

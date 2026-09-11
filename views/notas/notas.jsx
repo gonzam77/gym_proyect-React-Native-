@@ -89,7 +89,10 @@ const Notas = () => {
                 <Modal
                     visible={notaModal}
                     animationType="slide"
-                    onRequestClose={() => setNotaModal(false)}
+                    onRequestClose={() => {
+                        setNotaModal(false);
+                        setNotaSeleccionada({});
+                    }}
                 >
                     <NotaDetalle
                         notaSeleccionada={notaSeleccionada}
@@ -101,7 +104,10 @@ const Notas = () => {
                 <Modal
                     visible={fromModal}
                     animationType="slide"
-                    onRequestClose={() => setFormModal(false)}
+                    onRequestClose={() => {
+                        setFormModal(false);
+                        setNotaSeleccionada({});
+                    }}
                     >
                     <FormNota
                         notaSeleccionada={notaSeleccionada}
@@ -113,8 +119,11 @@ const Notas = () => {
             </ScrollView>
 
                 <Pressable
-                    style={[styles.btn, {position:'absolute', bottom:15, right:'50'}]}
-                    onPress={()=>setFormModal(true)}
+                    style={[styles.btn, {position:'absolute', bottom:15, right:50}]}
+                    onPress={()=>{
+                        setNotaSeleccionada({});
+                        setFormModal(true);
+                    }}
                 >
                     <Icon name="pencil" size={28} color={'#fff'}></Icon>
                 </Pressable>    

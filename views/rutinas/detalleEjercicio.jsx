@@ -32,7 +32,10 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
       return;
     }
 
-    setFinalizado(ejercicioActualizado.series === ejercicioActualizado.seriesRealizadas);
+    const series = Number(ejercicioActualizado.series) || 0;
+    const realizadas = Number(ejercicioActualizado.seriesRealizadas) || 0;
+
+    setFinalizado(series > 0 && realizadas >= series);
   },[ejercicioActualizado])
 
   useEffect(() => {

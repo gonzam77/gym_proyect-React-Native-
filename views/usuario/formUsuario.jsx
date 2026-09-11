@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
     ActivityIndicator,
     Alert,
@@ -148,7 +148,16 @@ const FormUsuario = ({ usuario, setFormModal }) => {
     const [nuevaContrasena, setNuevaContrasena] = useState("");
     const [confirmarContrasena, setConfirmarContrasena] = useState("");
 
+    const usuarioCargadoRef = useRef(null);
+
     useEffect(() => {
+        const idUsuario = usuarioBackend?.id ?? usuario?.id ?? null;
+
+        if (usuarioCargadoRef.current === idUsuario) {
+            return;
+        }
+
+        usuarioCargadoRef.current = idUsuario;
         setNuevoUsuario(crearEstadoInicial(usuario, usuarioBackend));
     }, [usuario, usuarioBackend]);
 

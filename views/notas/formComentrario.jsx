@@ -54,7 +54,7 @@ const FormComentario = ({ idNota, comentarioSeleccionado, setComentarioSeleccion
                 
             </Pressable>
 
-            <Text style={styles.titulo}>{idNota ? 'Editar Comentario' : 'Nuevo Comentario' }</Text>
+            <Text style={styles.titulo}>{comentarioSeleccionado?.id ? 'Editar Comentario' : 'Nuevo Comentario' }</Text>
 
             <TextInput
                 multiline

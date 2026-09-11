@@ -18,9 +18,10 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
   const inicioRef = useRef(Date.now());
   const pausadoRef = useRef(0);
   const notificadoRef = useRef(false);
+  const notificacionIdRef = useRef(null);
 
   const onDisplayNotification = useCallback(async () => {
-    await notifee.displayNotification({
+    notificacionIdRef.current = await notifee.displayNotification({
       title: 'Descanso terminado',
       body: `Es hora de la serie de ${ejercicio.nombre || 'ejercicio'}`,
       android: {
@@ -48,6 +49,13 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
     });
   }, [ejercicio?.nombre]);
 
+  const cancelarNotificacionDescanso = async () => {
+    if (notificacionIdRef.current) {
+      await notifee.cancelNotification(notificacionIdRef.current);
+      notificacionIdRef.current = null;
+    }
+  };
+
   const calcularSegundos = useCallback(() => {
     const ahora = Date.now();
     const transcurrido = Math.floor((ahora - inicioRef.current + pausadoRef.current) / 1000);
@@ -65,6 +73,7 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
   };
 
   const reiniciar = () => {
+    cancelarNotificacionDescanso();
     inicioRef.current = Date.now();
     pausadoRef.current = 0;
     notificadoRef.current = false;
@@ -83,7 +92,7 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
       BackgroundTimer.clearInterval(intervaloRef.current);
     }
 
-    await notifee.cancelAllNotifications();
+    await cancelarNotificacionDescanso();
     setModalDescanso(false);
   };
 
@@ -96,7 +105,7 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
   };
 
   useEffect(() => {
-    if (!activo) return;
+    if (!activo || segundosTotales <= 0) return;
 
     intervaloRef.current = BackgroundTimer.setInterval(() => {
       setSegundos(calcularSegundos());
@@ -107,15 +116,19 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
         BackgroundTimer.clearInterval(intervaloRef.current);
       }
     };
-  }, [activo, calcularSegundos]);
+  }, [activo, calcularSegundos, segundosTotales]);
 
   useEffect(() => {
+    if (segundosTotales <= 0) {
+      return;
+    }
+
     if (segundos === 0 && !notificadoRef.current) {
       notificadoRef.current = true;
       setActivo(false);
       onDisplayNotification();
     }
-  }, [onDisplayNotification, segundos]);
+  }, [onDisplayNotification, segundos, segundosTotales]);
 
   return (
     <View style={styles.container}>
