@@ -1,61 +1,117 @@
 import { StyleSheet } from "react-native";
-import {colores} from './colores';
+import { colores } from './colores';
+import { espaciado, radios, tipografia, toqueMinimo } from './theme';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor:colores.azulProfundo,
-    padding: 20,
+    backgroundColor: colores.fondo,
   },
-  titulo: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: colores.blanco,
-    marginBottom: 25,
-    textAlign: "center",
-  },
-  seccion: {
-    marginBottom: 20,
-  },
-  label: {
-    color: colores.secundario,
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 5,
-  },
-  input: {
-    backgroundColor: '#fff',
-    color: colores.azulProfundo,
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderRadius: 10,
-    marginBottom: 15,
-    fontSize: 16,
-    textAlignVertical: "top",
-  },
-  pickerWrapper: {
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    marginBottom: 15,
-  },
-  picker: {
-    color: '#000',
-  },
-  error: {
-    color: "red",
-    marginBottom: 10,
-    textAlign: "center",
-  },
-  iconButton: {
-    marginHorizontal: 10,
-    backgroundColor: colores.azulProfundo,
-    borderRadius: 50,
-    elevation: 5,
+  scrollContent: {
+    paddingHorizontal: espaciado.xl,
+    paddingBottom: espaciado.xxxl,
   },
   botonera: {
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 20,
+    gap: espaciado.sm,
+    paddingTop: espaciado.sm,
+  },
+  acciones: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: espaciado.sm,
+  },
+  botonIcono: {
+    minWidth: toqueMinimo,
+    minHeight: toqueMinimo,
+    borderRadius: radios.completo,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  botonIconoPresionado: {
+    backgroundColor: colores.superficieAlta,
+  },
+  botonEliminar: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: espaciado.xs,
+    minHeight: toqueMinimo,
+    paddingHorizontal: espaciado.lg,
+    borderRadius: radios.completo,
+    borderWidth: 1,
+    borderColor: colores.peligro,
+  },
+  botonEliminarTexto: {
+    ...tipografia.auxiliar,
+    color: colores.peligro,
+  },
+  botonGuardar: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: espaciado.sm,
+    minHeight: toqueMinimo,
+    paddingHorizontal: espaciado.xl,
+    borderRadius: radios.completo,
+    backgroundColor: colores.exito,
+  },
+  botonGuardarTexto: {
+    ...tipografia.cuerpoFuerte,
+    color: colores.sobreRelleno,
+  },
+  presionado: {
+    opacity: 0.75,
+  },
+  titulo: {
+    ...tipografia.titulo,
+    color: colores.textoPrimario,
+    textAlign: "center",
+    marginTop: espaciado.lg,
+    marginBottom: espaciado.xl,
+  },
+  seccion: {
+    marginBottom: espaciado.xl,
+    gap: espaciado.sm,
+  },
+  label: {
+    ...tipografia.auxiliar,
+    color: colores.textoSecundario,
+  },
+  ayuda: {
+    ...tipografia.micro,
+    color: colores.textoTenue,
+    fontWeight: "500",
+  },
+  input: {
+    backgroundColor: colores.superficie,
+    color: colores.textoPrimario,
+    borderWidth: 1,
+    borderColor: colores.borde,
+    paddingVertical: espaciado.md,
+    paddingHorizontal: espaciado.lg,
+    borderRadius: radios.md,
+    fontSize: 16,
+    minHeight: toqueMinimo + 4,
+    textAlignVertical: "top",
+  },
+  inputNota: {
+    minHeight: 110,
+  },
+  errorCaja: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: espaciado.sm,
+    marginBottom: espaciado.xl,
+    padding: espaciado.md,
+    borderRadius: radios.md,
+    borderWidth: 1,
+    borderColor: colores.peligro,
+    backgroundColor: "rgba(229, 72, 77, 0.12)",
+  },
+  error: {
+    flex: 1,
+    ...tipografia.auxiliar,
+    color: colores.peligro,
   },
 });

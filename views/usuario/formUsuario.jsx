@@ -1,7 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
     ActivityIndicator,
     Alert,
+    KeyboardAvoidingView,
+    Platform,
     Pressable,
     ScrollView,
     Text,
@@ -13,15 +15,19 @@ import DatePicker from "react-native-date-picker";
 import { useDispatch, useSelector } from "react-redux";
 import { actualizarUsuarioSesion, guardarUsuario } from "../../store/usuarioSlice";
 import styles from "../../styles/usuarioStyles";
-import { SelectList } from "react-native-dropdown-select-list";
+import { colores } from "../../styles/colores";
+import { maxEscalaFuente } from "../../styles/theme";
+import Selector from "../../components/Selector";
+import PantallaModal from "../../components/PantallaModal";
+import { avisoError, avisoExito } from "../../helpers/avisos";
 import disponibilidades from "../../helpers/disponibilidades";
 import { guardarUsuarioBackup } from "../../helpers/usuarioBackup";
 import { apiJson } from "../../services/apiClient";
 
 const generos = [
-    { key: "masculino", value: "masculino" },
-    { key: "femenino", value: "femenino" },
-    { key: "otro", value: "otro" },
+    { etiqueta: "Masculino", valor: "masculino" },
+    { etiqueta: "Femenino", valor: "femenino" },
+    { etiqueta: "Otro", valor: "otro" },
 ];
 
 const generarId = () =>
@@ -147,6 +153,8 @@ const FormUsuario = ({ usuario, setFormModal }) => {
     const [datePickerAbierto, setDatePickerAbierto] = useState(false);
     const [nuevaContrasena, setNuevaContrasena] = useState("");
     const [confirmarContrasena, setConfirmarContrasena] = useState("");
+    const [verContrasena, setVerContrasena] = useState(false);
+    const [error, setError] = useState("");
 
     const usuarioCargadoRef = useRef(null);
 
@@ -161,13 +169,10 @@ const FormUsuario = ({ usuario, setFormModal }) => {
         setNuevoUsuario(crearEstadoInicial(usuario, usuarioBackend));
     }, [usuario, usuarioBackend]);
 
-    const defaultOptionGenero = nuevoUsuario.genero
-        ? { key: nuevoUsuario.genero, value: nuevoUsuario.genero }
-        : undefined;
-
-    const defaultOptionDispo = nuevoUsuario.disponibilidad
-        ? { key: nuevoUsuario.disponibilidad, value: nuevoUsuario.disponibilidad }
-        : undefined;
+    const opcionesDisponibilidad = useMemo(
+        () => disponibilidades.map(item => ({ etiqueta: item.value, valor: item.value })),
+        [],
+    );
 
     const handleChange = (campo, valor) => {
         setNuevoUsuario(prev => ({
@@ -220,20 +225,22 @@ const FormUsuario = ({ usuario, setFormModal }) => {
         guardarUsuarioBackup(usuarioLocal);
     };
 
-    const guardar = async () => {
+    /**
+     * Los errores de validacion se muestran en el formulario, no en un Alert:
+     * el Alert tapa justo el campo que hay que corregir y hay que cerrarlo para
+     * poder verlo.
+     */
+    const validar = () => {
         if (!nuevoUsuario.nombre?.trim()) {
-            Alert.alert("Error", "Debe ingresar un nombre valido.");
-            return;
+            return "Ingresá tu nombre de usuario.";
         }
 
         if (!nuevoUsuario.correo?.trim()) {
-            Alert.alert("Error", "Debe ingresar un correo valido.");
-            return;
+            return "Ingresá tu correo.";
         }
 
         if (!usuarioBackend?.id) {
-            Alert.alert("Error", "No se pudo identificar el usuario autenticado.");
-            return;
+            return "No pudimos identificar tu usuario. Volvé a iniciar sesión.";
         }
 
         const password = nuevaContrasena.trim();
@@ -241,16 +248,26 @@ const FormUsuario = ({ usuario, setFormModal }) => {
 
         if (password || passwordConfirm) {
             if (password.length < 6) {
-                Alert.alert("Error", "La nueva contrasena debe tener al menos 6 caracteres.");
-                return;
+                return "La nueva contraseña necesita al menos 6 caracteres.";
             }
 
             if (password !== passwordConfirm) {
-                Alert.alert("Error", "La confirmacion de contrasena no coincide.");
-                return;
+                return "Las dos contraseñas no coinciden.";
             }
         }
 
+        return "";
+    };
+
+    const guardar = async () => {
+        const errorValidacion = validar();
+
+        if (errorValidacion) {
+            setError(errorValidacion);
+            return;
+        }
+
+        setError("");
         setGuardando(true);
 
         try {
@@ -263,203 +280,322 @@ const FormUsuario = ({ usuario, setFormModal }) => {
             sincronizarEstado(payload, body);
             setNuevaContrasena("");
             setConfirmarContrasena("");
-            Alert.alert("Perfil actualizado", "Tus datos fueron guardados correctamente.");
+            avisoExito("Perfil actualizado", "Tus datos se guardaron correctamente.");
             setFormModal(false);
-        } catch (error) {
-            Alert.alert("Error", error.message || "No se pudo actualizar el perfil.");
+        } catch (err) {
+            avisoError("No se pudo actualizar", err.message || "Intentá de nuevo en un momento.");
         } finally {
             setGuardando(false);
         }
     };
 
+    const hayCambiosDeContrasena = Boolean(nuevaContrasena || confirmarContrasena);
+
+    const cerrar = () => {
+        if (hayCambiosDeContrasena) {
+            Alert.alert(
+                "Salir sin guardar",
+                "Escribiste una contraseña nueva que todavía no se guardó. ¿Querés salir?",
+                [
+                    { text: "Seguir editando", style: "cancel" },
+                    { text: "Salir", style: "destructive", onPress: () => setFormModal(false) },
+                ],
+            );
+            return;
+        }
+
+        setFormModal(false);
+    };
+
     return (
-        <View style={styles.container}>
-            <Pressable
-                onPress={() => {
-                    setFormModal(false);
-                }}
-                style={{marginTop:20,marginLeft:10,}}
+        <PantallaModal>
+            <KeyboardAvoidingView
+                style={styles.container}
+                behavior={Platform.OS === "ios" ? "padding" : undefined}
             >
-                <Icon name="chevron-back-outline" color={"#fff"} size={25} />
-            </Pressable>
-
-            <Text style={styles.titulo}>Perfil</Text>
-
-            <ScrollView
-                style={{marginTop:20}}
-                contentContainerStyle={styles.scrollContent}
-                keyboardShouldPersistTaps="handled"
-            >
-                <Text style={styles.label}>Nombre de usuario</Text>
-                <TextInput
-                    placeholder="ANDRES"
-                    value={nuevoUsuario.nombre}
-                    onChangeText={valor => handleChange("nombre", valor)}
-                    style={styles.input}
-                    placeholderTextColor="#888"
-                    autoCapitalize="characters"
-                />
-
-                <Text style={styles.label}>Correo</Text>
-                <TextInput
-                    placeholder="correo@email.com"
-                    value={nuevoUsuario.correo}
-                    onChangeText={valor => handleChange("correo", valor)}
-                    style={styles.input}
-                    placeholderTextColor="#888"
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                />
-
-                <Text style={styles.label}>Nueva contrasena (opcional)</Text>
-                <TextInput
-                    placeholder="Ingrese nueva contrasena"
-                    value={nuevaContrasena}
-                    onChangeText={setNuevaContrasena}
-                    style={styles.input}
-                    placeholderTextColor="#888"
-                    secureTextEntry
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                />
-
-                <Text style={styles.label}>Confirmar nueva contrasena</Text>
-                <TextInput
-                    placeholder="Repita la nueva contrasena"
-                    value={confirmarContrasena}
-                    onChangeText={setConfirmarContrasena}
-                    style={styles.input}
-                    placeholderTextColor="#888"
-                    secureTextEntry
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                />
-
-                <Text style={styles.label}>Fecha de nacimiento</Text>
-                <Pressable
-                    style={styles.dateButton}
-                    onPress={() => setDatePickerAbierto(true)}
-                >
-                    <Text
-                        style={[
-                            styles.dateButtonText,
-                            !nuevoUsuario.birthDate && styles.dateButtonPlaceholder,
-                        ]}
+                <View style={styles.encabezado}>
+                    <Pressable
+                        accessibilityRole="button"
+                        accessibilityLabel="Volver al perfil"
+                        hitSlop={8}
+                        style={({ pressed }) => [styles.botonIcono, pressed && styles.botonIconoPresionado]}
+                        onPress={cerrar}
                     >
-                        {nuevoUsuario.birthDate || "Seleccionar fecha"}
+                        <Icon name="chevron-back-outline" color={colores.textoPrimario} size={30} />
+                    </Pressable>
+                    <Text style={styles.titulo} maxFontSizeMultiplier={maxEscalaFuente}>
+                        Editar perfil
                     </Text>
-                    <Icon name="calendar-outline" size={22} color="#000" />
-                </Pressable>
+                </View>
 
-                <DatePicker
-                    modal
-                    mode="date"
-                    open={datePickerAbierto}
-                    date={crearFechaPicker(nuevoUsuario.birthDate)}
-                    maximumDate={new Date()}
-                    title="Fecha de nacimiento"
-                    confirmText="Confirmar"
-                    cancelText="Cancelar"
-                    onConfirm={fecha => {
-                        setDatePickerAbierto(false);
-                        handleChange("birthDate", formatearFechaDesdeDate(fecha));
-                    }}
-                    onCancel={() => setDatePickerAbierto(false)}
-                />
-
-                <Text style={styles.label}>Telefono</Text>
-                <TextInput
-                    placeholder="Telefono..."
-                    value={nuevoUsuario.telefono}
-                    onChangeText={valor => handleChange("telefono", valor)}
-                    style={styles.input}
-                    placeholderTextColor="#888"
-                    keyboardType="phone-pad"
-                />
-
-                <Text style={styles.label}>Altura en cm</Text>
-                <TextInput
-                    placeholder="190"
-                    value={nuevoUsuario.altura}
-                    onChangeText={valor => handleChange("altura", valor)}
-                    style={styles.input}
-                    placeholderTextColor="#888"
-                    keyboardType="numeric"
-                />
-
-                <Text style={styles.label}>Peso en kg</Text>
-                <TextInput
-                    placeholder="110"
-                    value={nuevoUsuario.peso}
-                    onChangeText={valor => handleChange("peso", valor)}
-                    style={styles.input}
-                    placeholderTextColor="#888"
-                    keyboardType="numeric"
-                />
-
-                <Text style={styles.label}>Direccion</Text>
-                <TextInput
-                    placeholder="Direccion..."
-                    value={nuevoUsuario.direccion}
-                    onChangeText={valor => handleChange("direccion", valor)}
-                    style={styles.input}
-                    placeholderTextColor="#888"
-                />
-
-                <Text style={styles.label}>Genero</Text>
-                <SelectList
-                    setSelected={valor => handleChange("genero", valor)}
-                    data={generos}
-                    save="value"
-                    placeholder="Seleccione genero..."
-                    search={false}
-                    boxStyles={{marginHorizontal:15, marginVertical:10, backgroundColor:"#fff"}}
-                    inputStyles={{color:"#000"}}
-                    dropdownStyles={{marginHorizontal:15, backgroundColor:"#fff"}}
-                    dropdownTextStyles={{color:"#000"}}
-                    defaultOption={defaultOptionGenero}
-                />
-
-                <Text style={styles.label}>Disponibilidad semanal</Text>
-                <SelectList
-                    setSelected={valor => handleChange("disponibilidad", valor)}
-                    data={disponibilidades}
-                    save="value"
-                    placeholder="Seleccione la disponibilidad"
-                    search={false}
-                    boxStyles={{marginHorizontal:15, marginVertical:10, backgroundColor:"#fff"}}
-                    inputStyles={{color:"#000"}}
-                    dropdownStyles={{marginHorizontal:15, backgroundColor:"#fff"}}
-                    dropdownTextStyles={{color:"#000"}}
-                    defaultOption={defaultOptionDispo}
-                />
-
-                <Text style={styles.label}>Objetivo</Text>
-                <TextInput
-                    multiline
-                    numberOfLines={4}
-                    placeholder="Hipertrofia / perdida de peso / ganancia de peso..."
-                    value={nuevoUsuario.objetivos}
-                    onChangeText={valor => handleChange("objetivos", valor)}
-                    style={[styles.input,{minHeight:80}]}
-                    placeholderTextColor="#888"
-                />
-
-                <Pressable
-                    style={[styles.btn, guardando && styles.btnDeshabilitado]}
-                    disabled={guardando}
-                    onPress={guardar}
+                <ScrollView
+                    contentContainerStyle={styles.scrollContent}
+                    keyboardShouldPersistTaps="handled"
+                    showsVerticalScrollIndicator={false}
                 >
-                    {guardando ? (
-                        <ActivityIndicator color="#fff" />
-                    ) : (
-                        <Text style={styles.btnTexto}>
-                            GUARDAR CAMBIOS
+                    {error ? (
+                        <View style={styles.errorCaja}>
+                            <Icon name="alert-circle-outline" size={20} color={colores.peligro} />
+                            <Text style={styles.errorTexto} maxFontSizeMultiplier={maxEscalaFuente}>
+                                {error}
+                            </Text>
+                        </View>
+                    ) : null}
+
+                    <View style={styles.seccion}>
+                        <Text style={styles.seccionTitulo} maxFontSizeMultiplier={maxEscalaFuente}>
+                            Datos personales
                         </Text>
-                    )}
-                </Pressable>
-            </ScrollView>
-        </View>
+
+                        <View style={styles.campo}>
+                            <Text style={styles.label} maxFontSizeMultiplier={maxEscalaFuente}>
+                                Nombre de usuario
+                            </Text>
+                            <TextInput
+                                placeholder="Tu nombre"
+                                value={nuevoUsuario.nombre}
+                                onChangeText={valor => handleChange("nombre", valor)}
+                                style={styles.input}
+                                placeholderTextColor={colores.textoTenue}
+                                autoCapitalize="words"
+                                maxFontSizeMultiplier={maxEscalaFuente}
+                            />
+                        </View>
+
+                        <View style={styles.campo}>
+                            <Text style={styles.label} maxFontSizeMultiplier={maxEscalaFuente}>Correo</Text>
+                            <TextInput
+                                placeholder="correo@email.com"
+                                value={nuevoUsuario.correo}
+                                onChangeText={valor => handleChange("correo", valor)}
+                                style={styles.input}
+                                placeholderTextColor={colores.textoTenue}
+                                keyboardType="email-address"
+                                autoCapitalize="none"
+                                autoCorrect={false}
+                                maxFontSizeMultiplier={maxEscalaFuente}
+                            />
+                        </View>
+
+                        <View style={styles.campo}>
+                            <Text style={styles.label} maxFontSizeMultiplier={maxEscalaFuente}>
+                                Fecha de nacimiento
+                            </Text>
+                            <Pressable
+                                accessibilityRole="button"
+                                accessibilityLabel="Elegir la fecha de nacimiento"
+                                style={({ pressed }) => [styles.dateButton, pressed && styles.dateButtonPresionado]}
+                                onPress={() => setDatePickerAbierto(true)}
+                            >
+                                <Text
+                                    style={[
+                                        styles.dateButtonText,
+                                        !nuevoUsuario.birthDate && styles.dateButtonPlaceholder,
+                                    ]}
+                                    maxFontSizeMultiplier={maxEscalaFuente}
+                                >
+                                    {nuevoUsuario.birthDate || "Seleccionar fecha"}
+                                </Text>
+                                <Icon name="calendar-outline" size={20} color={colores.textoSecundario} />
+                            </Pressable>
+                        </View>
+
+                        <DatePicker
+                            modal
+                            mode="date"
+                            theme="dark"
+                            open={datePickerAbierto}
+                            date={crearFechaPicker(nuevoUsuario.birthDate)}
+                            maximumDate={new Date()}
+                            title="Fecha de nacimiento"
+                            confirmText="Confirmar"
+                            cancelText="Cancelar"
+                            onConfirm={fecha => {
+                                setDatePickerAbierto(false);
+                                handleChange("birthDate", formatearFechaDesdeDate(fecha));
+                            }}
+                            onCancel={() => setDatePickerAbierto(false)}
+                        />
+
+                        <View style={styles.campo}>
+                            <Text style={styles.label} maxFontSizeMultiplier={maxEscalaFuente}>Teléfono</Text>
+                            <TextInput
+                                placeholder="Ej: 2664123456"
+                                value={nuevoUsuario.telefono}
+                                onChangeText={valor => handleChange("telefono", valor)}
+                                style={styles.input}
+                                placeholderTextColor={colores.textoTenue}
+                                keyboardType="phone-pad"
+                                maxFontSizeMultiplier={maxEscalaFuente}
+                            />
+                        </View>
+
+                        <View style={styles.campo}>
+                            <Text style={styles.label} maxFontSizeMultiplier={maxEscalaFuente}>Dirección</Text>
+                            <TextInput
+                                placeholder="Calle y número"
+                                value={nuevoUsuario.direccion}
+                                onChangeText={valor => handleChange("direccion", valor)}
+                                style={styles.input}
+                                placeholderTextColor={colores.textoTenue}
+                                maxFontSizeMultiplier={maxEscalaFuente}
+                            />
+                        </View>
+
+                        <View style={styles.campo}>
+                            <Text style={styles.label} maxFontSizeMultiplier={maxEscalaFuente}>Género</Text>
+                            <Selector
+                                titulo="Género"
+                                placeholder="Elegí una opción"
+                                opciones={generos}
+                                valor={nuevoUsuario.genero}
+                                onChange={valor => handleChange("genero", valor)}
+                            />
+                        </View>
+                    </View>
+
+                    <View style={styles.seccion}>
+                        <Text style={styles.seccionTitulo} maxFontSizeMultiplier={maxEscalaFuente}>
+                            Entrenamiento
+                        </Text>
+
+                        <View style={styles.campo}>
+                            <Text style={styles.label} maxFontSizeMultiplier={maxEscalaFuente}>Altura en cm</Text>
+                            <TextInput
+                                placeholder="190"
+                                value={nuevoUsuario.altura}
+                                onChangeText={valor => handleChange("altura", valor)}
+                                style={styles.input}
+                                placeholderTextColor={colores.textoTenue}
+                                keyboardType="numeric"
+                                maxFontSizeMultiplier={maxEscalaFuente}
+                            />
+                        </View>
+
+                        <View style={styles.campo}>
+                            <Text style={styles.label} maxFontSizeMultiplier={maxEscalaFuente}>Peso en kg</Text>
+                            <TextInput
+                                placeholder="110"
+                                value={nuevoUsuario.peso}
+                                onChangeText={valor => handleChange("peso", valor)}
+                                style={styles.input}
+                                placeholderTextColor={colores.textoTenue}
+                                keyboardType="numeric"
+                                maxFontSizeMultiplier={maxEscalaFuente}
+                            />
+                        </View>
+
+                        <View style={styles.campo}>
+                            <Text style={styles.label} maxFontSizeMultiplier={maxEscalaFuente}>
+                                Disponibilidad semanal
+                            </Text>
+                            <Selector
+                                titulo="Disponibilidad semanal"
+                                placeholder="Elegí cuántos días"
+                                opciones={opcionesDisponibilidad}
+                                valor={nuevoUsuario.disponibilidad}
+                                onChange={valor => handleChange("disponibilidad", valor)}
+                            />
+                        </View>
+
+                        <View style={styles.campo}>
+                            <Text style={styles.label} maxFontSizeMultiplier={maxEscalaFuente}>Objetivo</Text>
+                            <TextInput
+                                multiline
+                                numberOfLines={4}
+                                placeholder="Hipertrofia, pérdida de peso, ganancia de peso..."
+                                value={nuevoUsuario.objetivos}
+                                onChangeText={valor => handleChange("objetivos", valor)}
+                                style={[styles.input, styles.inputMultilinea]}
+                                placeholderTextColor={colores.textoTenue}
+                                maxFontSizeMultiplier={maxEscalaFuente}
+                            />
+                        </View>
+                    </View>
+
+                    <View style={styles.seccion}>
+                        <Text style={styles.seccionTitulo} maxFontSizeMultiplier={maxEscalaFuente}>
+                            Contraseña
+                        </Text>
+                        <Text style={styles.ayuda} maxFontSizeMultiplier={maxEscalaFuente}>
+                            Dejalo vacío si no querés cambiarla. Mínimo 6 caracteres.
+                        </Text>
+
+                        <View style={styles.campo}>
+                            <Text style={styles.label} maxFontSizeMultiplier={maxEscalaFuente}>
+                                Nueva contraseña
+                            </Text>
+                            <View style={styles.campoPassword}>
+                                <TextInput
+                                    placeholder="Nueva contraseña"
+                                    value={nuevaContrasena}
+                                    onChangeText={setNuevaContrasena}
+                                    style={[styles.input, styles.inputPassword]}
+                                    placeholderTextColor={colores.textoTenue}
+                                    secureTextEntry={!verContrasena}
+                                    autoCapitalize="none"
+                                    autoCorrect={false}
+                                    maxFontSizeMultiplier={maxEscalaFuente}
+                                />
+                                <Pressable
+                                    accessibilityRole="button"
+                                    accessibilityLabel={verContrasena ? "Ocultar las contraseñas" : "Mostrar las contraseñas"}
+                                    hitSlop={8}
+                                    style={styles.verPassword}
+                                    onPress={() => setVerContrasena(valor => !valor)}
+                                >
+                                    <Icon
+                                        name={verContrasena ? "eye-off-outline" : "eye-outline"}
+                                        size={20}
+                                        color={colores.textoSecundario}
+                                    />
+                                </Pressable>
+                            </View>
+                        </View>
+
+                        <View style={styles.campo}>
+                            <Text style={styles.label} maxFontSizeMultiplier={maxEscalaFuente}>
+                                Confirmar contraseña
+                            </Text>
+                            <TextInput
+                                placeholder="Repetí la nueva contraseña"
+                                value={confirmarContrasena}
+                                onChangeText={setConfirmarContrasena}
+                                style={styles.input}
+                                placeholderTextColor={colores.textoTenue}
+                                secureTextEntry={!verContrasena}
+                                autoCapitalize="none"
+                                autoCorrect={false}
+                                maxFontSizeMultiplier={maxEscalaFuente}
+                            />
+                        </View>
+                    </View>
+
+                    <Pressable
+                        accessibilityRole="button"
+                        accessibilityLabel="Guardar los cambios del perfil"
+                        accessibilityState={{ disabled: guardando, busy: guardando }}
+                        style={({ pressed }) => [
+                            styles.btn,
+                            (guardando || pressed) && styles.btnDeshabilitado,
+                        ]}
+                        disabled={guardando}
+                        onPress={guardar}
+                    >
+                        {guardando ? (
+                            <ActivityIndicator color={colores.sobreRelleno} />
+                        ) : (
+                            <>
+                                <Icon name="checkmark" size={20} color={colores.sobreRelleno} />
+                                <Text style={styles.btnTexto} maxFontSizeMultiplier={maxEscalaFuente}>
+                                    Guardar cambios
+                                </Text>
+                            </>
+                        )}
+                    </Pressable>
+                </ScrollView>
+            </KeyboardAvoidingView>
+        </PantallaModal>
     );
 };
 

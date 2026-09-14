@@ -1,10 +1,11 @@
-import { StyleSheet, Platform } from "react-native";
-import {colores} from './colores';
+import { StyleSheet } from "react-native";
+import { colores } from './colores';
+import { espaciado, radios, sombras, tipografia, toqueMinimo } from './theme';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colores.azulProfundo,
+    backgroundColor: colores.fondo,
   },
   scroll: {
     flex: 1,
@@ -12,113 +13,170 @@ export const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
     alignItems: "center",
-    padding: 20,
-    paddingBottom: 70,
+    justifyContent: "center",
+    paddingHorizontal: espaciado.xl,
+    paddingVertical: espaciado.xl,
+  },
+  image: {
+    alignSelf: 'center',
+    height: 110,
+    width: 110,
+    borderRadius: radios.completo,
   },
   titulo: {
-    fontSize: 28,
-    fontWeight: "900",
-    color: colores.blanco,
-    marginVertical: 35,
+    ...tipografia.display,
+    color: colores.textoPrimario,
+    marginTop: espaciado.lg,
     textAlign: "center",
-  },
-  btn: {
-    backgroundColor: colores.principal,
-    borderRadius: 30,
-    paddingVertical: 12,
-    paddingHorizontal: 30,
-    elevation: 3,
-  },
-  btnTexto: {
-    fontSize: 18,
-    color: colores.fondo,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  image:{
-    alignSelf:'center',
-    height:150,
-    width:150,
-    padding:20,
-    borderRadius:50
-  },
-  contenedor: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 16,
-    backgroundColor: colores.azulProfundoClaro, 
-    paddingBottom: 20,
-    paddingTop: 10,
-    paddingHorizontal:20,
-    ...Platform.select({
-      ios: {
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.2,
-        shadowRadius: 10,
-      },
-      android: {
-        elevation: 6,
-      }
-    }),
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.15)',
-    overflow: 'hidden',
-    borderRadius:10
+    textTransform: 'uppercase',
+    letterSpacing: 2,
   },
   titulo1: {
-    fontSize: 24,
-    color: colores.secundario,
-    marginBottom: 20,
-    fontWeight: 'bold',
+    ...tipografia.cuerpo,
+    color: colores.textoSecundario,
+    marginTop: espaciado.xs,
+    marginBottom: espaciado.xl,
+    textAlign: 'center',
+  },
+
+  // --- Tarjeta del contador ---
+  contenedor: {
+    width: '100%',
+    alignItems: 'center',
+    backgroundColor: colores.superficie,
+    borderRadius: radios.xl,
+    borderWidth: 1,
+    borderColor: colores.borde,
+    paddingVertical: espaciado.xxl,
+    paddingHorizontal: espaciado.xl,
+    gap: espaciado.lg,
+    ...sombras.card,
   },
   titulo2: {
-    fontSize: 24,
-    color: colores.cian,
-    marginBottom: 20,
-    fontWeight: 'bold',
-    paddingHorizontal:15
+    ...tipografia.micro,
+    color: colores.textoTenue,
+    textTransform: 'uppercase',
+    letterSpacing: 2,
   },
   tiempo: {
-    fontSize: 48,
-    color: colores.blanco,
-    marginBottom: 40,
+    fontSize: 68,
+    lineHeight: 74,
+    fontWeight: '200',
+    color: colores.textoPrimario,
+    fontVariant: ['tabular-nums'],
+  },
+  tiempoTerminado: {
+    color: colores.principal,
+  },
+  barra: {
+    width: '100%',
   },
   botones: {
     flexDirection: 'row',
-    gap: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: espaciado.xl,
+    marginTop: espaciado.xs,
   },
-  boton: {
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
-    marginHorizontal: 5,
+  botonRedondo: {
+    width: 64,
+    height: 64,
+    borderRadius: radios.completo,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: colores.borde,
+    backgroundColor: colores.superficieAlta,
   },
-  stopButton: {
-    marginTop: 10,
+  botonPresionado: {
+    opacity: 0.7,
   },
+
+  // --- Ajustes rapidos de tiempo ---
+  ajustes: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: espaciado.md,
+    marginTop: espaciado.md,
+    width: '100%',
+  },
+  botonAjuste: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: espaciado.xs,
+    minHeight: toqueMinimo,
+    borderRadius: radios.completo,
+    borderWidth: 1,
+    borderColor: colores.borde,
+  },
+  botonAjusteTexto: {
+    ...tipografia.cuerpoFuerte,
+    color: colores.textoPrimario,
+  },
+  botonAjusteDeshabilitado: {
+    opacity: 0.35,
+  },
+
+  // --- Cierre ---
   aviso: {
-    fontSize: 16,
-    color: colores.advertencia,
-    fontWeight: 'bold',
+    ...tipografia.cuerpoFuerte,
+    color: colores.aviso,
     textAlign: 'center',
-    marginTop: 20,
+    marginTop: espaciado.xl,
   },
+  botonSaltar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: espaciado.sm,
+    alignSelf: 'stretch',
+    minHeight: 56,
+    marginTop: espaciado.xl,
+    borderRadius: radios.completo,
+    borderWidth: 1,
+    borderColor: colores.borde,
+  },
+  botonSaltarTexto: {
+    ...tipografia.cuerpoFuerte,
+    color: colores.textoPrimario,
+    textTransform: 'uppercase',
+  },
+  botonDetener: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: espaciado.sm,
+    alignSelf: 'stretch',
+    minHeight: 64,
+    marginTop: espaciado.md,
+    borderRadius: radios.completo,
+    backgroundColor: colores.peligro,
+  },
+  botonDetenerTexto: {
+    fontSize: 18,
+    fontWeight: '900',
+    color: colores.sobreRelleno,
+    textTransform: 'uppercase',
+  },
+
+  // --- Banner de permiso ---
   bannerPermiso: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    marginBottom: 20,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 10,
+    gap: espaciado.md,
+    marginBottom: espaciado.xl,
+    paddingVertical: espaciado.md,
+    paddingHorizontal: espaciado.lg,
+    borderRadius: radios.md,
     borderWidth: 1,
-    borderColor: colores.advertencia,
-    backgroundColor: colores.azulProfundoClaro,
+    borderColor: colores.aviso,
+    backgroundColor: colores.superficie,
   },
   bannerPermisoTexto: {
     flex: 1,
-    fontSize: 14,
-    color: colores.blanco,
+    ...tipografia.auxiliar,
+    color: colores.textoPrimario,
   },
 });

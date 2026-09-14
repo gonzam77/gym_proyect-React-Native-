@@ -24,6 +24,8 @@ class MainApplication : Application(), ReactApplication {
               if (none { it is KeychainPackage }) {
                 add(KeychainPackage())
               }
+              // Modulo propio, no autolinkeable: vive en este mismo proyecto.
+              add(PantallaEncendidaPackage())
             }
 
         override fun getJSMainModuleName(): String = "index"

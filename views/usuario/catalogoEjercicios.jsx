@@ -1,12 +1,16 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { useSelector } from "react-redux";
+import Icon from "react-native-vector-icons/Ionicons";
 import {
   CATALOG_REFRESH_MS,
   getCatalogoLocalConRefresh,
   refrescarCatalogoRemoto,
 } from "../../helpers/catalogoEjercicios";
 import { colores } from "../../styles/colores";
+import { maxEscalaFuente } from "../../styles/theme";
+import styles from "../../styles/catalogoStyles";
+import Esqueleto from "../../components/Esqueleto";
 
 const formatearFecha = (valor) => {
   if (!valor) return "Sin registros";
@@ -24,6 +28,7 @@ const CatalogoEjercicios = () => {
   const [cargando, setCargando] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState("");
+  const [abiertas, setAbiertas] = useState({});
 
   const cargarLocal = useCallback(async () => {
     setError("");
@@ -43,7 +48,7 @@ const CatalogoEjercicios = () => {
       setCategorias(remoto.categorias);
       setUpdatedAt(remoto.updatedAt);
     } catch (e) {
-      setError(e?.message || "No se pudo actualizar el catalogo.");
+      setError(e?.message || "No se pudo actualizar el catálogo.");
     } finally {
       setRefreshing(false);
     }
@@ -72,50 +77,98 @@ const CatalogoEjercicios = () => {
     [catalogo, categorias]
   );
 
+  const alternar = categoria => {
+    setAbiertas(previas => ({ ...previas, [categoria]: !previas[categoria] }));
+  };
+
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: colores.azulProfundo }} contentContainerStyle={{ padding: 16 }}>
-      <View style={{ backgroundColor: "#ffffff", borderRadius: 12, padding: 14, marginBottom: 14 }}>
-        <Text style={{ color: "#111", fontSize: 18, fontWeight: "800" }}>Catalogo de ejercicios</Text>
-        <Text style={{ color: "#555", marginTop: 6 }}>
-          Ultima actualizacion: {formatearFecha(updatedAt)}
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      showsVerticalScrollIndicator={false}
+    >
+      <View style={styles.tarjeta}>
+        <Text style={styles.tituloTarjeta} maxFontSizeMultiplier={maxEscalaFuente}>
+          Catálogo de ejercicios
         </Text>
-        <Text style={{ color: "#555", marginTop: 2 }}>
-          Refresh automatico: cada {Math.floor(CATALOG_REFRESH_MS / (60 * 60 * 1000))} horas
+        <Text style={styles.dato} maxFontSizeMultiplier={maxEscalaFuente}>
+          Última actualización: {formatearFecha(updatedAt)}
         </Text>
+        <Text style={styles.dato} maxFontSizeMultiplier={maxEscalaFuente}>
+          Se actualiza solo cada {Math.floor(CATALOG_REFRESH_MS / (60 * 60 * 1000))} horas
+        </Text>
+
         <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Refrescar el catálogo ahora"
+          accessibilityState={{ disabled: refreshing, busy: refreshing }}
           onPress={refrescarManual}
-          style={{
-            marginTop: 12,
-            backgroundColor: colores.verdeOpaco,
-            borderRadius: 8,
-            paddingVertical: 10,
-            alignItems: "center",
-            opacity: refreshing ? 0.7 : 1,
-          }}
+          style={({ pressed }) => [
+            styles.boton,
+            (refreshing || pressed) && styles.botonPresionado,
+          ]}
           disabled={refreshing}
         >
-          <Text style={{ color: "#fff", fontWeight: "800" }}>
+          <Icon name="refresh-outline" size={18} color={colores.sobreRelleno} />
+          <Text style={styles.botonTexto} maxFontSizeMultiplier={maxEscalaFuente}>
             {refreshing ? "Actualizando..." : "Refrescar ahora"}
           </Text>
         </Pressable>
-        {error ? <Text style={{ color: "#b00020", marginTop: 10 }}>{error}</Text> : null}
+
+        {error ? (
+          <View style={styles.errorCaja}>
+            <Icon name="alert-circle-outline" size={20} color={colores.peligro} />
+            <Text style={styles.errorTexto} maxFontSizeMultiplier={maxEscalaFuente}>{error}</Text>
+          </View>
+        ) : null}
       </View>
 
       {cargando ? (
-        <ActivityIndicator color={colores.verdeOpaco} size="large" />
+        <Esqueleto cantidad={4} />
       ) : (
-        ejerciciosPorCategoria.map(({ categoria, ejercicios }) => (
-          <View key={categoria} style={{ backgroundColor: "#fff", borderRadius: 12, padding: 12, marginBottom: 10 }}>
-            <Text style={{ fontWeight: "800", fontSize: 16, color: "#111", marginBottom: 8 }}>
-              {categoria.charAt(0).toUpperCase() + categoria.slice(1)}
-            </Text>
-            {ejercicios.map(ej => (
-              <Text key={ej.idEjercicio} style={{ color: "#333", marginBottom: 5 }}>
-                - {ej.nombre}
-              </Text>
-            ))}
-          </View>
-        ))
+        ejerciciosPorCategoria.map(({ categoria, ejercicios }) => {
+          const abierta = Boolean(abiertas[categoria]);
+
+          return (
+            <View key={categoria} style={styles.categoria}>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={`${categoria}, ${ejercicios.length} ejercicios`}
+                accessibilityState={{ expanded: abierta }}
+                style={({ pressed }) => [
+                  styles.categoriaEncabezado,
+                  pressed && styles.categoriaEncabezadoPresionado,
+                ]}
+                onPress={() => alternar(categoria)}
+              >
+                <Text style={styles.categoriaNombre} maxFontSizeMultiplier={maxEscalaFuente}>
+                  {categoria.charAt(0).toUpperCase() + categoria.slice(1)}
+                </Text>
+                <Text style={styles.contador} maxFontSizeMultiplier={maxEscalaFuente}>
+                  {ejercicios.length}
+                </Text>
+                <Icon
+                  name={abierta ? "chevron-up" : "chevron-down"}
+                  size={20}
+                  color={colores.textoSecundario}
+                />
+              </Pressable>
+
+              {abierta ? (
+                <View style={styles.listaEjercicios}>
+                  {ejercicios.map(ej => (
+                    <View key={ej.idEjercicio} style={styles.ejercicio}>
+                      <Icon name="ellipse" size={5} color={colores.textoTenue} />
+                      <Text style={styles.ejercicioNombre} maxFontSizeMultiplier={maxEscalaFuente}>
+                        {ej.nombre}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+              ) : null}
+            </View>
+          );
+        })
       )}
     </ScrollView>
   );

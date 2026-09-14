@@ -4,10 +4,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { modificarEjercicio } from "../store/rutinasSlice";
 import { KeyboardAvoidingView, Platform } from "react-native";
 import { colores } from "../styles/colores";
+import { espaciado, maxEscalaFuente, radios, sombras, tipografia, toqueMinimo } from "../styles/theme";
+import { avisoExito } from "../helpers/avisos";
 
 
 const FormNota = ({onClose, visible, ejercicio})=> {
-    
+
     const [nuevaNota, setNuevaNota] = useState('');
 
     const dispatch = useDispatch();
@@ -30,7 +32,7 @@ const FormNota = ({onClose, visible, ejercicio})=> {
                 Animated.spring(scale, { toValue: 1, friction: 6, useNativeDriver: true })
             ]).start();
         }
-    }, [visible]);
+    }, [fade, scale, visible]);
 
     const handleChange = (valor)=>{
         setNuevaNota(valor)
@@ -44,11 +46,19 @@ const FormNota = ({onClose, visible, ejercicio})=> {
                 nota: nuevaNota
             }
         }))
+        avisoExito('Nota guardada');
         onClose();
     }
 
     return (
-        <Modal visible={visible} transparent animationType="fade">
+        <Modal
+            visible={visible}
+            transparent
+            animationType="fade"
+            statusBarTranslucent
+            navigationBarTranslucent
+            onRequestClose={onClose}
+        >
             <KeyboardAvoidingView
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
                 style={styles.overlay}
@@ -57,8 +67,8 @@ const FormNota = ({onClose, visible, ejercicio})=> {
                     styles.box,
                     { opacity: fade, transform: [{ scale: scale }] }
                 ]}>
-                    <Text style={styles.titulo}>Nota</Text>
-                    
+                    <Text style={styles.titulo} maxFontSizeMultiplier={maxEscalaFuente}>Nota</Text>
+
                    <View style={{ flexGrow: 1 }}>
                         <ScrollView keyboardShouldPersistTaps="handled">
                             <TextInput
@@ -69,18 +79,34 @@ const FormNota = ({onClose, visible, ejercicio})=> {
                                 value={nuevaNota}
                                 onChangeText={(valor)=>{handleChange(valor)}}
                                 style={[styles.input,{minHeight:80}]}
-                                placeholderTextColor='#888'
-                                ></TextInput>
-                        </ScrollView> 
+                                placeholderTextColor={colores.textoTenue}
+                                maxFontSizeMultiplier={maxEscalaFuente}
+                                accessibilityLabel="Nota del ejercicio"
+                            />
+                        </ScrollView>
                     </View>
 
                     <View style={styles.btnRow}>
-                        <Pressable style={[styles.btn, styles.cancelar]} onPress={onClose}>
-                            <Text style={styles.txtCancelar}>Cancelar</Text>
+                        <Pressable
+                            accessibilityRole="button"
+                            accessibilityLabel="Cancelar"
+                            style={({ pressed }) => [styles.btn, styles.cancelar, pressed && styles.presionado]}
+                            onPress={onClose}
+                        >
+                            <Text style={styles.txtCancelar} maxFontSizeMultiplier={maxEscalaFuente}>
+                                Cancelar
+                            </Text>
                         </Pressable>
-                        
-                        <Pressable style={[styles.btn, styles.editar]} onPress={handleGuardar}>
-                            <Text style={styles.txtEditar}>Guardar</Text>
+
+                        <Pressable
+                            accessibilityRole="button"
+                            accessibilityLabel="Guardar la nota"
+                            style={({ pressed }) => [styles.btn, styles.editar, pressed && styles.presionado]}
+                            onPress={handleGuardar}
+                        >
+                            <Text style={styles.txtEditar} maxFontSizeMultiplier={maxEscalaFuente}>
+                                Guardar
+                            </Text>
                         </Pressable>
                     </View>
                 </Animated.View>
@@ -97,64 +123,67 @@ const styles = StyleSheet.create({
         backgroundColor: "rgba(8, 12, 20, 0.72)",
         justifyContent: "center",
         alignItems: "center",
-        paddingHorizontal: 20,
+        paddingHorizontal: espaciado.xl,
     },
     box: {
         width: "100%",
         maxWidth: 420,
-        backgroundColor: colores.azulProfundoClaro,
-        borderRadius: 24,
-        padding: 18,
-        elevation: 6,
+        backgroundColor: colores.superficie,
+        borderRadius: radios.xl,
+        padding: espaciado.xl,
         minHeight: 220,
         borderWidth: 1,
-        borderColor: "rgba(255, 255, 255, 0.15)",
+        borderColor: colores.borde,
+        ...sombras.flotante,
     },
     titulo: {
-        fontSize: 24,
-        fontWeight: "800",
-        color: colores.blanco,
+        ...tipografia.titulo,
+        color: colores.textoPrimario,
         textAlign: "center",
-        marginBottom: 12,
+        marginBottom: espaciado.md,
         textTransform: "uppercase",
-    },
-    subtitulo: {
-        textAlign: "center",
-        color: "#555",
-        marginBottom: 10
     },
     btnRow: {
         flexDirection: "row",
         justifyContent: "space-between",
-        marginTop: 12,
-        gap: 10,
+        marginTop: espaciado.lg,
+        gap: espaciado.md,
     },
     btn: {
-        paddingVertical: 10,
-        paddingHorizontal: 16,
-        borderRadius: 12,
-        minWidth: 110,
+        flex: 1,
+        minHeight: toqueMinimo,
+        paddingHorizontal: espaciado.lg,
+        borderRadius: radios.md,
         alignItems: "center",
+        justifyContent: "center",
     },
-    input:{
-        backgroundColor: colores.azulProfundo,
-        color: colores.blanco,
-        borderRadius: 12,
-        paddingLeft: 12,
-        paddingRight: 12,
-        paddingTop: 10,
-        paddingBottom: 10,
+    presionado: {
+        opacity: 0.75,
+    },
+    input: {
+        backgroundColor: colores.fondo,
+        color: colores.textoPrimario,
+        borderRadius: radios.md,
+        paddingHorizontal: espaciado.md,
+        paddingVertical: espaciado.md,
         borderWidth: 1,
-        borderColor: "rgba(255, 255, 255, 0.2)",
+        borderColor: colores.borde,
+        fontSize: 16,
     },
     cancelar: {
         backgroundColor: "transparent",
         borderWidth: 1,
-        borderColor: "rgba(255, 255, 255, 0.35)",
+        borderColor: colores.borde,
     },
-    editar: { backgroundColor: colores.verdeOpaco },
-    eliminar: { backgroundColor: "#bd1515" },
-    txtCancelar: { color: colores.blanco, fontWeight: "700" },
-    txtEditar: { color: colores.blanco, fontWeight: "700" },
-    txtEliminar: { color: "#fff", fontWeight: "700" },
+    editar: {
+        backgroundColor: colores.exito,
+    },
+    txtCancelar: {
+        ...tipografia.cuerpoFuerte,
+        color: colores.textoSecundario,
+    },
+    txtEditar: {
+        ...tipografia.cuerpoFuerte,
+        color: colores.sobreRelleno,
+    },
 });

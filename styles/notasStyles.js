@@ -1,71 +1,174 @@
 import { StyleSheet } from "react-native";
 import { colores } from "./colores";
+import { espaciado, radios, sombras, tipografia, toqueMinimo } from "./theme";
 
 const styles = StyleSheet.create({
     container: {
-        padding: 12,
-        backgroundColor: colores.azulProfundo,
+        flex: 1,
+        backgroundColor: colores.fondo,
+    },
+    content: {
+        padding: espaciado.md,
+        paddingBottom: 110,
+        flexGrow: 1,
     },
 
+    // --- Tarjeta de seccion ---
     card: {
-        backgroundColor: "#ffffff",
-        padding: 16,
-        borderRadius: 12,
-        marginBottom: 20,
-        elevation: 3, 
-        shadowColor: "#000",
-        shadowOpacity: 0.15,
-        shadowRadius: 5,
-        shadowOffset: { width: 0, height: 2 },
+        backgroundColor: colores.superficie,
+        padding: espaciado.lg,
+        borderRadius: radios.lg,
+        borderWidth: 1,
+        borderColor: colores.borde,
+        marginBottom: espaciado.lg,
+        ...sombras.card,
+    },
+    cardPresionada: {
+        backgroundColor: colores.superficieAlta,
+    },
+    cardHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+        gap: espaciado.sm,
     },
     cardTitle: {
-        fontSize: 20,
-        fontWeight: "bold",
-        marginBottom: 10,
-        marginLeft: 5,
-        color: "#000",
+        ...tipografia.subtitulo,
+        color: colores.textoPrimario,
+        flex: 1,
+    },
+    etiqueta: {
+        ...tipografia.micro,
+        color: colores.textoTenue,
+        textTransform: 'uppercase',
+        letterSpacing: 1,
+        marginTop: espaciado.xs,
     },
 
+    // --- Comentarios ---
     commentContainer: {
-        backgroundColor: "#fafafa",
-        padding: 10,
-        borderRadius: 10,
-        marginVertical: 10,
-        marginHorizontal:10,
+        backgroundColor: colores.superficieAlta,
+        padding: espaciado.md,
+        borderRadius: radios.md,
+        marginTop: espaciado.md,
         borderWidth: 1,
-        borderColor: "#ddd",
+        borderColor: colores.bordeSuave,
+    },
+    commentHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        gap: espaciado.sm,
     },
     commentDate: {
-        fontSize: 12,
-        color: "#777",
-        marginBottom: 4,
+        ...tipografia.micro,
+        color: colores.textoTenue,
+        marginBottom: espaciado.xs,
     },
     commentText: {
-        fontSize: 15,
-        color: "#333",
+        ...tipografia.cuerpo,
+        color: colores.textoPrimario,
     },
-    titulo:{
-        textAlign:'center',
-        fontSize: 20,
-        fontWeight: "bold",
-        marginVertical: 10,
-        color: colores.blanco,
+    sinNotas: {
+        ...tipografia.cuerpo,
+        color: colores.textoTenue,
+        fontStyle: 'italic',
+        marginTop: espaciado.sm,
     },
+    verMas: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        gap: espaciado.xs,
+        marginTop: espaciado.md,
+    },
+    verMasTexto: {
+        ...tipografia.auxiliar,
+        color: colores.acento,
+    },
+
+    // --- Encabezado del detalle ---
+    encabezado: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: espaciado.sm,
+        paddingHorizontal: espaciado.md,
+        paddingTop: espaciado.sm,
+    },
+    titulo: {
+        ...tipografia.titulo,
+        color: colores.textoPrimario,
+        flex: 1,
+    },
+    botonIcono: {
+        minWidth: toqueMinimo,
+        minHeight: toqueMinimo,
+        borderRadius: radios.completo,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    botonIconoPresionado: {
+        backgroundColor: colores.superficieAlta,
+    },
+
+    // --- Boton flotante ---
     btn: {
-        backgroundColor: colores.verdeOpaco,
-        borderRadius: 30,
-        paddingVertical: 10,
-        paddingHorizontal: 10,
-        elevation: 3,
-        marginHorizontal:10,
-        borderColor:colores.verdeOpaco,
-        borderWidth:2
+        position: 'absolute',
+        right: espaciado.xl,
+        width: 60,
+        height: 60,
+        borderRadius: radios.completo,
+        backgroundColor: colores.exito,
+        alignItems: 'center',
+        justifyContent: 'center',
+        ...sombras.flotante,
+    },
+    btnPresionado: {
+        opacity: 0.85,
+    },
+
+    // --- Formularios de notas ---
+    form: {
+        paddingHorizontal: espaciado.xl,
+        gap: espaciado.sm,
+    },
+    label: {
+        ...tipografia.auxiliar,
+        color: colores.textoSecundario,
+    },
+    input: {
+        backgroundColor: colores.superficie,
+        borderWidth: 1,
+        borderColor: colores.borde,
+        borderRadius: radios.md,
+        color: colores.textoPrimario,
+        paddingHorizontal: espaciado.lg,
+        paddingVertical: espaciado.md,
+        fontSize: 16,
+        minHeight: toqueMinimo + 4,
+    },
+    inputMultilinea: {
+        minHeight: 160,
+        textAlignVertical: 'top',
+    },
+    botonGuardar: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: espaciado.sm,
+        minHeight: 52,
+        marginHorizontal: espaciado.xl,
+        marginTop: espaciado.xl,
+        borderRadius: radios.completo,
+        backgroundColor: colores.exito,
+    },
+    botonGuardarDeshabilitado: {
+        opacity: 0.5,
     },
     btnTexto: {
-        fontSize: 18,
-        color: colores.fondo,
-        fontWeight: "bold",
-        textAlign: "center",
+        ...tipografia.cuerpoFuerte,
+        color: colores.sobreRelleno,
+        textTransform: 'uppercase',
     },
 });
 

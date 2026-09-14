@@ -1,90 +1,172 @@
-import { Platform, StyleSheet } from "react-native";
-import { colores } from './colores'
+import { StyleSheet } from "react-native";
+import { colores } from './colores';
+import { espaciado, radios, sombras, tipografia, toqueMinimo } from './theme';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor:colores.azulProfundo,
-    paddingHorizontal: 20,
-    paddingTop:30,
+    backgroundColor: colores.fondo,
+  },
+  cuerpo: {
+    flex: 1,
+    paddingHorizontal: espaciado.xl,
+  },
+  botonera: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingTop: espaciado.sm,
+    paddingBottom: espaciado.xs,
+  },
+  botonIcono: {
+    minWidth: toqueMinimo,
+    minHeight: toqueMinimo,
+    borderRadius: radios.completo,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  botonIconoPresionado: {
+    backgroundColor: colores.superficieAlta,
+  },
+  botonSecundario: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: espaciado.sm,
+    minHeight: toqueMinimo,
+    paddingHorizontal: espaciado.lg,
+    borderRadius: radios.md,
+    borderWidth: 1,
+    borderColor: colores.borde,
+  },
+  botonSecundarioTexto: {
+    ...tipografia.cuerpoFuerte,
+    color: colores.textoPrimario,
+  },
+  acciones: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: espaciado.sm,
+  },
+  titulo: {
+    ...tipografia.display,
+    color: colores.textoPrimario,
+    textAlign: "center",
+    marginTop: espaciado.md,
+  },
+  metaFila: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: espaciado.lg,
+    marginTop: espaciado.sm,
+  },
+  metaItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: espaciado.xs,
+  },
+  tiempo: {
+    ...tipografia.cuerpoFuerte,
+    color: colores.acento,
+  },
+  metaTexto: {
+    ...tipografia.auxiliar,
+    color: colores.textoSecundario,
+  },
+  progresoContenedor: {
+    marginTop: espaciado.lg,
+    gap: espaciado.sm,
+  },
+  progresoTexto: {
+    ...tipografia.micro,
+    color: colores.textoTenue,
+    textTransform: "uppercase",
+    letterSpacing: 1,
+    textAlign: "center",
   },
   scroll: {
     flex: 1,
   },
-  finalizado: {
-    color: colores.advertencia
-  },
-  titulo: {
-    fontSize: 28,
-    fontWeight: "500",
-    color: colores.blanco,
-    textAlign: "center",
-    marginTop:20
-  },
-  tiempo: {
-    fontSize: 20,
-    fontWeight: "600",
-    color: colores.cian,
-    textAlign: "center",
-    marginVertical: 10,
-  },
-  listaEjercicios:{
-    marginVertical:30
+  scrollContent: {
+    paddingTop: espaciado.xl,
+    paddingBottom: espaciado.xxxl,
+    flexGrow: 1,
   },
   ejercicioItem: {
-      marginBottom: 16,
-      backgroundColor: colores.azulProfundoClaro, 
-      borderRadius: 24,
-      padding: 20,
-      ...Platform.select({
-        ios: {
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 8 },
-          shadowOpacity: 0.2,
-          shadowRadius: 10,
-        },
-        android: {
-          elevation: 6,
-        }
-      }),
-      borderWidth: 1,
-      borderColor: 'rgba(255, 255, 255, 0.15)',
-      overflow: 'hidden',
+    marginBottom: espaciado.lg,
+    backgroundColor: colores.superficie,
+    borderRadius: radios.xl,
+    padding: espaciado.xl,
+    borderWidth: 1,
+    borderColor: colores.borde,
+    overflow: 'hidden',
+    ...sombras.card,
+  },
+  ejercicioItemPresionado: {
+    backgroundColor: colores.superficieAlta,
+    borderColor: colores.bordeSuave,
+  },
+  filaPrincipal: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: espaciado.md,
+  },
+  datos: {
+    flex: 1,
   },
   ejercicioNombre: {
-    color: colores.blanco,
-    fontSize: 18,
-    fontWeight: "700",
-    marginBottom: 5,
+    ...tipografia.subtitulo,
+    color: colores.textoPrimario,
+    marginBottom: espaciado.xs,
   },
   ejercicioDetalle: {
-    color: colores.secundario,
-    fontSize: 16,
-    fontWeight: "600",
+    ...tipografia.auxiliar,
+    color: colores.textoSecundario,
   },
-  botonera: {
+  badgeFinalizado: {
     flexDirection: "row",
-    justifyContent: "space-evenly",
     alignItems: "center",
-    marginVertical: 10,
+    alignSelf: "flex-start",
+    gap: espaciado.xs,
+    marginTop: espaciado.sm,
+    paddingHorizontal: espaciado.sm,
+    paddingVertical: espaciado.xs,
+    borderRadius: radios.md,
+    backgroundColor: 'rgba(29, 191, 132, 0.16)',
+    borderWidth: 1,
+    borderColor: colores.exito,
+  },
+  badgeFinalizadoTexto: {
+    ...tipografia.micro,
+    color: colores.exito,
+  },
+  seriesProgreso: {
+    marginTop: espaciado.lg,
   },
   actionsContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: espaciado.sm,
   },
   reorderButtonsContainer: {
-    gap: 6,
+    gap: espaciado.xs,
   },
   reorderButton: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: 'rgba(255, 255, 255, 0.18)',
+    width: toqueMinimo,
+    height: toqueMinimo - 4,
+    borderRadius: radios.md,
+    backgroundColor: colores.superficieAlta,
+    borderWidth: 1,
+    borderColor: colores.bordeSuave,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  reorderButtonDisabled: {
-    opacity: 0.35,
+  reorderButtonPresionado: {
+    backgroundColor: colores.borde,
   },
-})
+  reorderButtonDisabled: {
+    opacity: 0.3,
+  },
+});

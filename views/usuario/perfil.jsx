@@ -4,8 +4,10 @@ import Icon from "react-native-vector-icons/Ionicons";
 import FormUsuario from "./formUsuario";
 import { useDispatch, useSelector } from "react-redux";
 import styles from "../../styles/perfilStyles";
+import { colores } from "../../styles/colores";
 import { cerrarSesion, limpiarUsuario } from "../../store/usuarioSlice";
 import CatalogoEjercicios from "./catalogoEjercicios";
+import PantallaModal from "../../components/PantallaModal";
 import { logoutAllAuth, logoutAuth } from "../../services/authService";
 
 const tieneValor = valor => valor !== undefined && valor !== null && valor !== "";
@@ -47,6 +49,13 @@ const valorPerfil = (local, remoto) => {
 
     return tieneValor(remoto) ? remoto : "";
 };
+
+const Dato = ({ etiqueta, valor }) => (
+    <View style={styles.row}>
+        <Text style={styles.label}>{etiqueta}</Text>
+        <Text style={styles.value}>{valor || "-"}</Text>
+    </View>
+);
 
 const Perfil = () => {
 
@@ -95,12 +104,12 @@ const Perfil = () => {
 
     const confirmarCerrarSesion = () => {
         Alert.alert(
-            "Cerrar sesion",
-            "Desea cerrar la sesion actual?",
+            "Cerrar sesión",
+            "¿Querés cerrar la sesión actual?",
             [
                 { text: "Cancelar", style: "cancel" },
                 {
-                    text: "Cerrar sesion",
+                    text: "Cerrar sesión",
                     style: "destructive",
                     onPress: async () => {
                         await logoutAuth();
@@ -114,8 +123,8 @@ const Perfil = () => {
 
     const confirmarCerrarSesionGlobal = () => {
         Alert.alert(
-            "Cerrar sesion en todos los dispositivos",
-            "Esto cerrara todas tus sesiones activas. Deseas continuar?",
+            "Cerrar sesión en todos los dispositivos",
+            "Esto cerrará todas tus sesiones activas. ¿Querés continuar?",
             [
                 { text: "Cancelar", style: "cancel" },
                 {
@@ -130,115 +139,85 @@ const Perfil = () => {
             ],
         );
     };
-    
+
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
 
         <View style={styles.card}>
             <Pressable
-                onPress={()=>setFormModal(true)}
+                accessibilityRole="button"
+                accessibilityLabel="Editar mis datos"
+                hitSlop={8}
+                style={({ pressed }) => [styles.editarBoton, pressed && styles.botonPresionado]}
+                onPress={() => setFormModal(true)}
             >
-
-                <View style={{alignSelf:'flex-end'}}>
-                    <Icon name="pencil-outline" size={25} color="#000"></Icon>
-                </View>
+                <Icon name="pencil-outline" size={24} color={colores.acento} />
             </Pressable>
 
             {/* Foto o icono */}
             <View style={styles.header}>
-                <Icon name="person-circle-outline" size={80} color="#4A90E2" />
-                <Text style={styles.nombre}>{usuarioPerfil.nombre || "Usuario"}</Text>
+                <Icon name="person-circle-outline" size={80} color={colores.acento} />
+                <Text style={styles.nombre} numberOfLines={2}>{usuarioPerfil.nombre || "Usuario"}</Text>
             </View>
 
             {/* Datos */}
-            <View style={styles.row}>
-                <Text style={styles.label}>Correo:</Text>
-                <Text style={styles.value}>{usuarioPerfil.correo || "-"}</Text>
-            </View>
-
-            <View style={styles.row}>
-                <Text style={styles.label}>Edad:</Text>
-                <Text style={styles.value}>{usuarioPerfil.edad || "-"}</Text>
-            </View>
-
-            <View style={styles.row}>
-                <Text style={styles.label}>Telefono:</Text>
-                <Text style={styles.value}>{usuarioPerfil.telefono || "-"}</Text>
-            </View>
-
-            <View style={styles.row}>
-                <Text style={styles.label}>Altura:</Text>
-                <Text style={styles.value}>{usuarioPerfil.altura ? usuarioPerfil.altura + " cm" : "-"}</Text>
-            </View>
-
-            <View style={styles.row}>
-                <Text style={styles.label}>Peso:</Text>
-                <Text style={styles.value}>{usuarioPerfil.peso ? usuarioPerfil.peso + " kg" : "-"}</Text>
-            </View>
-
-            <View style={styles.row}>
-                <Text style={styles.label}>Direccion:</Text>
-                <Text style={styles.value}>{usuarioPerfil.direccion || "-"}</Text>
-            </View>
-
-            <View style={styles.row}>
-                <Text style={styles.label}>Género:</Text>
-                <Text style={styles.value}>{usuarioPerfil.genero || "-"}</Text>
-            </View>
-
-            <View style={styles.row}>
-                <Text style={styles.label}>Disponibilidad:</Text>
-                <Text style={styles.value}>{usuarioPerfil.disponibilidad || "-"}</Text>
-            </View>
+            <Dato etiqueta="Correo" valor={usuarioPerfil.correo} />
+            <Dato etiqueta="Edad" valor={usuarioPerfil.edad} />
+            <Dato etiqueta="Teléfono" valor={usuarioPerfil.telefono} />
+            <Dato etiqueta="Altura" valor={usuarioPerfil.altura ? usuarioPerfil.altura + " cm" : ""} />
+            <Dato etiqueta="Peso" valor={usuarioPerfil.peso ? usuarioPerfil.peso + " kg" : ""} />
+            <Dato etiqueta="Dirección" valor={usuarioPerfil.direccion} />
+            <Dato etiqueta="Género" valor={usuarioPerfil.genero} />
+            <Dato etiqueta="Disponibilidad" valor={usuarioPerfil.disponibilidad} />
         </View>
 
         <View style={styles.card}>
             <View style={styles.header}>
-                <Text style={styles.label}>Objetivos:</Text>
+                <Text style={styles.label}>Objetivos</Text>
                 <Text style={styles.objetivos}>{usuarioPerfil.objetivos || "-"}</Text>
             </View>
         </View>
 
         <View style={styles.card}>
-            <View style={styles.row}>
-                <Text style={styles.label}>Cuenta:</Text>
-                <Text style={styles.value}>{usuarioBackend?.username || "-"}</Text>
-            </View>
-            <View style={styles.row}>
-                <Text style={styles.label}>Rol:</Text>
-                <Text style={styles.value}>{usuarioBackend?.Rol?.name || "-"}</Text>
-            </View>
-            <View style={styles.row}>
-                <Text style={styles.label}>Gym:</Text>
-                <Text style={styles.value}>{usuarioBackend?.adminOwner?.username || "-"}</Text>
-            </View>
+            <Dato etiqueta="Cuenta" valor={usuarioBackend?.username} />
+            <Dato etiqueta="Rol" valor={usuarioBackend?.Rol?.name} />
+            <Dato etiqueta="Gym" valor={usuarioBackend?.adminOwner?.username} />
+
             <Pressable
-                style={styles.catalogButton}
+                accessibilityRole="button"
+                accessibilityLabel="Abrir catálogo de ejercicios"
+                style={({ pressed }) => [styles.boton, styles.catalogButton, pressed && styles.botonPresionado]}
                 onPress={() => setCatalogoModal(true)}
             >
-                <Icon name="barbell-outline" size={20} color="#fff" />
-                <Text style={styles.logoutText}>Catalogo de ejercicios</Text>
+                <Icon name="barbell-outline" size={20} color={colores.sobreRelleno} />
+                <Text style={styles.botonTexto}>Catálogo de ejercicios</Text>
             </Pressable>
             <Pressable
-                style={styles.logoutButton}
+                accessibilityRole="button"
+                accessibilityLabel="Cerrar sesión"
+                style={({ pressed }) => [styles.boton, styles.logoutButton, pressed && styles.botonPresionado]}
                 onPress={confirmarCerrarSesion}
             >
-                <Icon name="log-out-outline" size={20} color="#fff" />
-                <Text style={styles.logoutText}>Cerrar sesion</Text>
+                <Icon name="log-out-outline" size={20} color={colores.textoPrimario} />
+                <Text style={styles.botonTextoSecundario}>Cerrar sesión</Text>
             </Pressable>
             <Pressable
-                style={styles.logoutAllButton}
+                accessibilityRole="button"
+                accessibilityLabel="Cerrar sesión en todos los dispositivos"
+                style={({ pressed }) => [styles.boton, styles.logoutAllButton, pressed && styles.botonPresionado]}
                 onPress={confirmarCerrarSesionGlobal}
             >
-                <Icon name="shield-outline" size={20} color="#fff" />
-                <Text style={styles.logoutText}>Cerrar en todos</Text>
+                <Icon name="shield-outline" size={20} color={colores.peligro} />
+                <Text style={styles.botonTextoPeligro}>Cerrar en todos</Text>
             </Pressable>
         </View>
 
         <Modal
             visible={formModal}
             animationType="slide"
+            statusBarTranslucent
+            navigationBarTranslucent
             onRequestClose={() => setFormModal(false)}
         >
             <FormUsuario
@@ -250,17 +229,25 @@ const Perfil = () => {
         <Modal
             visible={catalogoModal}
             animationType="slide"
+            statusBarTranslucent
+            navigationBarTranslucent
             onRequestClose={() => setCatalogoModal(false)}
         >
-            <View style={{ flexDirection: "row", alignItems: "center", backgroundColor: "#080c14", padding: 12 }}>
-                <Pressable onPress={() => setCatalogoModal(false)}>
-                    <Icon name="chevron-back-outline" color="#fff" size={32} />
-                </Pressable>
-                <Text style={{ color: "#fff", fontWeight: "800", fontSize: 18, marginLeft: 8 }}>
-                    Configuracion de Catalogo
-                </Text>
-            </View>
-            <CatalogoEjercicios />
+            <PantallaModal>
+                <View style={styles.modalHeader}>
+                    <Pressable
+                        accessibilityRole="button"
+                        accessibilityLabel="Volver al perfil"
+                        hitSlop={8}
+                        style={({ pressed }) => [styles.botonIcono, pressed && styles.botonPresionado]}
+                        onPress={() => setCatalogoModal(false)}
+                    >
+                        <Icon name="chevron-back-outline" color={colores.textoPrimario} size={30} />
+                    </Pressable>
+                    <Text style={styles.modalHeaderTitulo}>Configuración del catálogo</Text>
+                </View>
+                <CatalogoEjercicios />
+            </PantallaModal>
         </Modal>
     </ScrollView>
   );

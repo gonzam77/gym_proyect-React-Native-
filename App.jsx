@@ -1,8 +1,11 @@
 import {
   Platform,
-  SafeAreaView,
+  StatusBar,
   StyleSheet,
+  View,
 } from 'react-native';
+
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { checkForUpdate, UpdateFlow } from 'react-native-in-app-updates';
 
@@ -13,7 +16,7 @@ import { store, persistor } from './store/store';
 
 import { useEffect } from 'react';
 
-import { NavigationContainer } from '@react-navigation/native';
+import { DarkTheme, NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import notifee, { EventType } from '@notifee/react-native';
@@ -26,7 +29,9 @@ import Perfil from './views/usuario/perfil';
 import Notas from './views/notas/notas';
 import Login from './views/usuario/login';
 import StartupLoader from './components/StartupLoader';
+import AvisosToast from './components/AvisosToast';
 import { colores } from './styles/colores';
+import { tipografia } from './styles/theme';
 import { cargarUsuarioBackup, guardarUsuarioBackup, mapearUsuarioBackendALocal } from './helpers/usuarioBackup';
 import { cerrarSesion, guardarSesion, guardarUsuario, limpiarUsuario, setAuthInitializing } from './store/usuarioSlice';
 import { bootstrapAuth, limpiarAuthLocal } from './services/authService';
@@ -39,6 +44,27 @@ import {
 } from './services/descansoAlarma';
 
 const RootTabs = createBottomTabNavigator();
+
+/** Tema de navegacion, para que no se vea el flash blanco entre pantallas. */
+const temaNavegacion = {
+  ...DarkTheme,
+  colors: {
+    ...DarkTheme.colors,
+    primary: colores.principal,
+    background: colores.fondo,
+    card: colores.superficie,
+    text: colores.textoPrimario,
+    border: colores.bordeSuave,
+    notification: colores.acento,
+  },
+};
+
+const ICONOS_TABS = {
+  MisRutinas: ['fitness', 'fitness-outline'],
+  RutinasAsignadas: ['clipboard', 'clipboard-outline'],
+  Notas: ['create', 'create-outline'],
+  Perfil: ['person', 'person-outline'],
+};
 
 /**
  * Handler unico de eventos de notificacion.
@@ -141,7 +167,7 @@ const AppContent = () => {
   }, [dispatch, usuarioLocal, usuarioSesion]);
 
   if (authInitializing) {
-    return <StartupLoader message='Validando sesion...' />;
+    return <StartupLoader message='Validando tu sesión...' />;
   }
 
   if (!token) {
@@ -153,44 +179,29 @@ const AppContent = () => {
       initialRouteName='MisRutinas'
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
-          let iconName;
-          if (route.name === 'MisRutinas') {
-            iconName = focused ? 'fitness' : 'fitness-outline';
-          } else if (route.name === 'RutinasAsignadas') {
-            iconName = focused ? 'clipboard' : 'clipboard-outline';
-          } else if (route.name === 'Notas') {
-            iconName = focused ? 'create' : 'create-outline';
-          } else if (route.name === 'Perfil') {
-            iconName = focused ? 'person' : 'person-outline';
-          }
-          return <Ionicons name={iconName} size={size} color={color} />;
+          const [activo, inactivo] = ICONOS_TABS[route.name] || [];
+          return <Ionicons name={focused ? activo : inactivo} size={size} color={color} />;
         },
+        tabBarActiveTintColor: colores.principal,
+        tabBarInactiveTintColor: colores.textoSecundario,
+        tabBarStyle: styles.tabBar,
+        tabBarLabelStyle: styles.tabBarLabel,
+        tabBarItemStyle: styles.tabBarItem,
         headerTitleAlign: 'center',
-        headerStyle: {
-          backgroundColor: colores.azulProfundo,
-        },
-        headerTintColor: '#fff',
-        headerTitleStyle: {
-          fontWeight: 'bold',
-        },
+        headerStyle: styles.header,
+        headerShadowVisible: false,
+        headerTintColor: colores.textoPrimario,
+        headerTitleStyle: styles.headerTitle,
       })}
     >
-      <RootTabs.Screen
-        name='Perfil'
-        component={Perfil}
-      />
       <RootTabs.Screen
         name='MisRutinas'
         component={MisRutinas}
         options={{
-          tabBarLabel: 'Mis Rutinas',
-          headerTitle: 'Mis Rutinas',
-          headerTitleAlign: 'center',
-          headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-
+          tabBarLabel: 'Mis rutinas',
+          // La pantalla ya trae su propio encabezado con el saludo; un header
+          // del navegador arriba de eso serian dos titulos para lo mismo.
+          headerShown: false,
         }}
       />
       <RootTabs.Screen
@@ -198,17 +209,24 @@ const AppContent = () => {
         component={RutinasAsignadas}
         options={{
           tabBarLabel: 'Asignadas',
-          headerTitle: 'Rutinas Asignadas',
-          headerTitleAlign: 'center',
-          headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
+          headerShown: false,
         }}
       />
       <RootTabs.Screen
         name='Notas'
         component={Notas}
+        options={{
+          tabBarLabel: 'Notas',
+          headerTitle: 'Mis notas',
+        }}
+      />
+      <RootTabs.Screen
+        name='Perfil'
+        component={Perfil}
+        options={{
+          tabBarLabel: 'Perfil',
+          headerTitle: 'Mi perfil',
+        }}
       />
     </RootTabs.Navigator>
   );
@@ -241,11 +259,17 @@ const App = () => {
   return (
     <Provider store={store}>
       <PersistGate loading={<StartupLoader message='Preparando tu app...' />} persistor={persistor}>
-        <SafeAreaView style={styles.container}>
-          <NavigationContainer>
-            <AppContent />
-          </NavigationContainer>
-        </SafeAreaView>
+        <SafeAreaProvider>
+          {/* Sin backgroundColor: con edge-to-edge (Android 15+) ese prop es
+              no-op y ademas esta deprecado; el fondo lo pinta la pantalla. */}
+          <StatusBar barStyle='light-content' translucent />
+          <View style={styles.container}>
+            <NavigationContainer theme={temaNavegacion}>
+              <AppContent />
+            </NavigationContainer>
+          </View>
+          <AvisosToast />
+        </SafeAreaProvider>
       </PersistGate>
     </Provider>
   );
@@ -256,6 +280,29 @@ export default App;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'transparent',
+    backgroundColor: colores.fondo,
+  },
+  // Sin height ni paddingBottom a mano: bottom-tabs le suma el inset inferior
+  // solo cuando no se le pisa la altura, y asi la barra no queda abajo de la
+  // barra de navegacion del sistema.
+  tabBar: {
+    backgroundColor: colores.superficie,
+    borderTopColor: colores.bordeSuave,
+    borderTopWidth: 1,
+    paddingTop: 6,
+  },
+  tabBarItem: {
+    paddingVertical: 4,
+  },
+  tabBarLabel: {
+    ...tipografia.micro,
+    marginBottom: 2,
+  },
+  header: {
+    backgroundColor: colores.fondo,
+  },
+  headerTitle: {
+    ...tipografia.subtitulo,
+    color: colores.textoPrimario,
   },
 });

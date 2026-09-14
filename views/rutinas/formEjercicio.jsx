@@ -1,15 +1,23 @@
-import { useEffect, useRef, useState } from "react";
-import { Text, TextInput, View, ScrollView, Alert, Pressable } from "react-native";
-import { Picker } from "@react-native-picker/picker";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Alert, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { styles } from '../../styles/formEjercicioStyles';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { colores } from "../../styles/colores";
+import { maxEscalaFuente } from "../../styles/theme";
+import Selector from "../../components/Selector";
+import PantallaModal from "../../components/PantallaModal";
+import { avisoExito } from "../../helpers/avisos";
 import { useSelector } from "react-redux";
 import {
   getCatalogoLocalConRefresh,
   refrescarCatalogoRemoto,
 } from "../../helpers/catalogoEjercicios";
- 
+
+const OPCIONES_DESCANSO = Array.from({ length: 10 }, (_, i) => ({
+  etiqueta: `${i + 1} ${i === 0 ? 'minuto' : 'minutos'}`,
+  valor: String(i + 1),
+}));
+
 const FormEjercicio = ({ nuevaRutina, setNuevaRutina, setModalFormEjercicio, ejercicioSeleccionado, setEjercicioSeleccionado}) => {
   const sesion = useSelector(state => state.usuario.sesion);
   const usuarioBackend = sesion?.user;
@@ -90,27 +98,34 @@ const FormEjercicio = ({ nuevaRutina, setNuevaRutina, setModalFormEjercicio, eje
 
   const eliminarEjercicio = ()=>{
     Alert.alert(
-      'Eliminar',
-      'Desea eliminar el ejercicio?',
-      [{text:'Cancelar'}, {text:'Ok, Elimnar', onPress:()=>{
-        setNuevaRutina({
-          ...nuevaRutina,
-          ejercicios: nuevaRutina.ejercicios.filter(e => e.id !== ejercicioSeleccionado)
-        });
+      'Eliminar ejercicio',
+      '¿Querés quitar este ejercicio de la rutina?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Eliminar',
+          style: 'destructive',
+          onPress: ()=>{
+            setNuevaRutina({
+              ...nuevaRutina,
+              ejercicios: nuevaRutina.ejercicios.filter(e => e.id !== ejercicioSeleccionado)
+            });
 
-        setEjercicioSeleccionado(null); 
-        setModalFormEjercicio(false);
-      }}]
+            setEjercicioSeleccionado(null);
+            setModalFormEjercicio(false);
+            avisoExito('Ejercicio eliminado');
+          },
+        },
+      ]
     )
-        
+
   };
 
-  const validarFormulario = () => {   
-    if (!selectedCategory) return "Debe seleccionar una categoria.";
-    if (!ejercicioNuevo.ejercicio?.idEjercicio) return "Debe seleccionar un ejercicio.";
-    if (!ejercicioNuevo.series || ejercicioNuevo.series <= 0 ||
-        !ejercicioNuevo.descanso || ejercicioNuevo.descanso <= 0)
-      return "Todos los campos deben ser mayores a cero.";
+  const validarFormulario = () => {
+    if (!selectedCategory) return "Elegí una categoría.";
+    if (!ejercicioNuevo.ejercicio?.idEjercicio) return "Elegí un ejercicio.";
+    if (!ejercicioNuevo.series || ejercicioNuevo.series <= 0) return "Las series tienen que ser mayores a cero.";
+    if (!ejercicioNuevo.descanso || ejercicioNuevo.descanso <= 0) return "Elegí cuántos minutos de descanso.";
     return "";
   };
 
@@ -136,11 +151,15 @@ const FormEjercicio = ({ nuevaRutina, setNuevaRutina, setModalFormEjercicio, eje
   const handleGuardar = () => {
     const error = validarFormulario();
     if (error) {
+      // El error se muestra arriba del formulario, no en un alert() del
+      // navegador: ese dialogo no se puede estilar y tapa el campo que hay
+      // que corregir.
       setErrores(error);
-      alert(error);
       return;
     }
-    
+
+    setErrores("");
+
     if(ejercicioSeleccionado){
       setNuevaRutina({
         ...nuevaRutina,
@@ -155,67 +174,104 @@ const FormEjercicio = ({ nuevaRutina, setNuevaRutina, setModalFormEjercicio, eje
         ],
       });
 
-    }   
+    }
     setModalFormEjercicio(false);
     setEjercicioSeleccionado(null)
   };
 
-  return (
-    <ScrollView style={styles.container}>
-      <View style={styles.botonera}>
-        <Pressable
-          onPress={() => {
-            setEjercicioSeleccionado(null);
-            setModalFormEjercicio(false);
-          }}
-        >
-          
-          <Icon name="chevron-back-outline" color={'#fff'} size={35} />
-        </Pressable>
+  const opcionesCategorias = useMemo(() => categorias.map(categoria => ({
+    etiqueta: categoria.charAt(0).toUpperCase() + categoria.slice(1),
+    valor: categoria,
+  })), [categorias]);
 
-        {
-          ejercicioSeleccionado ?
-            <Pressable
-              onPress={() => {eliminarEjercicio()}}
-              style={{borderRadius:8, backgroundColor:'#862b2bff'}}
-            >
-              <Text style={{color:'#fff', fontSize:16, fontWeight:'900', padding:10}}>Eliminar</Text>
-            </Pressable>
-          :null
-        }
-        <Pressable style={{borderRadius:8, backgroundColor:colores.verdeOpaco}} onPress={handleGuardar}>
-            <Text style={{color:'#fff', fontSize:16, fontWeight:'900', padding:10}}>Guardar</Text>
-        </Pressable>
-        
-      </View>
-      <Text style={styles.titulo}>Personalizar Ejercicio</Text>
-      <View style={styles.seccion}>
-        <Text style={styles.label}>Categoria</Text>
-        <View style={styles.pickerWrapper}>
-          <Picker
-            selectedValue={selectedCategory}
-            dropdownIconColor="#fff"
-            onValueChange={valor => setSelectedCategory(valor)}
-            style={styles.picker}
+  const opcionesEjercicios = useMemo(() => ejerciciosFiltrados
+    .filter(e => e.categoria === selectedCategory)
+    .slice()
+    .sort((a, b) => a.nombre.localeCompare(b.nombre))
+    .map(e => ({ etiqueta: e.nombre, valor: e.nombre })), [ejerciciosFiltrados, selectedCategory]);
+
+  return (
+    <PantallaModal>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.botonera}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Volver sin guardar"
+            hitSlop={8}
+            style={({ pressed }) => [styles.botonIcono, pressed && styles.botonIconoPresionado]}
+            onPress={() => {
+              setEjercicioSeleccionado(null);
+              setModalFormEjercicio(false);
+            }}
           >
-            <Picker.Item label="--Seleccione Categoria--" value="" />
-            {categorias.map(categoria => (
-              <Picker.Item
-                key={categoria}
-                label={categoria.charAt(0).toUpperCase() + categoria.slice(1)}
-                value={categoria}
-              />
-            ))}
-          </Picker>
+            <Icon name="chevron-back-outline" color={colores.textoPrimario} size={30} />
+          </Pressable>
+
+          <View style={styles.acciones}>
+            {ejercicioSeleccionado ? (
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Eliminar este ejercicio de la rutina"
+                style={({ pressed }) => [styles.botonEliminar, pressed && styles.presionado]}
+                onPress={() => {eliminarEjercicio()}}
+              >
+                <Icon name="trash-outline" size={16} color={colores.peligro} />
+                <Text style={styles.botonEliminarTexto} maxFontSizeMultiplier={maxEscalaFuente}>
+                  Eliminar
+                </Text>
+              </Pressable>
+            ) : null}
+
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Guardar el ejercicio"
+              style={({ pressed }) => [styles.botonGuardar, pressed && styles.presionado]}
+              onPress={handleGuardar}
+            >
+              <Icon name="checkmark" size={20} color={colores.sobreRelleno} />
+              <Text style={styles.botonGuardarTexto} maxFontSizeMultiplier={maxEscalaFuente}>
+                Guardar
+              </Text>
+            </Pressable>
+          </View>
         </View>
-      </View>
-      <View style={styles.seccion}>
-        <Text style={styles.label}>Ejercicio</Text>
-        <View style={styles.pickerWrapper}>
-          <Picker
-            selectedValue={ejercicioNuevo.ejercicio?.nombre || ""}
-            dropdownIconColor="#fff"
-            onValueChange={valor => {
+
+        <Text style={styles.titulo} maxFontSizeMultiplier={maxEscalaFuente}>
+          {ejercicioSeleccionado ? 'Editar ejercicio' : 'Nuevo ejercicio'}
+        </Text>
+
+        {errores !== "" ? (
+          <View style={styles.errorCaja}>
+            <Icon name="alert-circle-outline" size={20} color={colores.peligro} />
+            <Text style={styles.error} maxFontSizeMultiplier={maxEscalaFuente}>{errores}</Text>
+          </View>
+        ) : null}
+
+        <View style={styles.seccion}>
+          <Text style={styles.label} maxFontSizeMultiplier={maxEscalaFuente}>Categoría</Text>
+          <Selector
+            titulo="Categoría"
+            placeholder="Elegí una categoría"
+            opciones={opcionesCategorias}
+            valor={selectedCategory}
+            onChange={valor => setSelectedCategory(valor)}
+          />
+        </View>
+
+        <View style={styles.seccion}>
+          <Text style={styles.label} maxFontSizeMultiplier={maxEscalaFuente}>Ejercicio</Text>
+          <Selector
+            titulo="Ejercicio"
+            placeholder={selectedCategory ? 'Elegí un ejercicio' : 'Primero elegí la categoría'}
+            deshabilitado={!selectedCategory}
+            opciones={opcionesEjercicios}
+            valor={ejercicioNuevo.ejercicio?.nombre || ""}
+            onChange={valor => {
               const ejercicioDelCatalogo = ejerciciosFiltrados.find(e => e.nombre === valor);
               if (ejercicioDelCatalogo) {
                 setEjercicioNuevo(prev => ({
@@ -231,62 +287,53 @@ const FormEjercicio = ({ nuevaRutina, setNuevaRutina, setModalFormEjercicio, eje
                 }));
               }
             }}
-            style={styles.picker}
-          >
-            <Picker.Item label="--Seleccione Ejercicio--" value="" />
-            {ejerciciosFiltrados
-              ?.filter(e => e.categoria === selectedCategory)
-              ?.sort((a, b) => a.nombre.localeCompare(b.nombre))
-              ?.map(ej => {
-                return(
-                <Picker.Item key={ej.idEjercicio} label={ej.nombre} value={ej.nombre} />
-                )
-            })}
-          </Picker>
-        </View>
-      </View>
-      <View style={styles.seccion}>
-        <Text style={styles.label}>Series</Text>
-        <TextInput
-          value={ejercicioNuevo.series.toString()}
-          style={styles.input}
-          keyboardType="numeric"
-          onChangeText={v => handleChange("series", v)}
           />
-        <Text style={styles.label}>Descanso</Text>
-        <View style={styles.pickerWrapper}>
-          <Picker
-            style={styles.picker}
-            selectedValue={ejercicioNuevo.descanso.toString()}
-            dropdownIconColor="#fff"
-            onValueChange={v => handleChange("descanso", v)}
-          >
-            <Picker.Item label="--Minutos de descanso--" value=''></Picker.Item>
-            <Picker.Item label="1 Min" value='1'></Picker.Item>
-            <Picker.Item label="2 Min" value='2'></Picker.Item>
-            <Picker.Item label="3 Min" value='3'></Picker.Item>
-            <Picker.Item label="4 Min" value='4'></Picker.Item>
-            <Picker.Item label="5 Min" value='5'></Picker.Item>
-            <Picker.Item label="6 Min" value='6'></Picker.Item>
-            <Picker.Item label="7 Min" value='7'></Picker.Item>
-            <Picker.Item label="8 Min" value='8'></Picker.Item>
-            <Picker.Item label="9 Min" value='9'></Picker.Item>
-            <Picker.Item label="10 Min" value='10'></Picker.Item>
-          </Picker>
         </View>
-        <Text style={styles.label}>Nota</Text>
-        <TextInput
-          multiline
-          numberOfLines={4}
-          placeholder="Peso estimado, repeticiones estimadas"
-          value={ejercicioNuevo.nota}
-          onChangeText={(valor)=>{handleChange('nota',valor)}}
-          style={[styles.input,{minHeight:80}]}
-          placeholderTextColor='#888'
-        ></TextInput>
-      </View>
-      {errores !== "" && <Text style={styles.error}>{errores}</Text>}
-    </ScrollView>
+
+        <View style={styles.seccion}>
+          <Text style={styles.label} maxFontSizeMultiplier={maxEscalaFuente}>Series</Text>
+          <TextInput
+            value={ejercicioNuevo.series.toString()}
+            style={styles.input}
+            keyboardType="numeric"
+            placeholder="Ej: 4"
+            placeholderTextColor={colores.textoTenue}
+            onChangeText={v => handleChange("series", v)}
+            accessibilityLabel="Cantidad de series"
+            maxFontSizeMultiplier={maxEscalaFuente}
+          />
+        </View>
+
+        <View style={styles.seccion}>
+          <Text style={styles.label} maxFontSizeMultiplier={maxEscalaFuente}>Descanso entre series</Text>
+          <Selector
+            titulo="Descanso entre series"
+            placeholder="Elegí los minutos"
+            opciones={OPCIONES_DESCANSO}
+            valor={ejercicioNuevo.descanso ? String(ejercicioNuevo.descanso) : ""}
+            onChange={v => handleChange("descanso", v)}
+          />
+        </View>
+
+        <View style={styles.seccion}>
+          <Text style={styles.label} maxFontSizeMultiplier={maxEscalaFuente}>Nota</Text>
+          <Text style={styles.ayuda} maxFontSizeMultiplier={maxEscalaFuente}>
+            Opcional. Te la vas a encontrar mientras entrenás.
+          </Text>
+          <TextInput
+            multiline
+            numberOfLines={4}
+            placeholder="Peso estimado, repeticiones estimadas"
+            value={ejercicioNuevo.nota}
+            onChangeText={(valor)=>{handleChange('nota',valor)}}
+            style={[styles.input, styles.inputNota]}
+            placeholderTextColor={colores.textoTenue}
+            accessibilityLabel="Nota del ejercicio"
+            maxFontSizeMultiplier={maxEscalaFuente}
+          />
+        </View>
+      </ScrollView>
+    </PantallaModal>
   );
 };
 

@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
-import { View, Text, Pressable, TextInput } from "react-native";
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { useDispatch } from "react-redux";
 import { agregarComentario } from "../../store/notasHistoricasSlice";
 import Icon from 'react-native-vector-icons/Ionicons';
-import uuid from 'react-native-uuid';
-import styles from "../../styles/formComentarioStyles";
+import styles from "../../styles/notasStyles";
+import PantallaModal from "../../components/PantallaModal";
 import { colores } from "../../styles/colores";
+import { maxEscalaFuente } from "../../styles/theme";
+import { avisoExito } from "../../helpers/avisos";
 
 const FormComentario = ({ idNota, comentarioSeleccionado, setComentarioSeleccionado, setFormComentarioModal }) => {
 
@@ -15,7 +17,7 @@ const FormComentario = ({ idNota, comentarioSeleccionado, setComentarioSeleccion
     const generarId = () =>
     Math.random().toString(36).substring(2, 10) +
     Date.now().toString(36);
-    
+
     const [comentario, setComentario] = useState({
         id: generarId(),
         fecha: nuevaFecha,
@@ -26,7 +28,7 @@ const FormComentario = ({ idNota, comentarioSeleccionado, setComentarioSeleccion
         if(comentarioSeleccionado?.id)setComentario(comentarioSeleccionado);
     },[comentarioSeleccionado])
 
-    
+
     const handeChange = (campo, valor) => {
         setComentario({
             ...comentario,
@@ -34,47 +36,82 @@ const FormComentario = ({ idNota, comentarioSeleccionado, setComentarioSeleccion
         })
     };
 
+    const esEdicion = Boolean(comentarioSeleccionado?.id);
+    const sinTexto = !comentario.nota?.trim();
+
+    const cerrar = () => {
+        setFormComentarioModal(false);
+        setComentarioSeleccionado({});
+    };
+
     const handleGuardar = ()=>{
+        if (sinTexto) {
+            return;
+        }
+
         dispatch(agregarComentario({idNota, comentario}));
+        avisoExito(esEdicion ? 'Nota actualizada' : 'Nota guardada');
         setComentarioSeleccionado({});
         setComentario({});
         setFormComentarioModal(false);
     };
 
     return (
-        <View style={{flex:1, backgroundColor:colores.azulProfundo}}>
-            <Pressable
-                onPress={()=>{
-                    setFormComentarioModal(false);
-                    setComentarioSeleccionado({});
-                }}
-                style={{marginTop:20,marginLeft:10,}}
+        <PantallaModal>
+            <KeyboardAvoidingView
+                style={styles.container}
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             >
-                <Icon name="chevron-back-outline" color={'#fff'} size={25}></Icon>
-                
-            </Pressable>
+                <View style={styles.encabezado}>
+                    <Pressable
+                        accessibilityRole="button"
+                        accessibilityLabel="Volver sin guardar"
+                        hitSlop={8}
+                        style={({ pressed }) => [styles.botonIcono, pressed && styles.botonIconoPresionado]}
+                        onPress={cerrar}
+                    >
+                        <Icon name="chevron-back-outline" color={colores.textoPrimario} size={30} />
+                    </Pressable>
+                    <Text style={styles.titulo} maxFontSizeMultiplier={maxEscalaFuente}>
+                        {esEdicion ? 'Editar nota' : 'Nueva nota'}
+                    </Text>
+                </View>
 
-            <Text style={styles.titulo}>{comentarioSeleccionado?.id ? 'Editar Comentario' : 'Nuevo Comentario' }</Text>
+                <ScrollView
+                    contentContainerStyle={{ paddingTop: 24, paddingBottom: 24 }}
+                    keyboardShouldPersistTaps="handled"
+                >
+                    <View style={styles.form}>
+                        <TextInput
+                            multiline
+                            placeholder="Escribí lo que quieras registrar..."
+                            placeholderTextColor={colores.textoTenue}
+                            onChangeText={(valor)=>handeChange('nota',valor)}
+                            style={[styles.input, styles.inputMultilinea]}
+                            value={comentario.nota}
+                            autoFocus={!esEdicion}
+                            maxFontSizeMultiplier={maxEscalaFuente}
+                        />
+                    </View>
 
-            <TextInput
-                multiline
-                placeholder="Escriba lo que desee..."
-                placeholderTextColor={'#000'}
-                onChangeText={(valor)=>handeChange('nota',valor)}
-                numberOfLines={10}
-                style={styles.input}
-                value={comentario.nota}
-            />
-
-            <Pressable
-                style={styles.btn}
-                onPress={handleGuardar}
-            >
-                <Text
-                    style={styles.btnText}
-                >Enviar</Text>
-            </Pressable>
-        </View>
+                    <Pressable
+                        accessibilityRole="button"
+                        accessibilityLabel={esEdicion ? 'Guardar los cambios' : 'Guardar la nota'}
+                        style={({ pressed }) => [
+                            styles.botonGuardar,
+                            (sinTexto || pressed) && styles.botonGuardarDeshabilitado,
+                        ]}
+                        disabled={sinTexto}
+                        onPress={handleGuardar}
+                    >
+                        <Icon name="checkmark" size={20} color={colores.sobreRelleno} />
+                        <Text style={styles.btnTexto} maxFontSizeMultiplier={maxEscalaFuente}>
+                            Guardar
+                        </Text>
+                    </Pressable>
+                </ScrollView>
+            </KeyboardAvoidingView>
+        </PantallaModal>
     )
 };
 

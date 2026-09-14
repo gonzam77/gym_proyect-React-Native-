@@ -1,132 +1,201 @@
-import { View, Text, ScrollView, Pressable, Modal, Alert } from "react-native";
+import { View, Text, Pressable, Modal, Alert, FlatList } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import styles from "../../styles/notasStyles";
 import { useState } from "react";
 import Icon from 'react-native-vector-icons/Ionicons';
 import NotaDetalle from "./notaDetalle";
 import FormNota from './formNota';
+import HojaAcciones from "../../components/HojaAcciones";
+import EstadoVacio from "../../components/EstadoVacio";
+import { colores } from "../../styles/colores";
+import { maxEscalaFuente } from "../../styles/theme";
+import { avisoExito } from "../../helpers/avisos";
 import { eliminarNota } from "../../store/notasHistoricasSlice";
 
 const Notas = () => {
 
     const notas = useSelector(state => state.notasHistoricas.notasHistoricas);
-    const copiaNotas = JSON.parse(JSON.stringify(notas));
     const dispatch = useDispatch();
     const [notaModal, setNotaModal] = useState(false);
     const [fromModal, setFormModal] = useState(false);
     const [notaSeleccionada, setNotaSeleccionada] = useState({});
-    
-    return (
-        <View style={{flex:1}}>
-            <ScrollView style={styles.container}>
+    const [menuNota, setMenuNota] = useState(null);
+
+    const nuevaSeccion = () => {
+        setNotaSeleccionada({});
+        setFormModal(true);
+    };
+
+    const confirmarEliminar = (nota) => {
+        Alert.alert(
+            "Eliminar sección",
+            `¿Querés eliminar "${nota.titulo}" y todas sus notas? Esta acción no se puede deshacer.`,
+            [
+                { text: "Cancelar", style: "cancel" },
                 {
-                    copiaNotas?.map(nota => (
-                        <View key={nota.id} style={styles.card}>
-                            <View style={{flexDirection:'row', justifyContent:'space-between'}}>
-                                <View>
-                                    <Text style={styles.cardTitle}>{nota.titulo}</Text>
-                                    <Text>Última nota:</Text>
-                                </View>
-                                <View style={{alignItems:'flex-end'}}>
-                                    <Pressable
-                                        
-                                        onPress={()=>{
-                                            Alert.alert( 
-                                                'Seleccione una opción',
-                                                '',
-                                                [
-                                                    {
-                                                        text:'Cancelar'
-                                                    }, 
-                                                    {
-                                                        text:'Editar', onPress:()=>{
-                                                            setNotaSeleccionada(nota);
-                                                            setFormModal(true)
-                                                        }
-                                                    },
-                                                    {
-                                                        text:'Eliminar', onPress:()=>{
-                                                            const idNota = nota.id;
-                                                            dispatch(eliminarNota(idNota))
-                                                        }
-                                                    }    
+                    text: "Eliminar",
+                    style: "destructive",
+                    onPress: () => {
+                        dispatch(eliminarNota(nota.id));
+                        avisoExito('Sección eliminada');
+                    },
+                },
+            ],
+        );
+    };
 
-                                                ]
-                                            )
-                                        }}
-                                    >
-                                        <Icon name="ellipsis-vertical-outline" size={23} color='#000' ></Icon>
-                                    </Pressable>
-                                </View>
-                                
-                            </View>
-                            <Pressable
-                                onPress={()=>{
-                                    setNotaSeleccionada(nota);
-                                    setNotaModal(true);
-                                }}
-                            >
+    const renderNota = ({ item: nota }) => {
+        const ultima = nota.notas?.length > 0 ? nota.notas[nota.notas.length - 1] : null;
 
-                                {
-                                    nota.notas?.length > 0 ? (() => {
-                                        const u = nota.notas.at(-1);
-                                        return (
-                                            <View key={u?.id} style={styles.commentContainer}>
-                                                <Text style={styles.commentDate}>{new Date(u?.fecha).toLocaleString()}</Text>
-                                                <Text numberOfLines={3} ellipsizeMode="tail" style={styles.commentText}>{u?.nota}</Text>
-                                            </View>
-                                        );
-                                    })() : <Text>¡No ha agregado notas!</Text>
-                                }
-                                <View style={{alignSelf:'flex-end', margin:5}}>
-                                    <Icon name="chevron-forward-outline" color={'#000'} size={20}></Icon>
-                                </View>
-                            </Pressable>
-                        </View>
-                    ))
-                }
-                
-                <Modal
-                    visible={notaModal}
-                    animationType="slide"
-                    onRequestClose={() => {
-                        setNotaModal(false);
-                        setNotaSeleccionada({});
-                    }}
-                >
-                    <NotaDetalle
-                        notaSeleccionada={notaSeleccionada}
-                        setNotaSeleccionada={setNotaSeleccionada}
-                        setNotaModal={setNotaModal}
-                        />
-                </Modal>
+        return (
+            <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={`Abrir la sección ${nota.titulo}`}
+                style={({ pressed }) => [styles.card, pressed && styles.cardPresionada]}
+                onPress={() => {
+                    setNotaSeleccionada(nota);
+                    setNotaModal(true);
+                }}
+            >
+                <View style={styles.cardHeader}>
+                    <View style={{ flex: 1 }}>
+                        <Text style={styles.cardTitle} numberOfLines={2} maxFontSizeMultiplier={maxEscalaFuente}>
+                            {nota.titulo}
+                        </Text>
+                        <Text style={styles.etiqueta} maxFontSizeMultiplier={maxEscalaFuente}>
+                            {nota.notas?.length
+                                ? `${nota.notas.length} ${nota.notas.length === 1 ? 'nota' : 'notas'}`
+                                : 'Sin notas'}
+                        </Text>
+                    </View>
 
-                <Modal
-                    visible={fromModal}
-                    animationType="slide"
-                    onRequestClose={() => {
-                        setFormModal(false);
-                        setNotaSeleccionada({});
-                    }}
+                    <Pressable
+                        accessibilityRole="button"
+                        accessibilityLabel={`Opciones de ${nota.titulo}`}
+                        hitSlop={8}
+                        style={({ pressed }) => [styles.botonIcono, pressed && styles.botonIconoPresionado]}
+                        onPress={(event) => {
+                            event.stopPropagation();
+                            setMenuNota(nota);
+                        }}
                     >
-                    <FormNota
-                        notaSeleccionada={notaSeleccionada}
-                        setNotaSeleccionada={setNotaSeleccionada}
-                        setFormModal={setFormModal}
+                        <Icon name="ellipsis-vertical" size={20} color={colores.textoSecundario} />
+                    </Pressable>
+                </View>
+
+                {ultima ? (
+                    <View style={styles.commentContainer}>
+                        <Text style={styles.commentDate} maxFontSizeMultiplier={maxEscalaFuente}>
+                            {new Date(ultima.fecha).toLocaleString()}
+                        </Text>
+                        <Text
+                            numberOfLines={3}
+                            ellipsizeMode="tail"
+                            style={styles.commentText}
+                            maxFontSizeMultiplier={maxEscalaFuente}
+                        >
+                            {ultima.nota}
+                        </Text>
+                    </View>
+                ) : (
+                    <Text style={styles.sinNotas} maxFontSizeMultiplier={maxEscalaFuente}>
+                        Todavía no agregaste notas acá.
+                    </Text>
+                )}
+
+                <View style={styles.verMas}>
+                    <Text style={styles.verMasTexto} maxFontSizeMultiplier={maxEscalaFuente}>
+                        Ver todo
+                    </Text>
+                    <Icon name="chevron-forward-outline" color={colores.acento} size={16} />
+                </View>
+            </Pressable>
+        );
+    };
+
+    return (
+        <View style={styles.container}>
+            <FlatList
+                data={notas}
+                keyExtractor={item => item.id.toString()}
+                renderItem={renderNota}
+                contentContainerStyle={styles.content}
+                showsVerticalScrollIndicator={false}
+                ListEmptyComponent={() => (
+                    <EstadoVacio
+                        icono="create-outline"
+                        titulo="Todavía no tenés notas"
+                        descripcion="Creá una sección para ir anotando pesos, sensaciones o lo que quieras seguir."
+                        textoAccion="Crear una sección"
+                        onAccion={nuevaSeccion}
                     />
-                </Modal>
+                )}
+            />
 
-            </ScrollView>
+            <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Crear una sección de notas"
+                style={({ pressed }) => [styles.btn, { bottom: 20 }, pressed && styles.btnPresionado]}
+                onPress={nuevaSeccion}
+            >
+                <Icon name="pencil" size={26} color={colores.sobreRelleno} />
+            </Pressable>
 
-                <Pressable
-                    style={[styles.btn, {position:'absolute', bottom:15, right:50}]}
-                    onPress={()=>{
-                        setNotaSeleccionada({});
-                        setFormModal(true);
-                    }}
-                >
-                    <Icon name="pencil" size={28} color={'#fff'}></Icon>
-                </Pressable>    
+            <HojaAcciones
+                visible={Boolean(menuNota)}
+                titulo={menuNota?.titulo}
+                onClose={() => setMenuNota(null)}
+                opciones={[
+                    {
+                        texto: 'Editar título',
+                        icono: 'pencil-outline',
+                        onPress: () => {
+                            setNotaSeleccionada(menuNota);
+                            setFormModal(true);
+                        },
+                    },
+                    {
+                        texto: 'Eliminar sección',
+                        icono: 'trash-outline',
+                        destructivo: true,
+                        onPress: () => confirmarEliminar(menuNota),
+                    },
+                ]}
+            />
+
+            <Modal
+                visible={notaModal}
+                animationType="slide"
+                statusBarTranslucent
+                navigationBarTranslucent
+                onRequestClose={() => {
+                    setNotaModal(false);
+                    setNotaSeleccionada({});
+                }}
+            >
+                <NotaDetalle
+                    notaSeleccionada={notaSeleccionada}
+                    setNotaSeleccionada={setNotaSeleccionada}
+                    setNotaModal={setNotaModal}
+                />
+            </Modal>
+
+            <Modal
+                visible={fromModal}
+                animationType="slide"
+                statusBarTranslucent
+                navigationBarTranslucent
+                onRequestClose={() => {
+                    setFormModal(false);
+                    setNotaSeleccionada({});
+                }}
+            >
+                <FormNota
+                    notaSeleccionada={notaSeleccionada}
+                    setNotaSeleccionada={setNotaSeleccionada}
+                    setFormModal={setFormModal}
+                />
+            </Modal>
         </View>
     );
 };

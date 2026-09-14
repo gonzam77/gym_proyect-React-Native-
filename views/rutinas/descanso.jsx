@@ -1,16 +1,24 @@
-import { AppState, Image, Pressable, ScrollView, Text, View } from 'react-native';
+import { AppState, Image, Pressable, ScrollView, Text, Vibration, View } from 'react-native';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import { styles } from '../../styles/descansoStyles';
-import { Boton } from '../../components/botones/botones';
 import { colores } from '../../styles/colores';
+import { maxEscalaFuente } from '../../styles/theme';
+import BarraProgreso from '../../components/BarraProgreso';
+import PantallaModal from '../../components/PantallaModal';
 import {
   abrirAjustesAlarmaExacta,
   cancelarDescanso,
   programarDescanso,
   puedeProgramarAlarmaExacta,
 } from '../../services/descansoAlarma';
+import {
+  mantenerPantallaEncendida,
+  permitirApagarPantalla,
+} from '../../services/pantallaEncendida';
+
+const AJUSTE_MS = 30 * 1000;
 
 /**
  * Pantalla de descanso.
@@ -33,6 +41,9 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
 
   const faltaPermisoRef = useRef(false);
 
+  // Para no vibrar dos veces por el mismo descanso.
+  const yaVibroRef = useRef(false);
+
   // Datos de la notificacion en un ref, para que programar() sea estable y no
   // reprograme la alarma cada vez que el ejercicio se re-renderiza.
   const datosRef = useRef(null);
@@ -48,11 +59,19 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
 
     if (restante === 0) {
       setActivo(false);
+
+      // Aviso tactil al terminar, para cuando la app esta en pantalla y el
+      // sonido del gimnasio tapa la alarma.
+      if (!yaVibroRef.current) {
+        yaVibroRef.current = true;
+        Vibration.vibrate([0, 400, 200, 400]);
+      }
     }
   }, []);
 
   const programar = useCallback((finEn) => {
     finEnRef.current = finEn;
+    yaVibroRef.current = false;
     setRestanteMs(Math.max(finEn - Date.now(), 0));
     setActivo(true);
     programarDescanso({ finEn, ...datosRef.current });
@@ -79,6 +98,14 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
   useEffect(() => {
     revisarPermisoAlarma();
   }, [revisarPermisoAlarma]);
+
+  // Durante el descanso el telefono queda apoyado mostrando el contador; sin
+  // esto Android apaga la pantalla al minuto. El cleanup es obligatorio: el
+  // flag vive en la ventana de la Activity, no en este componente.
+  useEffect(() => {
+    mantenerPantallaEncendida();
+    return permitirApagarPantalla;
+  }, []);
 
   // Arranca el descanso y le delega la cuenta al sistema.
   useEffect(() => {
@@ -141,6 +168,26 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
     programar(Date.now() + totalMs);
   };
 
+  /**
+   * Suma o resta tiempo al descanso en curso. Es el ajuste que mas se usa en el
+   * gimnasio: la serie salio mas dura de lo previsto y hacen falta 30 segundos
+   * mas, o sobran y se quiere arrancar antes.
+   */
+  const ajustar = (segundos) => {
+    const delta = segundos * 1000;
+
+    if (activo) {
+      const nuevoFin = Math.max(finEnRef.current + delta, Date.now());
+      programar(nuevoFin);
+      return;
+    }
+
+    setRestanteMs(previo => Math.max(previo + delta, 0));
+    if (delta > 0) {
+      yaVibroRef.current = false;
+    }
+  };
+
   const cerrar = async () => {
     setActivo(false);
     await cancelarDescanso();
@@ -156,22 +203,30 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
   };
 
   const termino = totalMs > 0 && restanteMs === 0;
+  const progreso = totalMs > 0 ? 1 - Math.min(restanteMs / totalMs, 1) : 0;
 
   return (
-    <View style={styles.container}>
+    <PantallaModal style={styles.container}>
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
         <Image style={styles.image} source={require('../../assets/img/descanso.png')} />
-        <Text style={styles.titulo}>DESCANSO</Text>
-        <Text style={styles.titulo1}>Series realizadas {serie} de {ejercicio.series}</Text>
+        <Text style={styles.titulo} maxFontSizeMultiplier={maxEscalaFuente}>Descanso</Text>
+        <Text style={styles.titulo1} maxFontSizeMultiplier={maxEscalaFuente}>
+          Series realizadas {serie} de {ejercicio.series}
+        </Text>
 
         {faltaPermisoAlarma && (
-          <Pressable style={styles.bannerPermiso} onPress={abrirAjustesAlarmaExacta}>
-            <Icon name='alarm-outline' size={24} color={colores.advertencia} />
-            <Text style={styles.bannerPermisoTexto}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Abrir los ajustes de alarmas y recordatorios"
+            style={({ pressed }) => [styles.bannerPermiso, pressed && styles.botonPresionado]}
+            onPress={abrirAjustesAlarmaExacta}
+          >
+            <Icon name='alarm-outline' size={24} color={colores.aviso} />
+            <Text style={styles.bannerPermisoTexto} maxFontSizeMultiplier={maxEscalaFuente}>
               Activá "Alarmas y recordatorios" para que el aviso suene puntual aunque
               uses otra app. Tocá acá.
             </Text>
@@ -179,41 +234,129 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
         )}
 
         <View style={styles.contenedor}>
-          <Text style={styles.titulo2}>Tiempo Restante</Text>
-          <Text style={styles.tiempo}>{formatoTiempo(restanteMs)}</Text>
+          <Text style={styles.titulo2} maxFontSizeMultiplier={maxEscalaFuente}>
+            {termino ? 'Descanso terminado' : 'Tiempo restante'}
+          </Text>
+          <Text
+            style={[styles.tiempo, termino && styles.tiempoTerminado]}
+            maxFontSizeMultiplier={1}
+            accessibilityLabel={`Quedan ${formatoTiempo(restanteMs)} minutos`}
+          >
+            {formatoTiempo(restanteMs)}
+          </Text>
+
+          <View style={styles.barra}>
+            <BarraProgreso
+              progreso={progreso}
+              color={termino ? colores.principal : colores.acento}
+              alto={6}
+              etiqueta="Progreso del descanso"
+            />
+          </View>
 
           <View style={styles.botones}>
             {activo ? (
-              <Pressable onPress={pausar}>
-                <Icon name='pause-circle-outline' size={60} color={colores.turquesa} />
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Pausar el descanso"
+                style={({ pressed }) => [styles.botonRedondo, pressed && styles.botonPresionado]}
+                onPress={pausar}
+              >
+                <Icon name='pause' size={30} color={colores.turquesa} />
               </Pressable>
             ) : (
-              <Pressable onPress={reanudar} disabled={restanteMs === 0}>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Reanudar el descanso"
+                style={({ pressed }) => [
+                  styles.botonRedondo,
+                  pressed && styles.botonPresionado,
+                  restanteMs === 0 && styles.botonAjusteDeshabilitado,
+                ]}
+                onPress={reanudar}
+                disabled={restanteMs === 0}
+              >
                 <Icon
-                  name='play-circle-outline'
-                  size={60}
-                  color={restanteMs === 0 ? colores.secundario : colores.principal}
+                  name='play'
+                  size={30}
+                  color={restanteMs === 0 ? colores.textoSecundario : colores.principal}
                 />
               </Pressable>
             )}
-            <Pressable onPress={reiniciar}>
-              <Icon name='refresh-outline' size={55} color={colores.turquesa} />
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Reiniciar el descanso"
+              style={({ pressed }) => [styles.botonRedondo, pressed && styles.botonPresionado]}
+              onPress={reiniciar}
+            >
+              <Icon name='refresh-outline' size={28} color={colores.turquesa} />
+            </Pressable>
+          </View>
+
+          <View style={styles.ajustes}>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Restar 30 segundos al descanso"
+              style={({ pressed }) => [
+                styles.botonAjuste,
+                pressed && styles.botonPresionado,
+                restanteMs <= 0 && styles.botonAjusteDeshabilitado,
+              ]}
+              disabled={restanteMs <= 0}
+              onPress={() => ajustar(-30)}
+            >
+              <Icon name="remove" size={18} color={colores.textoPrimario} />
+              <Text style={styles.botonAjusteTexto} maxFontSizeMultiplier={maxEscalaFuente}>
+                30 s
+              </Text>
+            </Pressable>
+
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Sumar 30 segundos al descanso"
+              style={({ pressed }) => [styles.botonAjuste, pressed && styles.botonPresionado]}
+              onPress={() => ajustar(30)}
+            >
+              <Icon name="add" size={18} color={colores.textoPrimario} />
+              <Text style={styles.botonAjusteTexto} maxFontSizeMultiplier={maxEscalaFuente}>
+                30 s
+              </Text>
             </Pressable>
           </View>
         </View>
 
         {termino ? (
           <>
-            <Text style={styles.aviso}>Tocá STOP para silenciar la alarma</Text>
-            <Pressable onPress={cerrar} style={styles.stopButton}>
-              <Icon name='stop-circle-outline' size={100} color={colores.alert} />
+            <Text style={styles.aviso} maxFontSizeMultiplier={maxEscalaFuente}>
+              Tocá DETENER para silenciar la alarma
+            </Text>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Detener la alarma y volver al ejercicio"
+              style={({ pressed }) => [styles.botonDetener, pressed && styles.botonPresionado]}
+              onPress={cerrar}
+            >
+              <Icon name='stop-circle-outline' size={28} color={colores.sobreRelleno} />
+              <Text style={styles.botonDetenerTexto} maxFontSizeMultiplier={maxEscalaFuente}>
+                Detener
+              </Text>
             </Pressable>
           </>
         ) : (
-          <Boton onPress={cerrar}>Saltar</Boton>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Saltar el descanso y volver al ejercicio"
+            style={({ pressed }) => [styles.botonSaltar, pressed && styles.botonPresionado]}
+            onPress={cerrar}
+          >
+            <Icon name="play-skip-forward-outline" size={20} color={colores.textoPrimario} />
+            <Text style={styles.botonSaltarTexto} maxFontSizeMultiplier={maxEscalaFuente}>
+              Saltar descanso
+            </Text>
+          </Pressable>
         )}
       </ScrollView>
-    </View>
+    </PantallaModal>
   );
 };
 

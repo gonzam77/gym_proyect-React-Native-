@@ -7,6 +7,19 @@ import formatearTiempo from '../../helpers/formatearTiempo';
 import { styles } from '../../styles/detalleRutinaStyles';
 import { eliminarRutina, reiniciarRutina, reordenarEjercicio } from "../../store/rutinasSlice";
 import { colores } from "../../styles/colores";
+import { maxEscalaFuente } from "../../styles/theme";
+import BarraProgreso from "../../components/BarraProgreso";
+import ProgresoSeries from "../../components/ProgresoSeries";
+import HojaAcciones from "../../components/HojaAcciones";
+import EstadoVacio from "../../components/EstadoVacio";
+import PantallaModal from "../../components/PantallaModal";
+import { avisoExito } from "../../helpers/avisos";
+
+const estaFinalizado = ejercicio => {
+  const series = Number(ejercicio?.series) || 0;
+  const realizadas = Number(ejercicio?.seriesRealizadas) || 0;
+  return series > 0 && realizadas >= series;
+};
 
 const DetalleRutina = (
   {
@@ -27,11 +40,13 @@ const DetalleRutina = (
   const dispatch = useDispatch();
   const [ejercicio, setEjercicio] = useState({});
   const [modalEjercicio, setModalEjercicio] = useState(false);
+  const [menuVisible, setMenuVisible] = useState(false);
 
   const handleEliminarRutina  = (id)=>{
     setRutinaSeleccionada({});
     setModalDetalle(false);
     dispatch(eliminarRutina(id));
+    avisoExito('Rutina eliminada');
   };
 
   useEffect(()=>{
@@ -46,8 +61,9 @@ const DetalleRutina = (
     }
 
     dispatch(reiniciarRutina(copiaRutinaActualizada));
+    avisoExito('Rutina reiniciada', 'Todas las series volvieron a cero.');
   }
-  
+
   const moverEjercicio = (indexActual, direccion) => {
     if (!copiaRutinaActualizada?.id) {
       return;
@@ -60,136 +76,253 @@ const DetalleRutina = (
     }));
   };
 
+  const confirmarReiniciar = () => {
+    Alert.alert(
+      "Reiniciar rutina",
+      "¿Querés volver todas las series de esta rutina a cero?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        { text: "Reiniciar", onPress: handleReiniciarRutina },
+      ],
+    );
+  };
+
+  const confirmarEliminar = () => {
+    Alert.alert(
+      "Eliminar rutina",
+      `¿Querés eliminar "${copiaRutinaActualizada?.nombre}"? Esta acción no se puede deshacer.`,
+      [
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Eliminar",
+          style: "destructive",
+          onPress: () => handleEliminarRutina(copiaRutinaActualizada.id),
+        },
+      ],
+    );
+  };
+
   if (!copiaRutinaActualizada) {
     return <View style={styles.container} />;
   }
 
+  const ejercicios = copiaRutinaActualizada?.ejercicios || [];
+  const completados = ejercicios.filter(estaFinalizado).length;
+  const total = ejercicios.length;
+  const progreso = total > 0 ? completados / total : 0;
+
   return (
-    <View style={styles.container}>
-      <View style={styles.botonera}>
-        <Pressable
-          onPress={() => {
-            setRutinaSeleccionada({});
-            setModalDetalle(false);
-          }}
+    <PantallaModal>
+      <View style={styles.cuerpo}>
+        <View style={styles.botonera}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Volver a mis rutinas"
+            hitSlop={8}
+            style={({ pressed }) => [styles.botonIcono, pressed && styles.botonIconoPresionado]}
+            onPress={() => {
+              setRutinaSeleccionada({});
+              setModalDetalle(false);
+            }}
           >
-          <Icon name="chevron-back-outline" color={'#fff'} size={35} />
-        </Pressable>
-        <Pressable
-          style={{borderRadius:8, backgroundColor:colores.azulClaro}}
-          onPress={() => {
-            setModalFormRutina(true);
-          }}
-          >
-            <Text style={{color:'#fff', fontSize:16, fontWeight:'900', padding:10}}>Editar</Text>
+            <Icon name="chevron-back-outline" color={colores.textoPrimario} size={30} />
+          </Pressable>
 
-        </Pressable>
+          <View style={styles.acciones}>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Editar la rutina"
+              style={({ pressed }) => [styles.botonSecundario, pressed && styles.botonIconoPresionado]}
+              onPress={() => setModalFormRutina(true)}
+            >
+              <Icon name="pencil-outline" color={colores.textoPrimario} size={18} />
+              <Text style={styles.botonSecundarioTexto} maxFontSizeMultiplier={maxEscalaFuente}>
+                Editar
+              </Text>
+            </Pressable>
 
-        <Pressable
-          style={{borderRadius:8, backgroundColor:colores.verdeOpaco}}
-          onPress={() => {
-            Alert.alert("Reiniciar", "Desea reiniciar los ejercicios?", [
-              { text: "Cancelar" },
-              {
-                text: "Ok, Reiciciar ejercicios",
-                onPress: () => {
-                  handleReiniciarRutina();
-                },
-              },
-            ]);
-          }}
-          >
-            <Text style={{color:'#fff', fontSize:16, fontWeight:'900', padding:10}}>Reiniciar</Text>
-        </Pressable>
-
-        <Pressable
-          style={{borderRadius:8, backgroundColor:colores.alert}}
-          onPress={() => {
-            Alert.alert("Eliminar", "Desea eliminar la rutina?", [
-              { text: "Cancelar" },
-              {
-                text: "Ok, Eliminar",
-                onPress: () => {
-                  handleEliminarRutina(copiaRutinaActualizada.id);
-                },
-              },
-            ]);
-          }}
-          >
-            <Text style={{color:'#fff', fontSize:16, fontWeight:'900', padding:10}}>Eliminar</Text>
-        </Pressable>
-
-      </View>
-
-      <View>
-        <Text style={styles.titulo}>{copiaRutinaActualizada?.nombre}</Text>
-      </View>
-
-      <Text style={styles.tiempo}>
-        Tiempo Estimado: {formatearTiempo(copiaRutinaActualizada.tiempo)}
-      </Text>
-
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={{ paddingBottom: 120, flexGrow: 1, minHeight: '120%' }}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.listaEjercicios}>
-          {
-            copiaRutinaActualizada?.ejercicios?.map((e, index) => (
-              <Pressable
-                key={e.id}
-                style={styles.ejercicioItem}
-                onPress={() => {
-                  setEjercicio(e);
-                  setModalEjercicio(true)
-                }}
-              >
-                <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
-                  <View style={{maxWidth:280}}>
-                    <Text style={styles.ejercicioNombre}>{e.nombre}</Text>
-                    <Text style={styles.ejercicioDetalle}>{e.series} series</Text>
-                    {e.series > 0 && e.seriesRealizadas >= e.series ? <Text style={styles.finalizado}>FINALIZADO</Text> : null}
-                  </View>
-                  <View style={styles.actionsContainer}>
-                    <View style={styles.reorderButtonsContainer}>
-                      <Pressable
-                        style={[styles.reorderButton, index === 0 && styles.reorderButtonDisabled]}
-                        disabled={index === 0}
-                        onPress={(event) => {
-                          event.stopPropagation();
-                          moverEjercicio(index, -1);
-                        }}
-                      >
-                        <Icon name="chevron-up-outline" size={18} color="#fff" />
-                      </Pressable>
-                      <Pressable
-                        style={[
-                          styles.reorderButton,
-                          index === copiaRutinaActualizada.ejercicios.length - 1 && styles.reorderButtonDisabled,
-                        ]}
-                        disabled={index === copiaRutinaActualizada.ejercicios.length - 1}
-                        onPress={(event) => {
-                          event.stopPropagation();
-                          moverEjercicio(index, 1);
-                        }}
-                      >
-                        <Icon name="chevron-down-outline" size={18} color="#fff" />
-                      </Pressable>
-                    </View>
-                    <Icon name="chevron-forward-outline" color={'#fff'} size={25} />
-                  </View>
-                </View>
-              </Pressable>
-            ))
-          }
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Más opciones de la rutina"
+              hitSlop={8}
+              style={({ pressed }) => [styles.botonIcono, pressed && styles.botonIconoPresionado]}
+              onPress={() => setMenuVisible(true)}
+            >
+              <Icon name="ellipsis-vertical" color={colores.textoPrimario} size={22} />
+            </Pressable>
+          </View>
         </View>
 
-      </ScrollView>
+        <Text style={styles.titulo} numberOfLines={2} maxFontSizeMultiplier={maxEscalaFuente}>
+          {copiaRutinaActualizada?.nombre}
+        </Text>
+
+        <View style={styles.metaFila}>
+          <View style={styles.metaItem}>
+            <Icon name="time-outline" size={16} color={colores.acento} />
+            <Text style={styles.tiempo} maxFontSizeMultiplier={maxEscalaFuente}>
+              {formatearTiempo(copiaRutinaActualizada.tiempo)}
+            </Text>
+          </View>
+          <View style={styles.metaItem}>
+            <Icon name="barbell-outline" size={16} color={colores.textoSecundario} />
+            <Text style={styles.metaTexto} maxFontSizeMultiplier={maxEscalaFuente}>
+              {total} {total === 1 ? 'ejercicio' : 'ejercicios'}
+            </Text>
+          </View>
+        </View>
+
+        {total > 0 ? (
+          <View style={styles.progresoContenedor}>
+            <Text style={styles.progresoTexto} maxFontSizeMultiplier={maxEscalaFuente}>
+              {completados === total
+                ? '¡Rutina completa!'
+                : `${completados} de ${total} ejercicios hechos`}
+            </Text>
+            <BarraProgreso
+              progreso={progreso}
+              color={completados === total ? colores.exito : colores.principal}
+              etiqueta="Progreso de la rutina"
+            />
+          </View>
+        ) : null}
+
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          {total === 0 ? (
+            <EstadoVacio
+              icono="barbell-outline"
+              titulo="Esta rutina no tiene ejercicios"
+              descripcion="Editá la rutina para agregar el primero."
+              textoAccion="Agregar ejercicios"
+              onAccion={() => setModalFormRutina(true)}
+            />
+          ) : (
+            ejercicios.map((e, index) => {
+              const finalizado = estaFinalizado(e);
+
+              return (
+                <Pressable
+                  key={e.id}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Entrenar ${e.nombre}`}
+                  style={({ pressed }) => [
+                    styles.ejercicioItem,
+                    pressed && styles.ejercicioItemPresionado,
+                  ]}
+                  onPress={() => {
+                    setEjercicio(e);
+                    setModalEjercicio(true);
+                  }}
+                >
+                  <View style={styles.filaPrincipal}>
+                    <View style={styles.datos}>
+                      <Text
+                        style={styles.ejercicioNombre}
+                        numberOfLines={2}
+                        maxFontSizeMultiplier={maxEscalaFuente}
+                      >
+                        {e.nombre}
+                      </Text>
+                      <Text style={styles.ejercicioDetalle} maxFontSizeMultiplier={maxEscalaFuente}>
+                        {Number(e.seriesRealizadas) || 0} de {e.series} series
+                        {e.descanso ? ` · ${e.descanso} min de descanso` : ''}
+                      </Text>
+
+                      {finalizado ? (
+                        <View style={styles.badgeFinalizado}>
+                          <Icon name="checkmark-circle" size={13} color={colores.exito} />
+                          <Text
+                            style={styles.badgeFinalizadoTexto}
+                            maxFontSizeMultiplier={maxEscalaFuente}
+                          >
+                            Finalizado
+                          </Text>
+                        </View>
+                      ) : null}
+                    </View>
+
+                    <View style={styles.actionsContainer}>
+                      <View style={styles.reorderButtonsContainer}>
+                        <Pressable
+                          accessibilityRole="button"
+                          accessibilityLabel={`Subir ${e.nombre}`}
+                          style={({ pressed }) => [
+                            styles.reorderButton,
+                            pressed && styles.reorderButtonPresionado,
+                            index === 0 && styles.reorderButtonDisabled,
+                          ]}
+                          disabled={index === 0}
+                          onPress={(event) => {
+                            event.stopPropagation();
+                            moverEjercicio(index, -1);
+                          }}
+                        >
+                          <Icon name="chevron-up-outline" size={20} color={colores.textoPrimario} />
+                        </Pressable>
+                        <Pressable
+                          accessibilityRole="button"
+                          accessibilityLabel={`Bajar ${e.nombre}`}
+                          style={({ pressed }) => [
+                            styles.reorderButton,
+                            pressed && styles.reorderButtonPresionado,
+                            index === ejercicios.length - 1 && styles.reorderButtonDisabled,
+                          ]}
+                          disabled={index === ejercicios.length - 1}
+                          onPress={(event) => {
+                            event.stopPropagation();
+                            moverEjercicio(index, 1);
+                          }}
+                        >
+                          <Icon name="chevron-down-outline" size={20} color={colores.textoPrimario} />
+                        </Pressable>
+                      </View>
+                      <Icon name="chevron-forward-outline" color={colores.textoSecundario} size={24} />
+                    </View>
+                  </View>
+
+                  <View style={styles.seriesProgreso}>
+                    <ProgresoSeries
+                      total={e.series}
+                      realizadas={e.seriesRealizadas}
+                      color={finalizado ? colores.exito : colores.principal}
+                    />
+                  </View>
+                </Pressable>
+              );
+            })
+          )}
+        </ScrollView>
+      </View>
+
+      <HojaAcciones
+        visible={menuVisible}
+        titulo={copiaRutinaActualizada?.nombre}
+        onClose={() => setMenuVisible(false)}
+        opciones={[
+          {
+            texto: 'Reiniciar series',
+            icono: 'refresh-outline',
+            onPress: confirmarReiniciar,
+          },
+          {
+            texto: 'Eliminar rutina',
+            icono: 'trash-outline',
+            destructivo: true,
+            onPress: confirmarEliminar,
+          },
+        ]}
+      />
 
       <Modal
         visible={modalEjercicio}
         animationType="slide"
+        statusBarTranslucent
+        navigationBarTranslucent
+        onRequestClose={() => setModalEjercicio(false)}
       >
         <DetalleEjercicio
           ejercicio={ejercicio}
@@ -198,7 +331,7 @@ const DetalleRutina = (
         />
       </Modal>
 
-    </View>
+    </PantallaModal>
   )
 }
 

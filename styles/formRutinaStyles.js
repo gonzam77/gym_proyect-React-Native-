@@ -1,93 +1,143 @@
-import { Platform, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import { colores } from './colores';
+import { espaciado, radios, sombras, tipografia, toqueMinimo } from './theme';
 
 export const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: colores.azulProfundo,
-        padding: 20,
+        backgroundColor: colores.fondo,
     },
-    scroll:{
-        backgroundColor:'transparent',
-        paddingVertical:50,
-        flexGrow:1
-    },  
-    titulo: {
-        fontSize: 30,
-        fontWeight: "900",
-        color: colores.blanco,
-        textAlign: "center",
-        marginTop: 25,
-    },
-    tiempo: {
-        fontSize: 18,
-        fontWeight: "500",
-        color: colores.cian,
-        textAlign: "center",
-        marginVertical: 20,
-    },
-    label: {
-        color: colores.blanco,
-        fontSize: 18,
-        fontWeight: "500",
-        marginBottom: 5,
-    },
-    input: {
-        backgroundColor: '#fff',
-        color: colores.azulProfundo,
-        borderRadius: 10,
-        paddingVertical: 10,
-        paddingHorizontal: 15,
-        marginBottom: 20,
-        fontSize: 16,
-    },
-    listaEjercicios: {
-        marginBottom: 30,
-    },
-    ejercicioItem: {
-        flexDirection:'row',
-        alignItems:'center',
-        justifyContent:'space-between',
-        marginBottom: 16,
-        backgroundColor: colores.azulProfundoClaro,
-        borderRadius: 24,
-        padding: 20,
-        ...Platform.select({
-            ios: {
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 8 },
-            shadowOpacity: 0.2,
-            shadowRadius: 10,
-            },
-            android: {
-            elevation: 6,
-            }
-        }),
-        borderWidth: 1,
-        borderColor: 'rgba(255, 255, 255, 0.15)',
-        overflow: 'hidden',
-    },
-    ejercicioNombre: {
-        color: colores.blanco,
-        fontSize: 18,
-        fontWeight: "700",
-        marginBottom: 5,
-    },
-    ejercicioDetalle: {
-        color: colores.secundario,
-        fontSize: 16,
-        fontWeight: "600",
-    },
-    iconButton: {
-        marginHorizontal: 10,
-        backgroundColor: colores.azulProfundo,
-        borderRadius: 50,
-        elevation: 5,
+    cuerpo: {
+        flex: 1,
+        paddingHorizontal: espaciado.xl,
     },
     botonera: {
         flexDirection: "row",
-        justifyContent: "space-around",
+        justifyContent: "space-between",
         alignItems: "center",
+        paddingTop: espaciado.sm,
     },
-
+    botonIcono: {
+        minWidth: toqueMinimo,
+        minHeight: toqueMinimo,
+        borderRadius: radios.completo,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    botonIconoPresionado: {
+        backgroundColor: colores.superficieAlta,
+    },
+    botonGuardar: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: espaciado.sm,
+        minHeight: toqueMinimo,
+        paddingHorizontal: espaciado.xl,
+        borderRadius: radios.completo,
+        backgroundColor: colores.exito,
+    },
+    botonGuardarDeshabilitado: {
+        opacity: 0.5,
+    },
+    botonGuardarTexto: {
+        ...tipografia.cuerpoFuerte,
+        color: colores.sobreRelleno,
+    },
+    titulo: {
+        ...tipografia.titulo,
+        color: colores.textoPrimario,
+        textAlign: "center",
+        marginTop: espaciado.lg,
+    },
+    tiempo: {
+        ...tipografia.auxiliar,
+        color: colores.acento,
+        textAlign: "center",
+        marginTop: espaciado.xs,
+        marginBottom: espaciado.xl,
+    },
+    form: {
+        gap: espaciado.sm,
+    },
+    label: {
+        ...tipografia.auxiliar,
+        color: colores.textoSecundario,
+    },
+    input: {
+        backgroundColor: colores.superficie,
+        color: colores.textoPrimario,
+        borderWidth: 1,
+        borderColor: colores.borde,
+        borderRadius: radios.md,
+        paddingVertical: espaciado.md,
+        paddingHorizontal: espaciado.lg,
+        fontSize: 16,
+        minHeight: toqueMinimo + 4,
+    },
+    agregarEjercicio: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: espaciado.sm,
+        minHeight: 52,
+        marginTop: espaciado.xl,
+        borderRadius: radios.md,
+        borderWidth: 1,
+        borderStyle: "dashed",
+        borderColor: colores.principal,
+    },
+    agregarEjercicioTexto: {
+        ...tipografia.cuerpoFuerte,
+        color: colores.principal,
+    },
+    presionado: {
+        opacity: 0.75,
+    },
+    scroll: {
+        flex: 1,
+        marginTop: espaciado.xl,
+    },
+    scrollContent: {
+        paddingBottom: espaciado.xxxl,
+        flexGrow: 1,
+    },
+    seccionTitulo: {
+        ...tipografia.micro,
+        color: colores.textoTenue,
+        textTransform: "uppercase",
+        letterSpacing: 1,
+        marginBottom: espaciado.md,
+    },
+    listaEjercicios: {
+        marginBottom: espaciado.xl,
+    },
+    ejercicioItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: espaciado.md,
+        marginBottom: espaciado.md,
+        backgroundColor: colores.superficie,
+        borderRadius: radios.lg,
+        padding: espaciado.lg,
+        borderWidth: 1,
+        borderColor: colores.borde,
+        ...sombras.card,
+    },
+    ejercicioItemPresionado: {
+        backgroundColor: colores.superficieAlta,
+    },
+    ejercicioDatos: {
+        flex: 1,
+    },
+    ejercicioNombre: {
+        ...tipografia.cuerpoFuerte,
+        fontSize: 17,
+        color: colores.textoPrimario,
+        marginBottom: espaciado.xs,
+    },
+    ejercicioDetalle: {
+        ...tipografia.auxiliar,
+        color: colores.textoSecundario,
+    },
 });
