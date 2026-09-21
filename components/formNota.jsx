@@ -21,9 +21,12 @@ const FormNota = ({onClose, visible, ejercicio})=> {
     const fade = useRef(new Animated.Value(0)).current;
     const scale = useRef(new Animated.Value(0.9)).current;
 
+    // La nota se recarga cada vez que se abre el modal. Antes solo se copiaba
+    // cuando habia nota guardada, asi que un texto tipeado y cancelado volvia a
+    // aparecer como borrador la proxima vez que se abria.
     useEffect(()=>{
-        if(ejercicio.nota)setNuevaNota(ejercicio.nota);
-    },[ejercicio.nota])
+        if(visible) setNuevaNota(ejercicio?.nota ?? '');
+    },[ejercicio?.nota, visible])
 
     useEffect(() => {
         if (visible) {

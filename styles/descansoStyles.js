@@ -119,6 +119,40 @@ export const styles = StyleSheet.create({
     opacity: 0.35,
   },
 
+  // --- Nota del ejercicio ---
+  tarjetaNota: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    gap: espaciado.md,
+    alignSelf: 'stretch',
+    marginTop: espaciado.lg,
+    padding: espaciado.lg,
+    borderRadius: radios.xl,
+    borderWidth: 1,
+    borderColor: colores.borde,
+    backgroundColor: colores.superficie,
+  },
+  notaTextos: {
+    flex: 1,
+    gap: espaciado.xs,
+  },
+  notaEtiqueta: {
+    ...tipografia.micro,
+    color: colores.textoTenue,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+  },
+  notaTexto: {
+    ...tipografia.cuerpo,
+    color: colores.textoPrimario,
+  },
+  notaVacia: {
+    ...tipografia.cuerpo,
+    color: colores.textoTenue,
+    fontStyle: 'italic',
+  },
+
   // --- Cierre ---
   aviso: {
     ...tipografia.cuerpoFuerte,

@@ -6,6 +6,7 @@ import { styles } from '../../styles/descansoStyles';
 import { colores } from '../../styles/colores';
 import { maxEscalaFuente } from '../../styles/theme';
 import BarraProgreso from '../../components/BarraProgreso';
+import FormNota from '../../components/formNota';
 import PantallaModal from '../../components/PantallaModal';
 import {
   abrirAjustesAlarmaExacta,
@@ -35,6 +36,9 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
   const [restanteMs, setRestanteMs] = useState(totalMs);
   const [activo, setActivo] = useState(totalMs > 0);
   const [faltaPermisoAlarma, setFaltaPermisoAlarma] = useState(false);
+  const [modalFormNota, setModalFormNota] = useState(false);
+
+  const termino = totalMs > 0 && restanteMs === 0;
 
   // Unica fuente de verdad mientras corre el descanso.
   const finEnRef = useRef(Date.now() + totalMs);
@@ -129,6 +133,14 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
     return () => clearInterval(intervalo);
   }, [activo, sincronizar]);
 
+  // Cuando suena la alarma la nota se cierra sola: si queda abierta tapa el
+  // boton de Detener justo cuando hay que silenciar el aviso.
+  useEffect(() => {
+    if (termino) {
+      setModalFormNota(false);
+    }
+  }, [termino]);
+
   // Al volver del segundo plano el contador se pone al dia de una.
   useEffect(() => {
     const suscripcion = AppState.addEventListener('change', (estado) => {
@@ -202,7 +214,6 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
     return `${String(minutos).padStart(2, '0')}:${String(segundos).padStart(2, '0')}`;
   };
 
-  const termino = totalMs > 0 && restanteMs === 0;
   const progreso = totalMs > 0 ? 1 - Math.min(restanteMs / totalMs, 1) : 0;
 
   return (
@@ -325,6 +336,25 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
           </View>
         </View>
 
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Editar la nota del ejercicio"
+          style={({ pressed }) => [styles.tarjetaNota, pressed && styles.botonPresionado]}
+          onPress={() => setModalFormNota(true)}
+        >
+          <View style={styles.notaTextos}>
+            <Text style={styles.notaEtiqueta} maxFontSizeMultiplier={maxEscalaFuente}>Nota</Text>
+            <Text
+              style={ejercicio?.nota ? styles.notaTexto : styles.notaVacia}
+              numberOfLines={2}
+              maxFontSizeMultiplier={maxEscalaFuente}
+            >
+              {ejercicio?.nota || 'Sin notas todavía. Tocá para agregar una.'}
+            </Text>
+          </View>
+          <Icon name="pencil-outline" size={20} color={colores.textoSecundario} />
+        </Pressable>
+
         {termino ? (
           <>
             <Text style={styles.aviso} maxFontSizeMultiplier={maxEscalaFuente}>
@@ -355,6 +385,12 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
             </Text>
           </Pressable>
         )}
+
+        <FormNota
+          visible={modalFormNota}
+          onClose={() => setModalFormNota(false)}
+          ejercicio={ejercicio}
+        />
       </ScrollView>
     </PantallaModal>
   );
