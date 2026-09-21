@@ -98,6 +98,30 @@ export const styles = StyleSheet.create({
   inputNota: {
     minHeight: 110,
   },
+  contadorSeries: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: espaciado.md,
+  },
+  contadorBoton: {
+    width: toqueMinimo,
+    height: toqueMinimo,
+    borderRadius: radios.completo,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colores.superficieAlta,
+    borderWidth: 1,
+    borderColor: colores.borde,
+  },
+  contadorBotonDeshabilitado: {
+    opacity: 0.35,
+  },
+  inputSeries: {
+    flex: 1,
+    textAlign: "center",
+    textAlignVertical: "center",
+    ...tipografia.cuerpoFuerte,
+  },
   errorCaja: {
     flexDirection: "row",
     alignItems: "center",

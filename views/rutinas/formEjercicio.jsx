@@ -18,6 +18,9 @@ const OPCIONES_DESCANSO = Array.from({ length: 10 }, (_, i) => ({
   valor: String(i + 1),
 }));
 
+const MIN_SERIES = 1;
+const MAX_SERIES = 20;
+
 const FormEjercicio = ({ nuevaRutina, setNuevaRutina, setModalFormEjercicio, ejercicioSeleccionado, setEjercicioSeleccionado}) => {
   const sesion = useSelector(state => state.usuario.sesion);
   const usuarioBackend = sesion?.user;
@@ -137,11 +140,29 @@ const FormEjercicio = ({ nuevaRutina, setNuevaRutina, setModalFormEjercicio, eje
       }));
     } else {
       const soloNumeros = String(valor).replace(/[^0-9]/g, "");
+      if (soloNumeros === "") {
+        setEjercicioNuevo(prev => ({ ...prev, [campo]: "" }));
+        return;
+      }
+
+      const numero = Number(soloNumeros);
       setEjercicioNuevo(prev => ({
         ...prev,
-        [campo]: soloNumeros === "" ? "" : Number(soloNumeros),
+        [campo]: campo === 'series' ? Math.min(MAX_SERIES, numero) : numero,
       }))
     };
+  };
+
+  // El + y el - trabajan sobre el valor actual; si el campo esta vacio arrancan
+  // desde el minimo, asi un toque siempre deja un numero valido.
+  const ajustarSeries = (paso) => {
+    setEjercicioNuevo(prev => {
+      const actual = Number(prev.series) || 0;
+      return {
+        ...prev,
+        series: Math.min(MAX_SERIES, Math.max(MIN_SERIES, actual + paso)),
+      };
+    });
   };
 
   const generarId = () =>
@@ -189,6 +210,10 @@ const FormEjercicio = ({ nuevaRutina, setNuevaRutina, setModalFormEjercicio, eje
     .slice()
     .sort((a, b) => a.nombre.localeCompare(b.nombre))
     .map(e => ({ etiqueta: e.nombre, valor: e.nombre })), [ejerciciosFiltrados, selectedCategory]);
+
+  const seriesActuales = Number(ejercicioNuevo.series) || 0;
+  const puedeBajarSeries = seriesActuales > MIN_SERIES;
+  const puedeSubirSeries = seriesActuales < MAX_SERIES;
 
   return (
     <PantallaModal>
@@ -292,16 +317,50 @@ const FormEjercicio = ({ nuevaRutina, setNuevaRutina, setModalFormEjercicio, eje
 
         <View style={styles.seccion}>
           <Text style={styles.label} maxFontSizeMultiplier={maxEscalaFuente}>Series</Text>
-          <TextInput
-            value={ejercicioNuevo.series.toString()}
-            style={styles.input}
-            keyboardType="numeric"
-            placeholder="Ej: 4"
-            placeholderTextColor={colores.textoTenue}
-            onChangeText={v => handleChange("series", v)}
-            accessibilityLabel="Cantidad de series"
-            maxFontSizeMultiplier={maxEscalaFuente}
-          />
+          <View style={styles.contadorSeries}>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Quitar una serie"
+              accessibilityState={{ disabled: !puedeBajarSeries }}
+              disabled={!puedeBajarSeries}
+              hitSlop={4}
+              style={({ pressed }) => [
+                styles.contadorBoton,
+                !puedeBajarSeries && styles.contadorBotonDeshabilitado,
+                pressed && styles.presionado,
+              ]}
+              onPress={() => ajustarSeries(-1)}
+            >
+              <Icon name="remove" size={24} color={colores.textoPrimario} />
+            </Pressable>
+
+            <TextInput
+              keyboardType="numeric"
+              value={String(ejercicioNuevo.series ?? "")}
+              style={[styles.input, styles.inputSeries]}
+              placeholder="0"
+              placeholderTextColor={colores.textoTenue}
+              onChangeText={v => handleChange("series", v)}
+              accessibilityLabel="Cantidad de series"
+              maxFontSizeMultiplier={maxEscalaFuente}
+            />
+
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Agregar una serie"
+              accessibilityState={{ disabled: !puedeSubirSeries }}
+              disabled={!puedeSubirSeries}
+              hitSlop={4}
+              style={({ pressed }) => [
+                styles.contadorBoton,
+                !puedeSubirSeries && styles.contadorBotonDeshabilitado,
+                pressed && styles.presionado,
+              ]}
+              onPress={() => ajustarSeries(1)}
+            >
+              <Icon name="add" size={24} color={colores.textoPrimario} />
+            </Pressable>
+          </View>
         </View>
 
         <View style={styles.seccion}>
