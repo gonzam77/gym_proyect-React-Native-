@@ -1,18 +1,19 @@
-import { Modal, Pressable, Text, View, Alert, ScrollView } from "react-native";
-import { useEffect, useState } from "react";
+import { Modal, Pressable, Text, View, Alert } from "react-native";
+import { useCallback, useEffect, useState } from "react";
 import DetalleEjercicio from "./detalleEjercicio";
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useDispatch, useSelector } from "react-redux";
 import formatearTiempo from '../../helpers/formatearTiempo';
 import { styles } from '../../styles/detalleRutinaStyles';
-import { eliminarRutina, reiniciarRutina, reordenarEjercicio } from "../../store/rutinasSlice";
+import { eliminarRutina, reiniciarRutina, reubicarEjercicio } from "../../store/rutinasSlice";
 import { colores } from "../../styles/colores";
-import { maxEscalaFuente } from "../../styles/theme";
+import { espaciado, maxEscalaFuente } from "../../styles/theme";
 import BarraProgreso from "../../components/BarraProgreso";
 import ProgresoSeries from "../../components/ProgresoSeries";
 import HojaAcciones from "../../components/HojaAcciones";
 import EstadoVacio from "../../components/EstadoVacio";
 import PantallaModal from "../../components/PantallaModal";
+import ListaOrdenable from "../../components/ListaOrdenable";
 import { avisoExito } from "../../helpers/avisos";
 
 const estaFinalizado = ejercicio => {
@@ -64,17 +65,15 @@ const DetalleRutina = (
     avisoExito('Rutina reiniciada', 'Todas las series volvieron a cero.');
   }
 
-  const moverEjercicio = (indexActual, direccion) => {
-    if (!copiaRutinaActualizada?.id) {
+  const idRutina = copiaRutinaActualizada?.id;
+
+  const reubicar = useCallback((desde, hacia) => {
+    if (!idRutina) {
       return;
     }
 
-    dispatch(reordenarEjercicio({
-      idRutina: copiaRutinaActualizada.id,
-      indexActual,
-      direccion,
-    }));
-  };
+    dispatch(reubicarEjercicio({ idRutina, desde, hacia }));
+  }, [dispatch, idRutina]);
 
   const confirmarReiniciar = () => {
     Alert.alert(
@@ -187,12 +186,14 @@ const DetalleRutina = (
           </View>
         ) : null}
 
-        <ScrollView
+        <ListaOrdenable
+          datos={ejercicios}
+          onReordenar={reubicar}
+          separacion={espaciado.lg}
           style={styles.scroll}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
-        >
-          {total === 0 ? (
+          vacio={
             <EstadoVacio
               icono="barbell-outline"
               titulo="Esta rutina no tiene ejercicios"
@@ -200,102 +201,83 @@ const DetalleRutina = (
               textoAccion="Agregar ejercicios"
               onAccion={() => setModalFormRutina(true)}
             />
-          ) : (
-            ejercicios.map((e, index) => {
-              const finalizado = estaFinalizado(e);
+          }
+          renderItem={({ item: e, index, arrastrando, manejador, accionesOrden }) => {
+            const finalizado = estaFinalizado(e);
 
-              return (
-                <Pressable
-                  key={e.id}
-                  accessibilityRole="button"
-                  accessibilityLabel={`Entrenar ${e.nombre}`}
-                  style={({ pressed }) => [
-                    styles.ejercicioItem,
-                    pressed && styles.ejercicioItemPresionado,
-                  ]}
-                  onPress={() => {
-                    setEjercicio(e);
-                    setModalEjercicio(true);
-                  }}
-                >
-                  <View style={styles.filaPrincipal}>
-                    <View style={styles.datos}>
-                      <Text
-                        style={styles.ejercicioNombre}
-                        numberOfLines={2}
-                        maxFontSizeMultiplier={maxEscalaFuente}
-                      >
-                        {e.nombre}
-                      </Text>
-                      <Text style={styles.ejercicioDetalle} maxFontSizeMultiplier={maxEscalaFuente}>
-                        {Number(e.seriesRealizadas) || 0} de {e.series} series
-                        {e.descanso ? ` · ${e.descanso} min de descanso` : ''}
-                      </Text>
+            return (
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={`Entrenar ${e.nombre}. Ejercicio ${index + 1} de ${ejercicios.length}`}
+                accessibilityHint="Usá las acciones Subir y Bajar para cambiarlo de lugar"
+                {...accionesOrden}
+                style={({ pressed }) => [
+                  styles.ejercicioItem,
+                  pressed && styles.ejercicioItemPresionado,
+                  arrastrando && styles.ejercicioItemArrastrado,
+                ]}
+                onPress={() => {
+                  setEjercicio(e);
+                  setModalEjercicio(true);
+                }}
+              >
+                <View style={styles.filaPrincipal}>
+                  <View style={styles.datos}>
+                    <Text
+                      style={styles.ejercicioNombre}
+                      numberOfLines={2}
+                      maxFontSizeMultiplier={maxEscalaFuente}
+                    >
+                      {e.nombre}
+                    </Text>
+                    <Text style={styles.ejercicioDetalle} maxFontSizeMultiplier={maxEscalaFuente}>
+                      {Number(e.seriesRealizadas) || 0} de {e.series} series
+                      {e.descanso ? ` · ${e.descanso} min de descanso` : ''}
+                    </Text>
 
-                      {finalizado ? (
-                        <View style={styles.badgeFinalizado}>
-                          <Icon name="checkmark-circle" size={13} color={colores.exito} />
-                          <Text
-                            style={styles.badgeFinalizadoTexto}
-                            maxFontSizeMultiplier={maxEscalaFuente}
-                          >
-                            Finalizado
-                          </Text>
-                        </View>
-                      ) : null}
-                    </View>
-
-                    <View style={styles.actionsContainer}>
-                      <View style={styles.reorderButtonsContainer}>
-                        <Pressable
-                          accessibilityRole="button"
-                          accessibilityLabel={`Subir ${e.nombre}`}
-                          style={({ pressed }) => [
-                            styles.reorderButton,
-                            pressed && styles.reorderButtonPresionado,
-                            index === 0 && styles.reorderButtonDisabled,
-                          ]}
-                          disabled={index === 0}
-                          onPress={(event) => {
-                            event.stopPropagation();
-                            moverEjercicio(index, -1);
-                          }}
+                    {finalizado ? (
+                      <View style={styles.badgeFinalizado}>
+                        <Icon name="checkmark-circle" size={13} color={colores.exito} />
+                        <Text
+                          style={styles.badgeFinalizadoTexto}
+                          maxFontSizeMultiplier={maxEscalaFuente}
                         >
-                          <Icon name="chevron-up-outline" size={20} color={colores.textoPrimario} />
-                        </Pressable>
-                        <Pressable
-                          accessibilityRole="button"
-                          accessibilityLabel={`Bajar ${e.nombre}`}
-                          style={({ pressed }) => [
-                            styles.reorderButton,
-                            pressed && styles.reorderButtonPresionado,
-                            index === ejercicios.length - 1 && styles.reorderButtonDisabled,
-                          ]}
-                          disabled={index === ejercicios.length - 1}
-                          onPress={(event) => {
-                            event.stopPropagation();
-                            moverEjercicio(index, 1);
-                          }}
-                        >
-                          <Icon name="chevron-down-outline" size={20} color={colores.textoPrimario} />
-                        </Pressable>
+                          Finalizado
+                        </Text>
                       </View>
-                      <Icon name="chevron-forward-outline" color={colores.textoSecundario} size={24} />
-                    </View>
+                    ) : null}
                   </View>
 
-                  <View style={styles.seriesProgreso}>
-                    <ProgresoSeries
-                      total={e.series}
-                      realizadas={e.seriesRealizadas}
-                      color={finalizado ? colores.exito : colores.principal}
-                    />
+                  <View style={styles.actionsContainer}>
+                    {/* La manija es lo unico que arrastra: el resto de la
+                        tarjeta sigue scrolleando y abriendo el ejercicio. */}
+                    <View
+                      {...manejador}
+                      hitSlop={8}
+                      importantForAccessibility="no"
+                      style={[styles.manija, arrastrando && styles.manijaActiva]}
+                    >
+                      <Icon
+                        name="reorder-three-outline"
+                        size={22}
+                        color={arrastrando ? colores.acento : colores.textoSecundario}
+                      />
+                    </View>
+                    <Icon name="chevron-forward-outline" color={colores.textoSecundario} size={24} />
                   </View>
-                </Pressable>
-              );
-            })
-          )}
-        </ScrollView>
+                </View>
+
+                <View style={styles.seriesProgreso}>
+                  <ProgresoSeries
+                    total={e.series}
+                    realizadas={e.seriesRealizadas}
+                    color={finalizado ? colores.exito : colores.principal}
+                  />
+                </View>
+              </Pressable>
+            );
+          }}
+        />
       </View>
 
       <HojaAcciones

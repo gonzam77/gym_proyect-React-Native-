@@ -102,27 +102,33 @@ const rutinasSlice = createSlice({
             rutina.ejercicios.push(nuevoEjercicio);
             }
         },
-        reordenarEjercicio: (state, action) => {
-            const { idRutina, indexActual, direccion } = action.payload;
+        /**
+         * Mueve un ejercicio de una posicion a otra. A diferencia de un swap,
+         * saca el ejercicio y lo inserta en el destino, que es lo que hace
+         * falta cuando se arrastra sobre varias posiciones de una.
+         */
+        reubicarEjercicio: (state, action) => {
+            const { idRutina, desde, hacia } = action.payload;
             const rutina = state.rutinas.find(r => r.id === idRutina);
 
             if (!rutina || !Array.isArray(rutina.ejercicios)) {
                 return;
             }
 
-            const indexDestino = indexActual + direccion;
+            const cantidad = rutina.ejercicios.length;
 
             if (
-                indexActual < 0
-                || indexDestino < 0
-                || indexActual >= rutina.ejercicios.length
-                || indexDestino >= rutina.ejercicios.length
+                desde === hacia
+                || desde < 0
+                || hacia < 0
+                || desde >= cantidad
+                || hacia >= cantidad
             ) {
                 return;
             }
 
-            [rutina.ejercicios[indexActual], rutina.ejercicios[indexDestino]] =
-                [rutina.ejercicios[indexDestino], rutina.ejercicios[indexActual]];
+            const [movido] = rutina.ejercicios.splice(desde, 1);
+            rutina.ejercicios.splice(hacia, 0, movido);
         },
         modificarEjercicio: (state, action) => {
             const { idRutina, idEjercicio, cambios } = action.payload;
@@ -162,7 +168,7 @@ export const {
   reordenarRutina,
   sincronizarEstadoRutinasAsignadas,
   agregarEjercicio,
-  reordenarEjercicio,
+  reubicarEjercicio,
   modificarEjercicio,
   eliminarEjercicio,
   reiniciarRutina

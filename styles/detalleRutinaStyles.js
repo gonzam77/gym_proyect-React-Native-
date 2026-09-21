@@ -94,7 +94,6 @@ export const styles = StyleSheet.create({
     flexGrow: 1,
   },
   ejercicioItem: {
-    marginBottom: espaciado.lg,
     backgroundColor: colores.superficie,
     borderRadius: radios.xl,
     padding: espaciado.xl,
@@ -106,6 +105,11 @@ export const styles = StyleSheet.create({
   ejercicioItemPresionado: {
     backgroundColor: colores.superficieAlta,
     borderColor: colores.bordeSuave,
+  },
+  ejercicioItemArrastrado: {
+    backgroundColor: colores.superficieAlta,
+    borderColor: colores.acento,
+    ...sombras.flotante,
   },
   filaPrincipal: {
     flexDirection: 'row',
@@ -150,12 +154,9 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     gap: espaciado.sm,
   },
-  reorderButtonsContainer: {
-    gap: espaciado.xs,
-  },
-  reorderButton: {
+  manija: {
     width: toqueMinimo,
-    height: toqueMinimo - 4,
+    height: toqueMinimo,
     borderRadius: radios.md,
     backgroundColor: colores.superficieAlta,
     borderWidth: 1,
@@ -163,10 +164,8 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  reorderButtonPresionado: {
+  manijaActiva: {
     backgroundColor: colores.borde,
-  },
-  reorderButtonDisabled: {
-    opacity: 0.3,
+    borderColor: colores.acento,
   },
 });
