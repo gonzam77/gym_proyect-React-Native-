@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { Modal, Text, View, ScrollView, Animated, Alert, Pressable, Vibration } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { styles } from '../../styles/detalleEjercicioStyles';
@@ -129,6 +129,8 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
   };
 
   const volver = () => setModalEjercicio(false);
+
+  const cerrarNota = useCallback(() => setModalFormNota(false), []);
 
   if (!ejercicioActualizado) {
     return (
@@ -333,34 +335,37 @@ const DetalleEjercicio = ({ ejercicio, setModalEjercicio, rutinaSeleccionada }) 
           </View>
         )}
 
-        <FormNota
-          visible={modalFormNota}
-          onClose={()=>setModalFormNota(false)}
-          setModalFormNota={setModalFormNota}
-          ejercicio={ejercicio}
-        />
-
-        {/* El boton atras tiene que cancelar la alarma antes de cerrar, igual
-            que Saltar. Antes era un handler vacio para que no se pudiera salir,
-            pero con predictive back (Android 16 / targetSdk 36) ese bloqueo se
-            ignora: el modal se cerraria igual y la alarma quedaba programada. */}
-        <Modal
-          visible={modalDescanso}
-          animationType="slide"
-          statusBarTranslucent
-          navigationBarTranslucent
-          onRequestClose={async () => {
-            await cancelarDescanso();
-            setModalDescanso(false);
-          }}
-        >
-          <Descanso
-            ejercicio={ejercicioActualizado}
-            setModalDescanso={setModalDescanso}
-            serie={serie}
-          />
-        </Modal>
       </ScrollView>
+
+      {/* Los dos Modal van fuera del ScrollView: abren su propia ventana, pero
+          como hijos del scroll igual participan del layout y se re-miden con
+          cada scroll y con cada ajuste del teclado. */}
+      <FormNota
+        visible={modalFormNota}
+        onClose={cerrarNota}
+        ejercicio={ejercicioActualizado}
+      />
+
+      {/* El boton atras tiene que cancelar la alarma antes de cerrar, igual
+          que Saltar. Antes era un handler vacio para que no se pudiera salir,
+          pero con predictive back (Android 16 / targetSdk 36) ese bloqueo se
+          ignora: el modal se cerraria igual y la alarma quedaba programada. */}
+      <Modal
+        visible={modalDescanso}
+        animationType="slide"
+        statusBarTranslucent
+        navigationBarTranslucent
+        onRequestClose={async () => {
+          await cancelarDescanso();
+          setModalDescanso(false);
+        }}
+      >
+        <Descanso
+          ejercicio={ejercicioActualizado}
+          setModalDescanso={setModalDescanso}
+          serie={serie}
+        />
+      </Modal>
     </PantallaModal>
   );
 };

@@ -39,7 +39,11 @@ const DetalleRutina = (
     : null;
 
   const dispatch = useDispatch();
-  const [ejercicio, setEjercicio] = useState({});
+
+  // Se guarda el id y no el ejercicio: guardar el objeto congelaba una copia del
+  // momento del toque, asi que los cambios hechos adentro (la nota del descanso,
+  // por ejemplo) nunca llegaban de vuelta al detalle del ejercicio.
+  const [idEjercicio, setIdEjercicio] = useState(null);
   const [modalEjercicio, setModalEjercicio] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
 
@@ -217,7 +221,7 @@ const DetalleRutina = (
                   arrastrando && styles.ejercicioItemArrastrado,
                 ]}
                 onPress={() => {
-                  setEjercicio(e);
+                  setIdEjercicio(e.id);
                   setModalEjercicio(true);
                 }}
               >
@@ -307,7 +311,7 @@ const DetalleRutina = (
         onRequestClose={() => setModalEjercicio(false)}
       >
         <DetalleEjercicio
-          ejercicio={ejercicio}
+          ejercicio={ejercicios.find(e => e.id === idEjercicio) || {}}
           setModalEjercicio={setModalEjercicio}
           rutinaSeleccionada={copiaRutinaActualizada}
         />

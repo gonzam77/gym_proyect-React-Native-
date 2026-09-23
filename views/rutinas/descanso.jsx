@@ -200,6 +200,11 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
     }
   };
 
+  // Estable a proposito: el contador re-renderiza este componente 4 veces por
+  // segundo y, si onClose cambiara de identidad en cada tick, el FormNota
+  // memoizado se volveria a renderizar igual mientras se escribe la nota.
+  const cerrarNota = useCallback(() => setModalFormNota(false), []);
+
   const cerrar = async () => {
     setActivo(false);
     await cancelarDescanso();
@@ -386,12 +391,16 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
           </Pressable>
         )}
 
-        <FormNota
-          visible={modalFormNota}
-          onClose={() => setModalFormNota(false)}
-          ejercicio={ejercicio}
-        />
       </ScrollView>
+
+      {/* Fuera del ScrollView: un Modal abre su propia ventana, pero como hijo
+          del scroll igual participa del layout y se re-media con cada scroll y
+          con cada ajuste del teclado. */}
+      <FormNota
+        visible={modalFormNota}
+        onClose={cerrarNota}
+        ejercicio={ejercicio}
+      />
     </PantallaModal>
   );
 };
