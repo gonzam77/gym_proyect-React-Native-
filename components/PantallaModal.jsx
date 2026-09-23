@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, useWindowDimensions, View } from 'react-native';
 import {
   SafeAreaProvider,
   SafeAreaView,
@@ -17,16 +17,28 @@ import { colores } from '../styles/colores';
  *
  * Con edge-to-edge (Android 15+) el contenido se dibuja atras de la barra de
  * estado y de la de navegacion, asi que por defecto se protegen los dos bordes.
+ *
+ * La altura va explicita a proposito: no alcanza con flex: 1. El <View> que el
+ * Modal pone arriba de todo no tiene alto definido en la primera pasada de
+ * layout, asi que un hijo con flex: 1 se estira hasta el alto de su contenido
+ * en vez de quedar acotado a la ventana. Con un ScrollView adentro eso se nota
+ * fuerte: queda mas alto que la pantalla, cree que su contenido entra entero y
+ * no scrollea hasta que algo fuerza otra pasada (reordenar la lista, por
+ * ejemplo).
  */
-const PantallaModal = ({ children, style, edges = ['top', 'bottom'] }) => (
-  <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-    <View style={styles.fondo}>
-      <SafeAreaView style={[styles.contenido, style]} edges={edges}>
-        {children}
-      </SafeAreaView>
-    </View>
-  </SafeAreaProvider>
-);
+const PantallaModal = ({ children, style, edges = ['top', 'bottom'] }) => {
+  const { height } = useWindowDimensions();
+
+  return (
+    <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+      <View style={[styles.fondo, { height }]}>
+        <SafeAreaView style={[styles.contenido, style]} edges={edges}>
+          {children}
+        </SafeAreaView>
+      </View>
+    </SafeAreaProvider>
+  );
+};
 
 export default PantallaModal;
 

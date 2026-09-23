@@ -165,7 +165,11 @@ const ListaOrdenable = ({
 }) => {
   const [alturas, setAlturas] = useState({});
   const [ordenArrastre, setOrdenArrastre] = useState(null);
+  // `idArrastrado` es el gesto en curso y es lo unico que corta el scroll.
+  // `idAsentando` es la fila ya soltada que todavia vuelve a su lugar: se
+  // sigue dibujando corrida, pero el dedo ya no la tiene.
   const [idArrastrado, setIdArrastrado] = useState(null);
+  const [idAsentando, setIdAsentando] = useState(null);
 
   const desplazamiento = useRef(new Animated.Value(0)).current;
   const refAlturas = useRef(alturas);
@@ -174,6 +178,9 @@ const ListaOrdenable = ({
   const refId = useRef(null);
   const refYInicial = useRef(0);
   const refDy = useRef(0);
+  // Sube con cada arrastre. El spring de asentado puede terminar cuando ya
+  // empezo otro gesto, y ahi no tiene que tocar nada.
+  const refGeneracion = useRef(0);
 
   refAlturas.current = alturas;
 
@@ -229,6 +236,13 @@ const ListaOrdenable = ({
   }, [baseDe, desplazamiento]);
 
   const alTomar = useCallback(id => {
+    // Si venia una fila asentandose hay que cortar su spring antes de tocar
+    // los refs: `stopAnimation` dispara el callback de fin en el acto y, si
+    // llegara despues, dejaria este gesto nuevo sin dueno (y el scroll
+    // bloqueado, porque nadie volveria a soltarlo).
+    refGeneracion.current += 1;
+    desplazamiento.stopAnimation();
+
     const orden = lista.map(claveItem);
 
     refOrden.current = orden;
@@ -239,6 +253,7 @@ const ListaOrdenable = ({
 
     desplazamiento.setValue(0);
     setOrdenArrastre(orden);
+    setIdAsentando(null);
     setIdArrastrado(id);
 
     // Un toquecito para que se note que la fila quedo agarrada. En iOS
@@ -293,6 +308,19 @@ const ListaOrdenable = ({
 
     const desde = refOrdenInicial.current.indexOf(id);
     const hacia = refOrden.current.indexOf(id);
+    const generacion = refGeneracion.current;
+
+    // El gesto termina aca, en el mismo toque: el scroll se libera sin
+    // esperar a que la fila se asiente. Avisar el orden nuevo tampoco puede
+    // esperar, porque el spring se puede cortar antes de terminar y el
+    // reordenamiento se perderia.
+    refId.current = null;
+    setIdArrastrado(null);
+    setIdAsentando(id);
+
+    if (desde !== hacia && desde >= 0 && hacia >= 0) {
+      onReordenar?.(desde, hacia);
+    }
 
     Animated.spring(desplazamiento, {
       toValue: 0,
@@ -300,15 +328,33 @@ const ListaOrdenable = ({
       bounciness: 0,
       speed: 18,
     }).start(() => {
-      refId.current = null;
-      setIdArrastrado(null);
-      setOrdenArrastre(null);
-
-      if (desde !== hacia && desde >= 0 && hacia >= 0) {
-        onReordenar?.(desde, hacia);
+      if (refGeneracion.current !== generacion) {
+        return;
       }
+
+      // El orden preliminar ya es el definitivo, asi que soltarlo recien
+      // ahora no mueve nada en pantalla.
+      setIdAsentando(null);
+      setOrdenArrastre(null);
     });
   }, [desplazamiento, onReordenar]);
+
+  // Si la fila que se esta arrastrando desaparece (llego una sincronizacion,
+  // se borro el ejercicio) el PanResponder se va con la fila y no avisa: sin
+  // esto el scroll quedaria bloqueado hasta salir de la pantalla.
+  useEffect(() => {
+    if (!idArrastrado || datos.some(item => claveItem(item) === idArrastrado)) {
+      return;
+    }
+
+    refGeneracion.current += 1;
+    refId.current = null;
+    desplazamiento.stopAnimation();
+    desplazamiento.setValue(0);
+    setIdArrastrado(null);
+    setIdAsentando(null);
+    setOrdenArrastre(null);
+  }, [datos, idArrastrado, claveItem, desplazamiento]);
 
   return (
     <ScrollView
@@ -329,8 +375,8 @@ const ListaOrdenable = ({
             total={lista.length}
             y={posiciones[id] || 0}
             separacion={separacion}
-            arrastrando={idArrastrado === id}
-            hayArrastre={Boolean(idArrastrado)}
+            arrastrando={idArrastrado === id || idAsentando === id}
+            hayArrastre={Boolean(idArrastrado || idAsentando)}
             desplazamiento={desplazamiento}
             medir={medir}
             renderItem={renderItem}
