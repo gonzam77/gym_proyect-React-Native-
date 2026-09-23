@@ -43,21 +43,27 @@ const rutinasSlice = createSlice({
         eliminarRutina: (state, action) => {
             state.rutinas = state.rutinas.filter(r => r.id !== action.payload);
         },
-        reordenarRutina: (state, action) => {
-            const { indexActual, direccion } = action.payload;
-            const indexDestino = indexActual + direccion;
+        /**
+         * Mueve una rutina de una posicion a otra. A diferencia de un swap,
+         * saca la rutina y la inserta en el destino, que es lo que hace falta
+         * cuando se arrastra sobre varias posiciones de una.
+         */
+        reubicarRutina: (state, action) => {
+            const { desde, hacia } = action.payload;
+            const cantidad = state.rutinas.length;
 
             if (
-                indexActual < 0
-                || indexDestino < 0
-                || indexActual >= state.rutinas.length
-                || indexDestino >= state.rutinas.length
+                desde === hacia
+                || desde < 0
+                || hacia < 0
+                || desde >= cantidad
+                || hacia >= cantidad
             ) {
                 return;
             }
 
-            [state.rutinas[indexActual], state.rutinas[indexDestino]] =
-                [state.rutinas[indexDestino], state.rutinas[indexActual]];
+            const [movida] = state.rutinas.splice(desde, 1);
+            state.rutinas.splice(hacia, 0, movida);
         },
         sincronizarEstadoRutinasAsignadas: (state, action) => {
             const asignaciones = Array.isArray(action.payload) ? action.payload : [];
@@ -165,7 +171,7 @@ export const {
   agregarRutina,
   actualizarRutinaAsignadaLocal,
   eliminarRutina,
-  reordenarRutina,
+  reubicarRutina,
   sincronizarEstadoRutinasAsignadas,
   agregarEjercicio,
   reubicarEjercicio,

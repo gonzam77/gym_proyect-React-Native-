@@ -41,6 +41,9 @@ export const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: colores.borde,
   },
+  lista: {
+    flex: 1,
+  },
   scroll: {
     paddingHorizontal: espaciado.lg,
     paddingTop: espaciado.sm,
@@ -48,7 +51,6 @@ export const styles = StyleSheet.create({
     flexGrow: 1,
   },
   entrenamiento: {
-    marginBottom: espaciado.lg,
     backgroundColor: colores.superficie,
     borderRadius: radios.xl,
     padding: espaciado.xl,
@@ -60,6 +62,11 @@ export const styles = StyleSheet.create({
   entrenamientoPresionado: {
     backgroundColor: colores.superficieAlta,
     borderColor: colores.bordeSuave,
+  },
+  entrenamientoArrastrado: {
+    backgroundColor: colores.superficieAlta,
+    borderColor: colores.acento,
+    ...sombras.flotante,
   },
   filaPrincipal: {
     flexDirection: 'row',
@@ -128,12 +135,9 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     gap: espaciado.sm,
   },
-  reorderButtonsContainer: {
-    gap: espaciado.xs,
-  },
-  reorderButton: {
+  manija: {
     width: toqueMinimo,
-    height: toqueMinimo - 4,
+    height: toqueMinimo,
     borderRadius: radios.md,
     backgroundColor: colores.superficieAlta,
     borderWidth: 1,
@@ -141,11 +145,9 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  reorderButtonPresionado: {
+  manijaActiva: {
     backgroundColor: colores.borde,
-  },
-  reorderButtonDisabled: {
-    opacity: 0.3,
+    borderColor: colores.acento,
   },
   btnCircular: {
     position: 'absolute',

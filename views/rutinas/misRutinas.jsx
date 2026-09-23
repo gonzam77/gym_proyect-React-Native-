@@ -1,17 +1,18 @@
-import { PermissionsAndroid, Platform, View, Text, Pressable, Modal, Image, Animated, FlatList } from "react-native";
+import { PermissionsAndroid, Platform, View, Text, Pressable, Modal, Image, Animated } from "react-native";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch, useSelector } from "react-redux";
 import { styles } from '../../styles/misRutinasStyles';
 import { colores } from '../../styles/colores';
-import { maxEscalaFuente } from '../../styles/theme';
+import { espaciado, maxEscalaFuente } from '../../styles/theme';
 import Icon from 'react-native-vector-icons/Ionicons';
 import formatearTiempo from '../../helpers/formatearTiempo';
 import FormRutina from "./formRutina";
 import DetalleRutina from "./detalleRutina";
 import BarraProgreso from "../../components/BarraProgreso";
 import EstadoVacio from "../../components/EstadoVacio";
-import { reordenarRutina } from "../../store/rutinasSlice";
+import ListaOrdenable from "../../components/ListaOrdenable";
+import { reubicarRutina } from "../../store/rutinasSlice";
 
 async function requestNotificationPermission() {
 
@@ -44,9 +45,11 @@ const contarProgreso = (ejercicios = []) => {
 const EntrenamientoItem = ({
   rutina,
   index,
-  esUltima,
+  total: cantidadRutinas,
   onAbrir,
-  onMover,
+  arrastrando,
+  manejador,
+  accionesOrden,
 }) => {
   const { total, completados } = contarProgreso(rutina.ejercicios);
   const progreso = total > 0 ? completados / total : 0;
@@ -54,9 +57,15 @@ const EntrenamientoItem = ({
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`Abrir rutina ${rutina.nombre}`}
+      accessibilityLabel={`Abrir rutina ${rutina.nombre}. Rutina ${index + 1} de ${cantidadRutinas}`}
+      accessibilityHint="Usá las acciones Subir y Bajar para cambiarla de lugar"
+      {...accionesOrden}
       onPress={() => onAbrir(rutina.id)}
-      style={({ pressed }) => [styles.entrenamiento, pressed && styles.entrenamientoPresionado]}
+      style={({ pressed }) => [
+        styles.entrenamiento,
+        pressed && styles.entrenamientoPresionado,
+        arrastrando && styles.entrenamientoArrastrado,
+      ]}
     >
       <View style={styles.filaPrincipal}>
         <View style={styles.datos}>
@@ -90,39 +99,19 @@ const EntrenamientoItem = ({
         </View>
 
         <View style={styles.actionsContainer}>
-          <View style={styles.reorderButtonsContainer}>
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel={`Subir ${rutina.nombre} en la lista`}
-              style={({ pressed }) => [
-                styles.reorderButton,
-                pressed && styles.reorderButtonPresionado,
-                index === 0 && styles.reorderButtonDisabled,
-              ]}
-              disabled={index === 0}
-              onPress={(event) => {
-                event.stopPropagation();
-                onMover(index, -1);
-              }}
-            >
-              <Icon name="chevron-up-outline" size={20} color={colores.textoPrimario} />
-            </Pressable>
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel={`Bajar ${rutina.nombre} en la lista`}
-              style={({ pressed }) => [
-                styles.reorderButton,
-                pressed && styles.reorderButtonPresionado,
-                esUltima && styles.reorderButtonDisabled,
-              ]}
-              disabled={esUltima}
-              onPress={(event) => {
-                event.stopPropagation();
-                onMover(index, 1);
-              }}
-            >
-              <Icon name="chevron-down-outline" size={20} color={colores.textoPrimario} />
-            </Pressable>
+          {/* La manija es lo unico que arrastra: el resto de la tarjeta sigue
+              scrolleando y abriendo la rutina. */}
+          <View
+            {...manejador}
+            hitSlop={8}
+            importantForAccessibility="no"
+            style={[styles.manija, arrastrando && styles.manijaActiva]}
+          >
+            <Icon
+              name="reorder-three-outline"
+              size={22}
+              color={arrastrando ? colores.acento : colores.textoSecundario}
+            />
           </View>
           <Icon name="chevron-forward-outline" color={colores.textoSecundario} size={24} />
         </View>
@@ -163,8 +152,8 @@ const MisRutinas = () => {
     requestNotificationPermission();
   },[]);
 
-  const moverRutina = useCallback((indexActual, direccion) => {
-    dispatch(reordenarRutina({ indexActual, direccion }));
+  const reubicar = useCallback((desde, hacia) => {
+    dispatch(reubicarRutina({ desde, hacia }));
   }, [dispatch]);
 
   const abrirRutina = useCallback((id) => {
@@ -207,19 +196,14 @@ const MisRutinas = () => {
           <Image style={styles.image} source={require('../../assets/img/logo1.png')} />
         </View>
 
-        <FlatList
-          data={rutinas}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item, index }) => (
-            <EntrenamientoItem
-              rutina={item}
-              index={index}
-              esUltima={index === rutinas.length - 1}
-              onAbrir={abrirRutina}
-              onMover={moverRutina}
-            />
-          )}
-          ListEmptyComponent={() => (
+        <ListaOrdenable
+          datos={rutinas}
+          onReordenar={reubicar}
+          separacion={espaciado.lg}
+          style={styles.lista}
+          contentContainerStyle={styles.scroll}
+          showsVerticalScrollIndicator={false}
+          vacio={
             <EstadoVacio
               icono="barbell-outline"
               titulo="Todavía no tenés rutinas"
@@ -227,9 +211,18 @@ const MisRutinas = () => {
               textoAccion="Crear una rutina"
               onAccion={nuevaRutina}
             />
+          }
+          renderItem={({ item, index, arrastrando, manejador, accionesOrden }) => (
+            <EntrenamientoItem
+              rutina={item}
+              index={index}
+              total={rutinas.length}
+              onAbrir={abrirRutina}
+              arrastrando={arrastrando}
+              manejador={manejador}
+              accionesOrden={accionesOrden}
+            />
           )}
-          contentContainerStyle={styles.scroll}
-          showsVerticalScrollIndicator={false}
         />
 
         <Pressable
