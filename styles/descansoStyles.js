@@ -2,6 +2,8 @@ import { StyleSheet } from "react-native";
 import { colores } from './colores';
 import { espaciado, radios, sombras, tipografia, toqueMinimo } from './theme';
 
+// Pantalla compacta: todo entra sin scroll en un telefono comun. Saltar /
+// Detener van fijos abajo (estilo "pie").
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -12,31 +14,34 @@ export const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: espaciado.xl,
-    paddingVertical: espaciado.xl,
+    paddingVertical: espaciado.lg,
+    gap: espaciado.lg,
+  },
+
+  // --- Encabezado ---
+  encabezado: {
+    alignItems: 'center',
+    gap: espaciado.sm,
   },
   image: {
-    alignSelf: 'center',
-    height: 110,
-    width: 110,
+    height: 84,
+    width: 84,
     borderRadius: radios.completo,
+  },
+  encabezadoTextos: {
+    alignItems: 'center',
   },
   titulo: {
     ...tipografia.display,
     color: colores.textoPrimario,
-    marginTop: espaciado.lg,
-    textAlign: "center",
     textTransform: 'uppercase',
     letterSpacing: 2,
   },
   titulo1: {
     ...tipografia.cuerpo,
     color: colores.textoSecundario,
-    marginTop: espaciado.xs,
-    marginBottom: espaciado.xl,
-    textAlign: 'center',
   },
 
   // --- Tarjeta del contador ---
@@ -47,9 +52,9 @@ export const styles = StyleSheet.create({
     borderRadius: radios.xl,
     borderWidth: 1,
     borderColor: colores.borde,
-    paddingVertical: espaciado.xxl,
-    paddingHorizontal: espaciado.xl,
-    gap: espaciado.lg,
+    paddingVertical: espaciado.xl,
+    paddingHorizontal: espaciado.lg,
+    gap: espaciado.md,
     ...sombras.card,
   },
   titulo2: {
@@ -75,12 +80,13 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: espaciado.xl,
-    marginTop: espaciado.xs,
+    gap: espaciado.md,
+    marginTop: espaciado.sm,
+    width: '100%',
   },
   botonRedondo: {
-    width: 64,
-    height: 64,
+    width: 60,
+    height: 60,
     borderRadius: radios.completo,
     alignItems: 'center',
     justifyContent: 'center',
@@ -91,21 +97,10 @@ export const styles = StyleSheet.create({
   botonPresionado: {
     opacity: 0.7,
   },
-
-  // --- Ajustes rapidos de tiempo ---
-  ajustes: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: espaciado.md,
-    marginTop: espaciado.md,
-    width: '100%',
-  },
   botonAjuste: {
     flex: 1,
-    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: espaciado.xs,
     minHeight: toqueMinimo,
     borderRadius: radios.completo,
     borderWidth: 1,
@@ -119,29 +114,22 @@ export const styles = StyleSheet.create({
     opacity: 0.35,
   },
 
-  // --- Nota del ejercicio ---
+  // --- Nota del ejercicio (una o dos lineas) ---
   tarjetaNota: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    gap: espaciado.md,
+    alignItems: 'center',
+    gap: espaciado.sm,
     alignSelf: 'stretch',
-    marginTop: espaciado.lg,
-    padding: espaciado.lg,
-    borderRadius: radios.xl,
+    minHeight: toqueMinimo + 8,
+    paddingVertical: espaciado.md,
+    paddingHorizontal: espaciado.lg,
+    borderRadius: radios.lg,
     borderWidth: 1,
     borderColor: colores.borde,
     backgroundColor: colores.superficie,
   },
   notaTextos: {
     flex: 1,
-    gap: espaciado.xs,
-  },
-  notaEtiqueta: {
-    ...tipografia.micro,
-    color: colores.textoTenue,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
   },
   notaTexto: {
     ...tipografia.cuerpo,
@@ -153,21 +141,26 @@ export const styles = StyleSheet.create({
     fontStyle: 'italic',
   },
 
-  // --- Cierre ---
+  // --- Pie fijo ---
+  pie: {
+    paddingHorizontal: espaciado.xl,
+    paddingTop: espaciado.md,
+    paddingBottom: espaciado.lg,
+    gap: espaciado.sm,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: colores.bordeSuave,
+  },
   aviso: {
     ...tipografia.cuerpoFuerte,
     color: colores.aviso,
     textAlign: 'center',
-    marginTop: espaciado.xl,
   },
   botonSaltar: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: espaciado.sm,
-    alignSelf: 'stretch',
     minHeight: 56,
-    marginTop: espaciado.xl,
     borderRadius: radios.completo,
     borderWidth: 1,
     borderColor: colores.borde,
@@ -182,9 +175,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: espaciado.sm,
-    alignSelf: 'stretch',
-    minHeight: 64,
-    marginTop: espaciado.md,
+    minHeight: 62,
     borderRadius: radios.completo,
     backgroundColor: colores.peligro,
   },
@@ -199,10 +190,9 @@ export const styles = StyleSheet.create({
   bannerPermiso: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: espaciado.md,
-    marginBottom: espaciado.xl,
-    paddingVertical: espaciado.md,
-    paddingHorizontal: espaciado.lg,
+    gap: espaciado.sm,
+    paddingVertical: espaciado.sm,
+    paddingHorizontal: espaciado.md,
     borderRadius: radios.md,
     borderWidth: 1,
     borderColor: colores.aviso,
@@ -210,7 +200,8 @@ export const styles = StyleSheet.create({
   },
   bannerPermisoTexto: {
     flex: 1,
-    ...tipografia.auxiliar,
+    ...tipografia.micro,
+    fontWeight: '500',
     color: colores.textoPrimario,
   },
 });

@@ -1,7 +1,10 @@
 package com.rutina360
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
+import androidx.activity.SystemBarStyle
+import androidx.activity.enableEdgeToEdge
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
@@ -22,6 +25,17 @@ class MainActivity : ReactActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         // React Navigation / Screens config
         supportFragmentManager.fragmentFactory = RNScreensFragmentFactory()
+
+        // Vista de extremo a extremo en TODAS las versiones de Android, no solo
+        // en 15+ (donde targetSdk 35+ la impone). Asi la app se ve igual en
+        // todos los telefonos: el contenido va detras de las barras del sistema
+        // y los margenes los ponen los SafeAreaView / la barra de pestañas.
+        // Barras transparentes con iconos claros (la app es oscura).
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
+            navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
+        )
+
         super.onCreate(savedInstanceState)
 
         // Inicializar actualizaciones

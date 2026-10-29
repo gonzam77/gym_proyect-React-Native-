@@ -97,13 +97,19 @@ export const styles = StyleSheet.create({
     paddingBottom: espaciado.lg,
     gap: espaciado.sm,
   },
+  ejercicioBloque: {
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: colores.bordeSuave,
+  },
   ejercicio: {
     flexDirection: "row",
     alignItems: "center",
     gap: espaciado.sm,
+    minHeight: 40,
     paddingTop: espaciado.sm,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: colores.bordeSuave,
+  },
+  imagenEjercicio: {
+    marginVertical: espaciado.sm,
   },
   ejercicioNombre: {
     flex: 1,

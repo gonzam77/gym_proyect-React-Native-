@@ -227,10 +227,11 @@ const programarAlarmaAndroid = async ({ finEn, titulo, cuerpo }) => {
       // despertador. Sin esto alarm2.mp3 suena una sola vez.
       loopSound: true,
       vibrationPattern: VIBRACION_ALARMA,
+      // Tocarla abre la app. A proposito NO usa fullScreenAction: abrir la
+      // app sola sobre la pantalla bloqueada molestaba, y ademas obligaba a
+      // pedir USE_FULL_SCREEN_INTENT (restringido por Google Play desde
+      // Android 14). La alarma suena igual como notificacion de alta prioridad.
       pressAction: { id: 'default', launchActivity: 'default' },
-      // Abre la app a pantalla completa sobre la pantalla de bloqueo.
-      // MainActivity ya declara showWhenLocked y turnScreenOn.
-      fullScreenAction: { id: 'default', launchActivity: 'default' },
       actions: [
         {
           title: '<font color="#D58691"><b>DETENER</b></font>',

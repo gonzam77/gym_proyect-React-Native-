@@ -24,7 +24,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     window = UIWindow(frame: UIScreen.main.bounds)
 
     factory.startReactNative(
-      withModuleName: "MiApp",
+      // Tiene que coincidir con "name" de app.json (index.js registra ese nombre).
+      withModuleName: "Rutina360",
       in: window,
       launchOptions: launchOptions
     )

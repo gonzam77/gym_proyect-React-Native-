@@ -22,6 +22,23 @@ export const styles = StyleSheet.create({
   headerTextos: {
     flex: 1,
   },
+  botonImportar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: espaciado.xs,
+    minHeight: toqueMinimo,
+    paddingHorizontal: espaciado.md,
+    borderRadius: radios.completo,
+    borderWidth: 1,
+    borderColor: colores.borde,
+  },
+  botonImportarPresionado: {
+    backgroundColor: colores.superficieAlta,
+  },
+  botonImportarTexto: {
+    ...tipografia.auxiliar,
+    color: colores.textoPrimario,
+  },
   saludo: {
     ...tipografia.micro,
     color: colores.textoTenue,

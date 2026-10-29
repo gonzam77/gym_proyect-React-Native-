@@ -11,6 +11,7 @@ import { maxEscalaFuente } from "../../styles/theme";
 import EstadoVacio from "../../components/EstadoVacio";
 import PantallaModal from "../../components/PantallaModal";
 import { avisoError, avisoExito } from "../../helpers/avisos";
+import { formatearDescanso, segundosDescanso } from "../../helpers/descanso";
 
 const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSeleccionada}) => {
 
@@ -37,10 +38,12 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
         Date.now().toString(36);
 
     useEffect(() => {
-        if (nuevaRutina.ejercicios.length > 0) {
-            const tiempoTotalSegundos = nuevaRutina.ejercicios.reduce((acumulador, e) => {
+        const ejerciciosActuales = nuevaRutina?.ejercicios || [];
+
+        if (ejerciciosActuales.length > 0) {
+            const tiempoTotalSegundos = ejerciciosActuales.reduce((acumulador, e) => {
             const tiempoSeries = e.ejercicio.tiempoEjecucion * e.series;
-            const tiempoDescanso = e.descanso * e.series * 60;
+            const tiempoDescanso = segundosDescanso(e) * e.series;
             return acumulador + tiempoSeries + tiempoDescanso;
             }, 0);
 
@@ -48,7 +51,7 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
         } else {
             setTiempoEstimado(0);
         }
-    }, [nuevaRutina.ejercicios]);
+    }, [nuevaRutina?.ejercicios]);
 
     useEffect(()=>{
         setNuevaRutina(previa => ({
@@ -75,8 +78,12 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
         }
     }, [rutinaSeleccionada]);
 
+    // Ojo: aca no se limpia nuevaRutina. Cuando este cierre viene del Alert de
+    // "salir sin guardar", React no agrupa los setState del callback nativo, asi
+    // que vaciar el estado provoca un render con ejercicios en undefined antes
+    // de que el modal se desmonte, y el efecto del tiempo estimado revienta.
+    // El estado arranca limpio solo con volver a montar el formulario.
     const cerrarFormulario = () => {
-        setNuevaRutina({});
         setModalFormRutina(false);
     };
 
@@ -259,7 +266,8 @@ const FormRutina = ({setModalFormRutina, rutinaSeleccionada, setRutinaSelecciona
                                             style={styles.ejercicioDetalle}
                                             maxFontSizeMultiplier={maxEscalaFuente}
                                         >
-                                            {e.series} series · {e.descanso} min de descanso
+                                            {e.series} series
+                                            {segundosDescanso(e) > 0 ? ` · ${formatearDescanso(segundosDescanso(e))} de descanso` : ''}
                                         </Text>
                                     </View>
                                     <Icon name="chevron-forward-outline" size={24} color={colores.textoSecundario} />

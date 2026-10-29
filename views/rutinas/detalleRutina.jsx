@@ -1,11 +1,13 @@
 import { Modal, Pressable, Text, View, Alert } from "react-native";
 import { useCallback, useEffect, useState } from "react";
 import DetalleEjercicio from "./detalleEjercicio";
+import CompartirRutina from "./compartirRutina";
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useDispatch, useSelector } from "react-redux";
 import formatearTiempo from '../../helpers/formatearTiempo';
 import { styles } from '../../styles/detalleRutinaStyles';
 import { eliminarRutina, reiniciarRutina, reubicarEjercicio } from "../../store/rutinasSlice";
+import { cerrarRegistros } from "../../store/historialSlice";
 import { colores } from "../../styles/colores";
 import { espaciado, maxEscalaFuente } from "../../styles/theme";
 import BarraProgreso from "../../components/BarraProgreso";
@@ -14,7 +16,8 @@ import HojaAcciones from "../../components/HojaAcciones";
 import EstadoVacio from "../../components/EstadoVacio";
 import PantallaModal from "../../components/PantallaModal";
 import ListaOrdenable from "../../components/ListaOrdenable";
-import { avisoExito } from "../../helpers/avisos";
+import { avisoError, avisoExito } from "../../helpers/avisos";
+import { formatearDescanso, segundosDescanso } from "../../helpers/descanso";
 
 const estaFinalizado = ejercicio => {
   const series = Number(ejercicio?.series) || 0;
@@ -27,8 +30,13 @@ const DetalleRutina = (
     rutinaSeleccionada,
     setRutinaSeleccionada,
     setModalFormRutina,
-    setModalDetalle
+    setModalDetalle,
+    enLinea = false,
   })=>{
+
+  // Dentro de la pestaña (enLinea) no hace falta la raiz de modal: la pantalla
+  // ya tiene su SafeAreaView y la barra de pestañas queda visible abajo.
+  const Contenedor = enLinea ? View : PantallaModal;
 
   const rutinaActualizada = useSelector(state =>
     state.rutinas.rutinas.find(r => r.id === rutinaSeleccionada?.id)
@@ -46,6 +54,7 @@ const DetalleRutina = (
   const [idEjercicio, setIdEjercicio] = useState(null);
   const [modalEjercicio, setModalEjercicio] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
+  const [modalCompartir, setModalCompartir] = useState(false);
 
   const handleEliminarRutina  = (id)=>{
     setRutinaSeleccionada({});
@@ -66,6 +75,8 @@ const DetalleRutina = (
     }
 
     dispatch(reiniciarRutina(copiaRutinaActualizada));
+    // Lo hecho hoy queda en el historial; lo que se haga despues es otra vuelta.
+    dispatch(cerrarRegistros({ idRutina: copiaRutinaActualizada.id }));
     avisoExito('Rutina reiniciada', 'Todas las series volvieron a cero.');
   }
 
@@ -88,6 +99,14 @@ const DetalleRutina = (
         { text: "Reiniciar", onPress: handleReiniciarRutina },
       ],
     );
+  };
+
+  const abrirCompartir = () => {
+    if (!copiaRutinaActualizada?.ejercicios?.length) {
+      avisoError('Rutina vacía', 'Agregale al menos un ejercicio antes de compartirla.');
+      return;
+    }
+    setModalCompartir(true);
   };
 
   const confirmarEliminar = () => {
@@ -115,7 +134,7 @@ const DetalleRutina = (
   const progreso = total > 0 ? completados / total : 0;
 
   return (
-    <PantallaModal>
+    <Contenedor style={enLinea ? styles.container : undefined}>
       <View style={styles.cuerpo}>
         <View style={styles.botonera}>
           <Pressable
@@ -236,7 +255,7 @@ const DetalleRutina = (
                     </Text>
                     <Text style={styles.ejercicioDetalle} maxFontSizeMultiplier={maxEscalaFuente}>
                       {Number(e.seriesRealizadas) || 0} de {e.series} series
-                      {e.descanso ? ` · ${e.descanso} min de descanso` : ''}
+                      {segundosDescanso(e) > 0 ? ` · ${formatearDescanso(segundosDescanso(e))} de descanso` : ''}
                     </Text>
 
                     {finalizado ? (
@@ -290,6 +309,11 @@ const DetalleRutina = (
         onClose={() => setMenuVisible(false)}
         opciones={[
           {
+            texto: 'Compartir rutina',
+            icono: 'share-social-outline',
+            onPress: abrirCompartir,
+          },
+          {
             texto: 'Reiniciar series',
             icono: 'refresh-outline',
             onPress: confirmarReiniciar,
@@ -302,6 +326,19 @@ const DetalleRutina = (
           },
         ]}
       />
+
+      <Modal
+        visible={modalCompartir}
+        animationType="slide"
+        statusBarTranslucent
+        navigationBarTranslucent
+        onRequestClose={() => setModalCompartir(false)}
+      >
+        <CompartirRutina
+          rutina={copiaRutinaActualizada}
+          onClose={() => setModalCompartir(false)}
+        />
+      </Modal>
 
       <Modal
         visible={modalEjercicio}
@@ -317,7 +354,7 @@ const DetalleRutina = (
         />
       </Modal>
 
-    </PantallaModal>
+    </Contenedor>
   )
 }
 

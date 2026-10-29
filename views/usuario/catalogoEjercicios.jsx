@@ -11,6 +11,7 @@ import { colores } from "../../styles/colores";
 import { maxEscalaFuente } from "../../styles/theme";
 import styles from "../../styles/catalogoStyles";
 import Esqueleto from "../../components/Esqueleto";
+import ImagenEjercicio from "../../components/ImagenEjercicio";
 
 const formatearFecha = (valor) => {
   if (!valor) return "Sin registros";
@@ -29,6 +30,8 @@ const CatalogoEjercicios = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState("");
   const [abiertas, setAbiertas] = useState({});
+  // Ejercicio desplegado para ver su ilustracion (uno por vez).
+  const [ejercicioAbierto, setEjercicioAbierto] = useState(null);
 
   const cargarLocal = useCallback(async () => {
     setError("");
@@ -157,11 +160,27 @@ const CatalogoEjercicios = () => {
               {abierta ? (
                 <View style={styles.listaEjercicios}>
                   {ejercicios.map(ej => (
-                    <View key={ej.idEjercicio} style={styles.ejercicio}>
-                      <Icon name="ellipse" size={5} color={colores.textoTenue} />
-                      <Text style={styles.ejercicioNombre} maxFontSizeMultiplier={maxEscalaFuente}>
-                        {ej.nombre}
-                      </Text>
+                    <View key={ej.idEjercicio} style={styles.ejercicioBloque}>
+                      <Pressable
+                        accessibilityRole="button"
+                        accessibilityLabel={`${ej.nombre}, ver ilustración`}
+                        accessibilityState={{ expanded: ejercicioAbierto === ej.idEjercicio }}
+                        style={({ pressed }) => [styles.ejercicio, pressed && styles.categoriaEncabezadoPresionado]}
+                        onPress={() => setEjercicioAbierto(actual => (actual === ej.idEjercicio ? null : ej.idEjercicio))}
+                      >
+                        <Icon name="ellipse" size={5} color={colores.textoTenue} />
+                        <Text style={styles.ejercicioNombre} maxFontSizeMultiplier={maxEscalaFuente}>
+                          {ej.nombre}
+                        </Text>
+                        <Icon
+                          name={ejercicioAbierto === ej.idEjercicio ? "image" : "image-outline"}
+                          size={18}
+                          color={colores.textoTenue}
+                        />
+                      </Pressable>
+                      {ejercicioAbierto === ej.idEjercicio ? (
+                        <ImagenEjercicio ejercicio={ej} style={styles.imagenEjercicio} />
+                      ) : null}
                     </View>
                   ))}
                 </View>

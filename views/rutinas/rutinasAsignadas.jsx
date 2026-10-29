@@ -24,6 +24,7 @@ import {
   sincronizarEstadoRutinasAsignadas,
 } from "../../store/rutinasSlice";
 import listadoEjercicios from "../../helpers/ejercicios";
+import { formatearDescanso, segundosDescansoBackend } from "../../helpers/descanso";
 import { apiJson } from "../../services/apiClient";
 
 const DEFAULT_EXERCISE_SECONDS = 40;
@@ -81,6 +82,12 @@ const construirHuellaAsignacion = asignacion => {
       nombre: normalizarTexto(item?.Ejercice?.name) || "",
       series: Number(item?.series) || 0,
       descanso: Number(item?.rest) || 0,
+      // Solo entra en la huella si los segundos no son minutos justos: asi las
+      // asignaciones que ya existian conservan la misma huella y no aparecen
+      // como "modificadas por el coach" al actualizar la app.
+      ...(segundosDescansoBackend(item) !== (Number(item?.rest) || 0) * 60
+        ? { descansoSegundos: segundosDescansoBackend(item) }
+        : {}),
       comentarios: (item?.comments || "").trim(),
     }))
     .sort((a, b) => a.id - b.id);
@@ -116,6 +123,7 @@ const convertirAsignacionEnRutinaLocal = asignacion => {
       nombre: ejercicio.nombre,
       series: Number(item.series) || 0,
       descanso: Number(item.rest) || 0,
+      descansoSegundos: segundosDescansoBackend(item),
       seriesRealizadas: 0,
       nota: item.comments || "",
     };
@@ -123,7 +131,7 @@ const convertirAsignacionEnRutinaLocal = asignacion => {
 
   const tiempoCalculado = ejercicios.reduce((total, item) => {
     const tiempoEjecucion = item.ejercicio?.tiempoEjecucion || DEFAULT_EXERCISE_SECONDS;
-    return total + (tiempoEjecucion * item.series) + (item.descanso * item.series * 60);
+    return total + (tiempoEjecucion * item.series) + (item.descansoSegundos * item.series);
   }, 0);
 
   return {
@@ -271,7 +279,8 @@ const RutinaAsignadaDetalle = ({
                   {item.Ejercice?.MuscleGroup?.name || "Grupo muscular"}
                 </Text>
                 <Text style={styles.exerciseInfo} maxFontSizeMultiplier={maxEscalaFuente}>
-                  {item.series || 0} series · {item.rest || 0} min de descanso
+                  {item.series || 0} series
+                  {segundosDescansoBackend(item) > 0 ? ` · ${formatearDescanso(segundosDescansoBackend(item))} de descanso` : ''}
                 </Text>
                 {item.comments ? (
                   <Text style={styles.comments} maxFontSizeMultiplier={maxEscalaFuente}>
@@ -291,7 +300,9 @@ const RutinaAsignadaDetalle = ({
   );
 };
 
-const RutinasAsignadas = () => {
+// embebido: se muestra dentro de la pantalla "Rutinas", que ya maneja el area
+// segura de arriba.
+const RutinasAsignadas = ({ embebido = false }) => {
   const dispatch = useDispatch();
   const sesion = useSelector(state => state.usuario.sesion);
   const rutinasLocales = useSelector(state => state.rutinas.rutinas);
@@ -518,7 +529,7 @@ const RutinasAsignadas = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container} edges={embebido ? [] : ['top']}>
       <View style={styles.header}>
         <View style={styles.headerTop}>
           <View style={styles.headerText}>

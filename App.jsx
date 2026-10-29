@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { store, persistor } from './store/store';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { DarkTheme, NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -23,13 +23,14 @@ import notifee, { EventType } from '@notifee/react-native';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-import MisRutinas from './views/rutinas/misRutinas';
-import RutinasAsignadas from './views/rutinas/rutinasAsignadas';
+import Rutinas from './views/rutinas/rutinas';
 import Perfil from './views/usuario/perfil';
 import Notas from './views/notas/notas';
+import Historial from './views/historial/historial';
 import Login from './views/usuario/login';
 import StartupLoader from './components/StartupLoader';
 import AvisosToast from './components/AvisosToast';
+import MenuMas from './components/MenuMas';
 import { colores } from './styles/colores';
 import { tipografia } from './styles/theme';
 import { cargarUsuarioBackup, guardarUsuarioBackup, mapearUsuarioBackendALocal } from './helpers/usuarioBackup';
@@ -61,9 +62,10 @@ const temaNavegacion = {
 
 const ICONOS_TABS = {
   MisRutinas: ['fitness', 'fitness-outline'],
-  RutinasAsignadas: ['clipboard', 'clipboard-outline'],
+  Historial: ['calendar', 'calendar-outline'],
   Notas: ['create', 'create-outline'],
   Perfil: ['person', 'person-outline'],
+  Mas: ['ellipsis-horizontal', 'ellipsis-horizontal'],
 };
 
 /**
@@ -96,8 +98,12 @@ const manejarEventoNotificacion = async ({ type, detail }) => {
 
 notifee.onBackgroundEvent(manejarEventoNotificacion);
 
+// La pestaña "Más" no tiene pantalla propia: al tocarla se abre un menu.
+const SinPantalla = () => null;
+
 const AppContent = () => {
   const dispatch = useDispatch();
+  const [menuMas, setMenuMas] = useState(false);
   const token = useSelector(state => state.usuario.sesion?.token);
   const usuarioSesion = useSelector(state => state.usuario.sesion?.user);
   const usuarioLocal = useSelector(state => state.usuario.usuario);
@@ -175,6 +181,7 @@ const AppContent = () => {
   }
 
   return (
+    <>
     <RootTabs.Navigator
       initialRouteName='MisRutinas'
       screenOptions={({ route }) => ({
@@ -196,20 +203,20 @@ const AppContent = () => {
     >
       <RootTabs.Screen
         name='MisRutinas'
-        component={MisRutinas}
+        component={Rutinas}
         options={{
-          tabBarLabel: 'Mis rutinas',
+          tabBarLabel: 'Rutinas',
           // La pantalla ya trae su propio encabezado con el saludo; un header
           // del navegador arriba de eso serian dos titulos para lo mismo.
           headerShown: false,
         }}
       />
       <RootTabs.Screen
-        name='RutinasAsignadas'
-        component={RutinasAsignadas}
+        name='Historial'
+        component={Historial}
         options={{
-          tabBarLabel: 'Asignadas',
-          headerShown: false,
+          tabBarLabel: 'Historial',
+          headerTitle: 'Historial',
         }}
       />
       <RootTabs.Screen
@@ -228,7 +235,24 @@ const AppContent = () => {
           headerTitle: 'Mi perfil',
         }}
       />
+      <RootTabs.Screen
+        name='Mas'
+        component={SinPantalla}
+        options={{
+          tabBarLabel: 'Más',
+          tabBarAccessibilityLabel: 'Más opciones',
+        }}
+        listeners={{
+          tabPress: evento => {
+            // No navega: deja la pestaña actual y abre el menu encima.
+            evento.preventDefault();
+            setMenuMas(true);
+          },
+        }}
+      />
     </RootTabs.Navigator>
+    <MenuMas visible={menuMas} onClose={() => setMenuMas(false)} />
+    </>
   );
 };
 

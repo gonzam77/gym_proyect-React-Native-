@@ -12,10 +12,24 @@ import {
   getCatalogoLocalConRefresh,
   refrescarCatalogoRemoto,
 } from "../../helpers/catalogoEjercicios";
+import {
+  MAX_MINUTOS_DESCANSO,
+  PASO_SEGUNDOS_DESCANSO,
+  camposDescanso,
+  formatearDescanso,
+  partirDescanso,
+  segundosDescanso,
+} from "../../helpers/descanso";
+import ImagenEjercicio from "../../components/ImagenEjercicio";
 
-const OPCIONES_DESCANSO = Array.from({ length: 10 }, (_, i) => ({
-  etiqueta: `${i + 1} ${i === 0 ? 'minuto' : 'minutos'}`,
-  valor: String(i + 1),
+const OPCIONES_MINUTOS = Array.from({ length: MAX_MINUTOS_DESCANSO + 1 }, (_, i) => ({
+  etiqueta: `${i} min`,
+  valor: String(i),
+}));
+
+const OPCIONES_SEGUNDOS = Array.from({ length: 60 / PASO_SEGUNDOS_DESCANSO }, (_, i) => ({
+  etiqueta: `${String(i * PASO_SEGUNDOS_DESCANSO).padStart(2, '0')} s`,
+  valor: String(i * PASO_SEGUNDOS_DESCANSO),
 }));
 
 const MIN_SERIES = 1;
@@ -36,6 +50,7 @@ const FormEjercicio = ({ nuevaRutina, setNuevaRutina, setModalFormEjercicio, eje
     ejercicio:{},
     series: "",
     descanso: "",
+    descansoSegundos: "",
     seriesRealizadas:0,
     nota:''
   });
@@ -77,7 +92,9 @@ const FormEjercicio = ({ nuevaRutina, setNuevaRutina, setModalFormEjercicio, eje
     }
 
     if (idCargadoRef.current !== ejercicioSeleccionado) {
-      setEjercicioNuevo(JSON.parse(JSON.stringify(seleccionado)));
+      const copia = JSON.parse(JSON.stringify(seleccionado));
+      // Las rutinas viejas solo tienen minutos: se pasan a segundos al abrir.
+      setEjercicioNuevo({ ...copia, ...camposDescanso(segundosDescanso(copia)) });
       idCargadoRef.current = ejercicioSeleccionado;
     }
 
@@ -128,7 +145,7 @@ const FormEjercicio = ({ nuevaRutina, setNuevaRutina, setModalFormEjercicio, eje
     if (!selectedCategory) return "Elegí una categoría.";
     if (!ejercicioNuevo.ejercicio?.idEjercicio) return "Elegí un ejercicio.";
     if (!ejercicioNuevo.series || ejercicioNuevo.series <= 0) return "Las series tienen que ser mayores a cero.";
-    if (!ejercicioNuevo.descanso || ejercicioNuevo.descanso <= 0) return "Elegí cuántos minutos de descanso.";
+    if (!(Number(ejercicioNuevo.descansoSegundos) > 0)) return "Elegí cuánto descanso entre series.";
     return "";
   };
 
@@ -162,6 +179,19 @@ const FormEjercicio = ({ nuevaRutina, setNuevaRutina, setModalFormEjercicio, eje
         ...prev,
         series: Math.min(MAX_SERIES, Math.max(MIN_SERIES, actual + paso)),
       };
+    });
+  };
+
+  // Minutos y segundos se eligen por separado pero se guarda un solo total.
+  const descansoActual = partirDescanso(ejercicioNuevo.descansoSegundos);
+  const descansoElegido = ejercicioNuevo.descansoSegundos !== "" && ejercicioNuevo.descansoSegundos !== undefined;
+
+  const cambiarDescanso = (parte, valor) => {
+    setEjercicioNuevo(prev => {
+      const actual = partirDescanso(prev.descansoSegundos);
+      const minutos = parte === 'minutos' ? Number(valor) : actual.minutos;
+      const segundos = parte === 'segundos' ? Number(valor) : actual.segundos;
+      return { ...prev, ...camposDescanso(minutos * 60 + segundos) };
     });
   };
 
@@ -221,6 +251,8 @@ const FormEjercicio = ({ nuevaRutina, setNuevaRutina, setModalFormEjercicio, eje
         style={styles.container}
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
+        // iOS: corre el contenido para que el teclado no tape la nota.
+        automaticallyAdjustKeyboardInsets
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.botonera}>
@@ -313,6 +345,12 @@ const FormEjercicio = ({ nuevaRutina, setNuevaRutina, setModalFormEjercicio, eje
               }
             }}
           />
+          {ejercicioNuevo.ejercicio?.idEjercicio ? (
+            <ImagenEjercicio
+              ejercicio={ejercicioNuevo.ejercicio}
+              style={styles.imagenEjercicio}
+            />
+          ) : null}
         </View>
 
         <View style={styles.seccion}>
@@ -365,13 +403,31 @@ const FormEjercicio = ({ nuevaRutina, setNuevaRutina, setModalFormEjercicio, eje
 
         <View style={styles.seccion}>
           <Text style={styles.label} maxFontSizeMultiplier={maxEscalaFuente}>Descanso entre series</Text>
-          <Selector
-            titulo="Descanso entre series"
-            placeholder="Elegí los minutos"
-            opciones={OPCIONES_DESCANSO}
-            valor={ejercicioNuevo.descanso ? String(ejercicioNuevo.descanso) : ""}
-            onChange={v => handleChange("descanso", v)}
-          />
+          <View style={styles.filaDescanso}>
+            <View style={styles.columnaDescanso}>
+              <Selector
+                titulo="Minutos de descanso"
+                placeholder="Min"
+                opciones={OPCIONES_MINUTOS}
+                valor={descansoElegido ? String(descansoActual.minutos) : ""}
+                onChange={v => cambiarDescanso('minutos', v)}
+              />
+            </View>
+            <View style={styles.columnaDescanso}>
+              <Selector
+                titulo="Segundos de descanso"
+                placeholder="Seg"
+                opciones={OPCIONES_SEGUNDOS}
+                valor={descansoElegido ? String(descansoActual.segundos) : ""}
+                onChange={v => cambiarDescanso('segundos', v)}
+              />
+            </View>
+          </View>
+          {Number(ejercicioNuevo.descansoSegundos) > 0 ? (
+            <Text style={styles.ayuda} maxFontSizeMultiplier={maxEscalaFuente}>
+              {formatearDescanso(ejercicioNuevo.descansoSegundos)} entre cada serie
+            </Text>
+          ) : null}
         </View>
 
         <View style={styles.seccion}>

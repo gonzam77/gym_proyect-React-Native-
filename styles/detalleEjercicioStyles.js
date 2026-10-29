@@ -2,6 +2,8 @@ import { StyleSheet } from "react-native";
 import { colores } from './colores';
 import { espaciado, radios, sombras, tipografia, toqueMinimo } from './theme';
 
+// Pantalla compacta: todo tiene que entrar sin scroll en un telefono comun
+// (~ 800 dp de alto util). Los botones de accion van fijos abajo.
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -13,13 +15,18 @@ export const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
     paddingHorizontal: espaciado.xl,
-    paddingBottom: espaciado.xxxl,
+    paddingBottom: espaciado.lg,
+    gap: espaciado.lg,
   },
   encabezado: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    gap: espaciado.xs,
+    paddingHorizontal: espaciado.md,
     paddingTop: espaciado.sm,
+  },
+  espaciador: {
+    flex: 1,
   },
   botonIcono: {
     minWidth: toqueMinimo,
@@ -32,21 +39,22 @@ export const styles = StyleSheet.create({
     backgroundColor: colores.superficieAlta,
   },
   titulo: {
-    ...tipografia.display,
+    ...tipografia.titulo,
     color: colores.textoPrimario,
     textAlign: "center",
-    marginTop: espaciado.lg,
     textTransform: 'uppercase',
   },
+  imagen: {
+    width: '100%',
+  },
 
-  // --- Progreso de series ---
+  // --- Progreso de series + datos ---
   tarjetaProgreso: {
-    marginTop: espaciado.xl,
     backgroundColor: colores.superficie,
-    borderRadius: radios.xl,
+    borderRadius: radios.lg,
     borderWidth: 1,
     borderColor: colores.borde,
-    padding: espaciado.xl,
+    padding: espaciado.lg,
     gap: espaciado.md,
     ...sombras.card,
   },
@@ -54,10 +62,11 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-end",
+    gap: espaciado.md,
   },
   progresoNumero: {
-    fontSize: 40,
-    lineHeight: 44,
+    fontSize: 38,
+    lineHeight: 42,
     fontWeight: "900",
     color: colores.textoPrimario,
   },
@@ -71,59 +80,41 @@ export const styles = StyleSheet.create({
     textTransform: "uppercase",
     letterSpacing: 1,
   },
+  datosDerecha: {
+    alignItems: "flex-end",
+    gap: 2,
+    flexShrink: 1,
+  },
+  dato: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
   restantes: {
     ...tipografia.cuerpoFuerte,
     color: colores.acento,
     textAlign: "right",
   },
-
-  // --- Detalle ---
-  infoBox: {
-    marginTop: espaciado.lg,
-    backgroundColor: colores.superficie,
-    borderRadius: radios.xl,
-    borderWidth: 1,
-    borderColor: colores.borde,
-    paddingVertical: espaciado.lg,
-    paddingHorizontal: espaciado.xl,
-    ...sombras.card,
-  },
-  filaDato: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: espaciado.sm,
-  },
-  separador: {
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: colores.bordeSuave,
-  },
   label: {
     ...tipografia.auxiliar,
     color: colores.textoSecundario,
   },
-  valor: {
-    ...tipografia.cuerpoFuerte,
-    color: colores.textoPrimario,
-  },
 
-  // --- Nota ---
+  // --- Nota (una o dos lineas) ---
   card: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     gap: espaciado.md,
     backgroundColor: colores.superficie,
     borderWidth: 1,
     borderColor: colores.borde,
-    padding: espaciado.xl,
-    borderRadius: radios.xl,
-    marginTop: espaciado.lg,
-    ...sombras.card,
+    paddingVertical: espaciado.md,
+    paddingHorizontal: espaciado.lg,
+    minHeight: toqueMinimo + 8,
+    borderRadius: radios.lg,
   },
   notaTextos: {
     flex: 1,
-    gap: espaciado.xs,
   },
   notaTexto: {
     ...tipografia.cuerpo,
@@ -135,13 +126,46 @@ export const styles = StyleSheet.create({
     fontStyle: 'italic',
   },
 
+  // --- Registro de hoy (chips) ---
+  registro: {
+    backgroundColor: colores.superficie,
+    borderWidth: 1,
+    borderColor: colores.borde,
+    borderRadius: radios.lg,
+    paddingVertical: espaciado.md,
+    paddingHorizontal: espaciado.lg,
+    gap: espaciado.sm,
+  },
+  registroEncabezado: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  chipsSeries: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: espaciado.xs,
+  },
+  chipSerie: {
+    paddingHorizontal: espaciado.md,
+    paddingVertical: 5,
+    borderRadius: radios.completo,
+    backgroundColor: colores.superficieAlta,
+  },
+  chipSerieRegistrada: {
+    backgroundColor: 'rgba(29, 191, 132, 0.16)',
+  },
+  chipSerieTexto: {
+    ...tipografia.auxiliar,
+    color: colores.textoPrimario,
+  },
+
   // --- Estado de la serie ---
   enCurso: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: espaciado.sm,
-    marginTop: espaciado.xxl,
   },
   puntoEnCurso: {
     width: 10,
@@ -158,7 +182,6 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     alignSelf: "center",
     gap: espaciado.sm,
-    marginTop: espaciado.xxl,
     paddingHorizontal: espaciado.lg,
     paddingVertical: espaciado.sm,
     borderRadius: radios.completo,
@@ -170,24 +193,28 @@ export const styles = StyleSheet.create({
     ...tipografia.cuerpoFuerte,
     color: colores.exito,
   },
-  felicitaciones: {
-    ...tipografia.cuerpo,
-    color: colores.textoSecundario,
-    textAlign: "center",
-    marginTop: espaciado.md,
-  },
 
-  // --- Acciones ---
-  acciones: {
-    marginTop: espaciado.xxl,
+  // --- Acciones (fijas abajo) ---
+  pie: {
+    paddingHorizontal: espaciado.xl,
+    paddingTop: espaciado.md,
+    paddingBottom: espaciado.lg,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: colores.bordeSuave,
+  },
+  filaBotones: {
+    flexDirection: "row",
     gap: espaciado.md,
+  },
+  botonFlexible: {
+    flex: 1,
   },
   botonPrincipal: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: espaciado.sm,
-    minHeight: 60,
+    minHeight: 58,
     borderRadius: radios.completo,
     backgroundColor: colores.principal,
   },
@@ -208,7 +235,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: espaciado.sm,
-    minHeight: toqueMinimo + 4,
+    minHeight: 58,
     borderRadius: radios.completo,
     borderWidth: 1,
     borderColor: colores.borde,

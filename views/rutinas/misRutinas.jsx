@@ -1,4 +1,5 @@
-import { PermissionsAndroid, Platform, View, Text, Pressable, Modal, Image, Animated } from "react-native";
+import { BackHandler, PermissionsAndroid, Platform, View, Text, Pressable, Modal, Image, Animated } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,6 +10,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import formatearTiempo from '../../helpers/formatearTiempo';
 import FormRutina from "./formRutina";
 import DetalleRutina from "./detalleRutina";
+import ImportarRutina from "./importarRutina";
 import BarraProgreso from "../../components/BarraProgreso";
 import EstadoVacio from "../../components/EstadoVacio";
 import ListaOrdenable from "../../components/ListaOrdenable";
@@ -135,7 +137,10 @@ const EntrenamientoItem = ({
   );
 };
 
-const MisRutinas = () => {
+// embebido: se muestra dentro de la pantalla "Rutinas" (que ya maneja el area
+// segura de arriba). activo: es el segmento visible; si no, no escucha el boton
+// atras ni la pestaña.
+const MisRutinas = ({ embebido = false, activo = true }) => {
 
   const dispatch = useDispatch();
   const rutinas = useSelector(state => state.rutinas.rutinas);
@@ -145,12 +150,44 @@ const MisRutinas = () => {
   const [modalFormRutina, setModalFormRutina] = useState(false);
   const [modalDetalle, setModalDetalle] = useState(false);
   const [rutinaSeleccionada, setRutinaSeleccionada] = useState();
+  const [modalImportar, setModalImportar] = useState(false);
 
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(()=>{
     requestNotificationPermission();
   },[]);
+
+  const navigation = useNavigation();
+
+  const cerrarDetalle = useCallback(() => {
+    setRutinaSeleccionada({});
+    setModalDetalle(false);
+  }, []);
+
+  // El detalle de la rutina se muestra dentro de la pestaña (no en un Modal)
+  // para que la barra de pestañas siga visible. Por eso el boton "atras" de
+  // Android y volver a tocar la pestaña "Mis rutinas" tienen que cerrarlo.
+  useEffect(() => {
+    if (!modalDetalle || !activo) {
+      return undefined;
+    }
+
+    const atras = BackHandler.addEventListener('hardwareBackPress', () => {
+      cerrarDetalle();
+      return true;
+    });
+    const tab = navigation.addListener('tabPress', () => {
+      if (navigation.isFocused()) {
+        cerrarDetalle();
+      }
+    });
+
+    return () => {
+      atras.remove();
+      tab();
+    };
+  }, [activo, cerrarDetalle, modalDetalle, navigation]);
 
   const reubicar = useCallback((desde, hacia) => {
     dispatch(reubicarRutina({ desde, hacia }));
@@ -184,7 +221,17 @@ const MisRutinas = () => {
   };
 
   return (
-    <SafeAreaView style={styles.fondo} edges={['top']}>
+    <SafeAreaView style={styles.fondo} edges={embebido ? [] : ['top']}>
+      {modalDetalle ? (
+        <DetalleRutina
+          enLinea
+          rutinaSeleccionada={rutinaSeleccionada}
+          setRutinaSeleccionada={setRutinaSeleccionada}
+          rutinas={rutinas}
+          setModalFormRutina={setModalFormRutina}
+          setModalDetalle={setModalDetalle}
+        />
+      ) : (
       <View style={styles.container}>
         <View style={styles.headerContainer}>
           <View style={styles.headerTextos}>
@@ -193,6 +240,18 @@ const MisRutinas = () => {
               {usuarioBackend?.username || usuario?.nombre || 'Atleta'}
             </Text>
           </View>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Importar una rutina con un código"
+            hitSlop={6}
+            style={({ pressed }) => [styles.botonImportar, pressed && styles.botonImportarPresionado]}
+            onPress={() => setModalImportar(true)}
+          >
+            <Icon name="download-outline" size={18} color={colores.textoPrimario} />
+            <Text style={styles.botonImportarTexto} maxFontSizeMultiplier={maxEscalaFuente}>
+              Importar
+            </Text>
+          </Pressable>
           <Image style={styles.image} source={require('../../assets/img/logo1.png')} />
         </View>
 
@@ -207,7 +266,7 @@ const MisRutinas = () => {
             <EstadoVacio
               icono="barbell-outline"
               titulo="Todavía no tenés rutinas"
-              descripcion="Armá tu primera rutina o traé una de las que te asignó tu coach."
+              descripcion="Armá tu primera rutina, traé una de las que te asignó tu coach o importá una con el código que te pasaron."
               textoAccion="Crear una rutina"
               onAccion={nuevaRutina}
             />
@@ -236,20 +295,16 @@ const MisRutinas = () => {
           <Animated.Image style={[styles.agregar, {transform:[{scale: scaleAnim}]}]} source={require('../../assets/img/agregar.png')} />
         </Pressable>
       </View>
+      )}
 
       <Modal
-        visible={modalDetalle}
+        visible={modalImportar}
         animationType="slide"
         statusBarTranslucent
-        onRequestClose={() => setModalDetalle(false)}
+        navigationBarTranslucent
+        onRequestClose={() => setModalImportar(false)}
       >
-        <DetalleRutina
-          rutinaSeleccionada={rutinaSeleccionada}
-          setRutinaSeleccionada={setRutinaSeleccionada}
-          rutinas={rutinas}
-          setModalFormRutina={setModalFormRutina}
-          setModalDetalle={setModalDetalle}
-        />
+        <ImportarRutina onClose={() => setModalImportar(false)} />
       </Modal>
 
       <Modal

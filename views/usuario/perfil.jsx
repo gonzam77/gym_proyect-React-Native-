@@ -6,8 +6,6 @@ import { useDispatch, useSelector } from "react-redux";
 import styles from "../../styles/perfilStyles";
 import { colores } from "../../styles/colores";
 import { cerrarSesion, limpiarUsuario } from "../../store/usuarioSlice";
-import CatalogoEjercicios from "./catalogoEjercicios";
-import PantallaModal from "../../components/PantallaModal";
 import { logoutAllAuth, logoutAuth } from "../../services/authService";
 
 const tieneValor = valor => valor !== undefined && valor !== null && valor !== "";
@@ -60,7 +58,6 @@ const Dato = ({ etiqueta, valor }) => (
 const Perfil = () => {
 
     const [formModal, setFormModal] = useState(false);
-    const [catalogoModal, setCatalogoModal] = useState(false);
 
     const dispatch = useDispatch();
     const usuario = useSelector(state => state.usuario.usuario);
@@ -186,15 +183,6 @@ const Perfil = () => {
 
             <Pressable
                 accessibilityRole="button"
-                accessibilityLabel="Abrir catálogo de ejercicios"
-                style={({ pressed }) => [styles.boton, styles.catalogButton, pressed && styles.botonPresionado]}
-                onPress={() => setCatalogoModal(true)}
-            >
-                <Icon name="barbell-outline" size={20} color={colores.sobreRelleno} />
-                <Text style={styles.botonTexto}>Catálogo de ejercicios</Text>
-            </Pressable>
-            <Pressable
-                accessibilityRole="button"
                 accessibilityLabel="Cerrar sesión"
                 style={({ pressed }) => [styles.boton, styles.logoutButton, pressed && styles.botonPresionado]}
                 onPress={confirmarCerrarSesion}
@@ -226,29 +214,6 @@ const Perfil = () => {
             />
         </Modal>
 
-        <Modal
-            visible={catalogoModal}
-            animationType="slide"
-            statusBarTranslucent
-            navigationBarTranslucent
-            onRequestClose={() => setCatalogoModal(false)}
-        >
-            <PantallaModal>
-                <View style={styles.modalHeader}>
-                    <Pressable
-                        accessibilityRole="button"
-                        accessibilityLabel="Volver al perfil"
-                        hitSlop={8}
-                        style={({ pressed }) => [styles.botonIcono, pressed && styles.botonPresionado]}
-                        onPress={() => setCatalogoModal(false)}
-                    >
-                        <Icon name="chevron-back-outline" color={colores.textoPrimario} size={30} />
-                    </Pressable>
-                    <Text style={styles.modalHeaderTitulo}>Configuración del catálogo</Text>
-                </View>
-                <CatalogoEjercicios />
-            </PantallaModal>
-        </Modal>
     </ScrollView>
   );
 };

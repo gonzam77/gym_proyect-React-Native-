@@ -18,6 +18,8 @@ import {
   mantenerPantallaEncendida,
   permitirApagarPantalla,
 } from '../../services/pantallaEncendida';
+import { segundosDescanso } from '../../helpers/descanso';
+import RegistroSerieRapido from '../../components/RegistroSerieRapido';
 
 const AJUSTE_MS = 30 * 1000;
 
@@ -30,8 +32,8 @@ const AJUSTE_MS = 30 * 1000;
  * finEnRef (un instante absoluto) y nunca restando de a un segundo, que es lo
  * que se desincronizaba cuando Android congelaba el proceso en segundo plano.
  */
-const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
-  const totalMs = (Number(ejercicio?.descanso) || 0) * 60 * 1000;
+const Descanso = ({ setModalDescanso, ejercicio, serie, registro }) => {
+  const totalMs = segundosDescanso(ejercicio) * 1000;
 
   const [restanteMs, setRestanteMs] = useState(totalMs);
   const [activo, setActivo] = useState(totalMs > 0);
@@ -223,16 +225,24 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
 
   return (
     <PantallaModal style={styles.container}>
+      {/* Pantalla compacta: entra sin scroll en un telefono comun. Saltar /
+          Detener van fijos abajo para tenerlos siempre a mano. */}
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        automaticallyAdjustKeyboardInsets
         showsVerticalScrollIndicator={false}
       >
-        <Image style={styles.image} source={require('../../assets/img/descanso.png')} />
-        <Text style={styles.titulo} maxFontSizeMultiplier={maxEscalaFuente}>Descanso</Text>
-        <Text style={styles.titulo1} maxFontSizeMultiplier={maxEscalaFuente}>
-          Series realizadas {serie} de {ejercicio.series}
-        </Text>
+        <View style={styles.encabezado}>
+          <Image style={styles.image} source={require('../../assets/img/descanso.png')} />
+          <View style={styles.encabezadoTextos}>
+            <Text style={styles.titulo} maxFontSizeMultiplier={1.2}>Descanso</Text>
+            <Text style={styles.titulo1} numberOfLines={1} maxFontSizeMultiplier={maxEscalaFuente}>
+              {ejercicio?.nombre ? `${ejercicio.nombre} · ` : ''}serie {serie} de {ejercicio.series}
+            </Text>
+          </View>
+        </View>
 
         {faltaPermisoAlarma && (
           <Pressable
@@ -241,10 +251,9 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
             style={({ pressed }) => [styles.bannerPermiso, pressed && styles.botonPresionado]}
             onPress={abrirAjustesAlarmaExacta}
           >
-            <Icon name='alarm-outline' size={24} color={colores.aviso} />
+            <Icon name='alarm-outline' size={22} color={colores.aviso} />
             <Text style={styles.bannerPermisoTexto} maxFontSizeMultiplier={maxEscalaFuente}>
-              Activá "Alarmas y recordatorios" para que el aviso suene puntual aunque
-              uses otra app. Tocá acá.
+              Activá "Alarmas y recordatorios" para que el aviso suene puntual. Tocá acá.
             </Text>
           </Pressable>
         )}
@@ -270,7 +279,22 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
             />
           </View>
 
+          {/* -30 s | pausa/play | reiniciar | +30 s en una sola fila. */}
           <View style={styles.botones}>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Restar 30 segundos al descanso"
+              style={({ pressed }) => [
+                styles.botonAjuste,
+                pressed && styles.botonPresionado,
+                restanteMs <= 0 && styles.botonAjusteDeshabilitado,
+              ]}
+              disabled={restanteMs <= 0}
+              onPress={() => ajustar(-30)}
+            >
+              <Text style={styles.botonAjusteTexto} maxFontSizeMultiplier={1.2}>-30s</Text>
+            </Pressable>
+
             {activo ? (
               <Pressable
                 accessibilityRole="button"
@@ -278,7 +302,7 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
                 style={({ pressed }) => [styles.botonRedondo, pressed && styles.botonPresionado]}
                 onPress={pausar}
               >
-                <Icon name='pause' size={30} color={colores.turquesa} />
+                <Icon name='pause' size={28} color={colores.turquesa} />
               </Pressable>
             ) : (
               <Pressable
@@ -294,7 +318,7 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
               >
                 <Icon
                   name='play'
-                  size={30}
+                  size={28}
                   color={restanteMs === 0 ? colores.textoSecundario : colores.principal}
                 />
               </Pressable>
@@ -305,26 +329,7 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
               style={({ pressed }) => [styles.botonRedondo, pressed && styles.botonPresionado]}
               onPress={reiniciar}
             >
-              <Icon name='refresh-outline' size={28} color={colores.turquesa} />
-            </Pressable>
-          </View>
-
-          <View style={styles.ajustes}>
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Restar 30 segundos al descanso"
-              style={({ pressed }) => [
-                styles.botonAjuste,
-                pressed && styles.botonPresionado,
-                restanteMs <= 0 && styles.botonAjusteDeshabilitado,
-              ]}
-              disabled={restanteMs <= 0}
-              onPress={() => ajustar(-30)}
-            >
-              <Icon name="remove" size={18} color={colores.textoPrimario} />
-              <Text style={styles.botonAjusteTexto} maxFontSizeMultiplier={maxEscalaFuente}>
-                30 s
-              </Text>
+              <Icon name='refresh-outline' size={26} color={colores.turquesa} />
             </Pressable>
 
             <Pressable
@@ -333,13 +338,13 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
               style={({ pressed }) => [styles.botonAjuste, pressed && styles.botonPresionado]}
               onPress={() => ajustar(30)}
             >
-              <Icon name="add" size={18} color={colores.textoPrimario} />
-              <Text style={styles.botonAjusteTexto} maxFontSizeMultiplier={maxEscalaFuente}>
-                30 s
-              </Text>
+              <Text style={styles.botonAjusteTexto} maxFontSizeMultiplier={1.2}>+30s</Text>
             </Pressable>
           </View>
         </View>
+
+        {/* Reps y peso de la serie que se acaba de terminar (opcional). */}
+        <RegistroSerieRapido registro={registro} numero={serie} />
 
         <Pressable
           accessibilityRole="button"
@@ -347,19 +352,18 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
           style={({ pressed }) => [styles.tarjetaNota, pressed && styles.botonPresionado]}
           onPress={() => setModalFormNota(true)}
         >
-          <View style={styles.notaTextos}>
-            <Text style={styles.notaEtiqueta} maxFontSizeMultiplier={maxEscalaFuente}>Nota</Text>
-            <Text
-              style={ejercicio?.nota ? styles.notaTexto : styles.notaVacia}
-              numberOfLines={2}
-              maxFontSizeMultiplier={maxEscalaFuente}
-            >
-              {ejercicio?.nota || 'Sin notas todavía. Tocá para agregar una.'}
-            </Text>
-          </View>
-          <Icon name="pencil-outline" size={20} color={colores.textoSecundario} />
+          <Icon name="document-text-outline" size={18} color={colores.textoSecundario} />
+          <Text
+            style={[styles.notaTextos, ejercicio?.nota ? styles.notaTexto : styles.notaVacia]}
+            numberOfLines={2}
+            maxFontSizeMultiplier={maxEscalaFuente}
+          >
+            {ejercicio?.nota || 'Sin nota. Tocá para agregar una.'}
+          </Text>
         </Pressable>
+      </ScrollView>
 
+      <View style={styles.pie}>
         {termino ? (
           <>
             <Text style={styles.aviso} maxFontSizeMultiplier={maxEscalaFuente}>
@@ -371,8 +375,8 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
               style={({ pressed }) => [styles.botonDetener, pressed && styles.botonPresionado]}
               onPress={cerrar}
             >
-              <Icon name='stop-circle-outline' size={28} color={colores.sobreRelleno} />
-              <Text style={styles.botonDetenerTexto} maxFontSizeMultiplier={maxEscalaFuente}>
+              <Icon name='stop-circle-outline' size={26} color={colores.sobreRelleno} />
+              <Text style={styles.botonDetenerTexto} maxFontSizeMultiplier={1.2}>
                 Detener
               </Text>
             </Pressable>
@@ -385,13 +389,12 @@ const Descanso = ({ setModalDescanso, ejercicio, serie }) => {
             onPress={cerrar}
           >
             <Icon name="play-skip-forward-outline" size={20} color={colores.textoPrimario} />
-            <Text style={styles.botonSaltarTexto} maxFontSizeMultiplier={maxEscalaFuente}>
+            <Text style={styles.botonSaltarTexto} maxFontSizeMultiplier={1.2}>
               Saltar descanso
             </Text>
           </Pressable>
         )}
-
-      </ScrollView>
+      </View>
 
       {/* Fuera del ScrollView: un Modal abre su propia ventana, pero como hijo
           del scroll igual participa del layout y se re-media con cada scroll y

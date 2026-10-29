@@ -44,7 +44,7 @@ const usuarioTransform = createTransform(
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['rutinas', 'usuario', 'notasHistoricas'],
+  whitelist: ['rutinas', 'usuario', 'notasHistoricas', 'historial'],
   transforms: [usuarioTransform],
 };
 

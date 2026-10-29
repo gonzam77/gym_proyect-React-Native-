@@ -25,7 +25,7 @@ export const IOS_CATEGORIA_DESCANSO = 'descanso-alarma-categoria';
 export const IOS_REPETICIONES_ALARMA = 8;
 export const IOS_INTERVALO_REPETICION_MS = 3000;
 
-// 'default' usa el sonido de notificacion del sistema. Para un sonido propio hay
-// que agregar un archivo .caf / .wav de menos de 30s al bundle de Xcode y poner
-// su nombre aca (iOS ignora los .mp3 en notificaciones).
-export const IOS_SONIDO_ALARMA = 'default';
+// Sonido propio de la alarma en iOS: alarm2.mp3 convertido a CAF (iOS ignora los
+// .mp3 en notificaciones y corta a los 30s). El archivo esta en ios/MiApp y se
+// copia al bundle desde el proyecto de Xcode.
+export const IOS_SONIDO_ALARMA = 'alarm2.caf';

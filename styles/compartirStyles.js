@@ -1,0 +1,145 @@
+import { StyleSheet } from "react-native";
+import { colores } from './colores';
+import { espaciado, radios, tipografia, toqueMinimo } from './theme';
+
+export const styles = StyleSheet.create({
+  cuerpo: {
+    flex: 1,
+    paddingHorizontal: espaciado.xl,
+  },
+  botonera: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingTop: espaciado.sm,
+  },
+  botonIcono: {
+    minWidth: toqueMinimo,
+    minHeight: toqueMinimo,
+    borderRadius: radios.completo,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  presionado: {
+    opacity: 0.75,
+  },
+  titulo: {
+    ...tipografia.titulo,
+    color: colores.textoPrimario,
+    marginTop: espaciado.md,
+  },
+  subtitulo: {
+    ...tipografia.cuerpo,
+    color: colores.textoSecundario,
+    marginTop: espaciado.sm,
+  },
+  tarjeta: {
+    marginTop: espaciado.xxl,
+    padding: espaciado.xl,
+    borderRadius: radios.lg,
+    backgroundColor: colores.superficie,
+    borderWidth: 1,
+    borderColor: colores.bordeSuave,
+    alignItems: "center",
+    gap: espaciado.md,
+  },
+  etiqueta: {
+    ...tipografia.micro,
+    color: colores.textoTenue,
+    textTransform: "uppercase",
+    letterSpacing: 2,
+  },
+  codigo: {
+    fontSize: 38,
+    fontWeight: "900",
+    letterSpacing: 4,
+    color: colores.principal,
+    fontVariant: ["tabular-nums"],
+  },
+  ayuda: {
+    ...tipografia.auxiliar,
+    fontWeight: "500",
+    color: colores.textoTenue,
+    textAlign: "center",
+  },
+  botonPrincipal: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: espaciado.sm,
+    minHeight: toqueMinimo + 8,
+    marginTop: espaciado.xl,
+    paddingHorizontal: espaciado.xl,
+    borderRadius: radios.completo,
+    backgroundColor: colores.exito,
+  },
+  botonPrincipalTexto: {
+    ...tipografia.cuerpoFuerte,
+    color: colores.sobreRelleno,
+  },
+  botonDeshabilitado: {
+    opacity: 0.45,
+  },
+  input: {
+    marginTop: espaciado.xl,
+    backgroundColor: colores.superficie,
+    color: colores.textoPrimario,
+    borderWidth: 1,
+    borderColor: colores.borde,
+    borderRadius: radios.md,
+    paddingVertical: espaciado.lg,
+    paddingHorizontal: espaciado.lg,
+    fontSize: 26,
+    fontWeight: "800",
+    letterSpacing: 4,
+    textAlign: "center",
+  },
+  errorCaja: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: espaciado.sm,
+    marginTop: espaciado.lg,
+    padding: espaciado.md,
+    borderRadius: radios.md,
+    backgroundColor: "rgba(229, 72, 77, 0.12)",
+  },
+  error: {
+    ...tipografia.auxiliar,
+    color: colores.peligro,
+    flex: 1,
+  },
+  vistaPrevia: {
+    marginTop: espaciado.xl,
+    padding: espaciado.lg,
+    borderRadius: radios.lg,
+    backgroundColor: colores.superficie,
+    borderWidth: 1,
+    borderColor: colores.bordeSuave,
+    gap: espaciado.xs,
+  },
+  previaNombre: {
+    ...tipografia.subtitulo,
+    color: colores.textoPrimario,
+  },
+  previaAutor: {
+    ...tipografia.auxiliar,
+    color: colores.textoTenue,
+    marginBottom: espaciado.sm,
+  },
+  previaEjercicio: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: espaciado.md,
+    paddingVertical: espaciado.sm,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: colores.bordeSuave,
+  },
+  previaEjercicioNombre: {
+    ...tipografia.cuerpo,
+    color: colores.textoPrimario,
+    flex: 1,
+  },
+  previaEjercicioDato: {
+    ...tipografia.auxiliar,
+    color: colores.textoSecundario,
+  },
+});

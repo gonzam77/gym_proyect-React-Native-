@@ -70,6 +70,16 @@ export const styles = StyleSheet.create({
     marginTop: espaciado.lg,
     marginBottom: espaciado.xl,
   },
+  filaDescanso: {
+    flexDirection: "row",
+    gap: espaciado.md,
+  },
+  columnaDescanso: {
+    flex: 1,
+  },
+  imagenEjercicio: {
+    marginTop: espaciado.md,
+  },
   seccion: {
     marginBottom: espaciado.xl,
     gap: espaciado.sm,
