@@ -8,6 +8,7 @@ import { styles } from "../../styles/compartirStyles";
 import { colores } from "../../styles/colores";
 import { maxEscalaFuente } from "../../styles/theme";
 import { compartirRutina, textoQR } from "../../services/rutinasCompartidas";
+import { esFuncional } from "../../helpers/funcional";
 
 // Negro sobre blanco y con margen: es lo que mejor leen las camaras, aunque la
 // app sea oscura.
@@ -26,6 +27,8 @@ const formatearVencimiento = valor => {
  * lleva una copia.
  */
 const CompartirRutina = ({ rutina, onClose }) => {
+  // Lo mismo sirve para los funcionales; solo cambian los textos.
+  const funcional = esFuncional(rutina);
   const [estado, setEstado] = useState('cargando');
   const [resultado, setResultado] = useState(null);
   const [error, setError] = useState('');
@@ -52,8 +55,11 @@ const CompartirRutina = ({ rutina, onClose }) => {
     try {
       await Share.share({
         message:
-          `Te comparto mi rutina "${rutina?.nombre}" en Rutina360. ` +
-          `Abrí la app, en Mis rutinas tocá "Importar" e ingresá el código: ${resultado.code}`,
+          (funcional
+            ? `Te comparto mi entrenamiento funcional "${rutina?.nombre}" en Rutina360. ` +
+              `Abrí la app, en la pestaña Funcional tocá "Importar" e ingresá el código: ${resultado.code}`
+            : `Te comparto mi rutina "${rutina?.nombre}" en Rutina360. ` +
+              `Abrí la app, en Mis rutinas tocá "Importar" e ingresá el código: ${resultado.code}`),
       });
     } catch {
       // El usuario cerro el menu de compartir: no hay nada que hacer.
@@ -81,7 +87,7 @@ const CompartirRutina = ({ rutina, onClose }) => {
           </Pressable>
         </View>
 
-        <Text style={styles.titulo} maxFontSizeMultiplier={maxEscalaFuente}>Compartir rutina</Text>
+        <Text style={styles.titulo} maxFontSizeMultiplier={maxEscalaFuente}>{funcional ? 'Compartir funcional' : 'Compartir rutina'}</Text>
         <Text style={styles.subtitulo} maxFontSizeMultiplier={maxEscalaFuente}>
           Quien reciba el código se lleva una copia de "{rutina?.nombre}". Lo que cambie en su copia no
           toca la tuya.

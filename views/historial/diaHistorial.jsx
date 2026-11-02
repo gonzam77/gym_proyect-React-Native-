@@ -9,12 +9,145 @@ import { styles } from "../../styles/historialStyles";
 import { styles as estilosRegistro } from "../../styles/registroStyles";
 import { colores } from "../../styles/colores";
 import { maxEscalaFuente } from "../../styles/theme";
-import { eliminarDiaHistorial, registroCompleto } from "../../store/historialSlice";
+import {
+  corregirBloqueFuncional,
+  eliminarDiaHistorial,
+  eliminarRegistro,
+  esRegistroFuncional,
+  registroCompleto,
+} from "../../store/historialSlice";
+import Selector from "../../components/Selector";
+import { etiquetaModo, formatearReloj } from "../../helpers/funcional";
 import { etiquetaDia, formatearFecha, horaLocal } from "../../helpers/fechas";
 import { describirSerie } from "../../helpers/registroSeries";
 import { avisoExito } from "../../helpers/avisos";
 
-/** Detalle de un dia del historial: ejercicios agrupados por rutina. */
+const COLOR_ESTADO = {
+  completo: colores.exito,
+  parcial: colores.aviso,
+  salteado: colores.textoTenue,
+};
+
+const TEXTO_ESTADO = {
+  completo: 'Completo',
+  parcial: 'Parcial',
+  salteado: 'Salteado',
+};
+
+/** Opciones de tiempo cumplido para corregir un bloque: de 0 al objetivo, de a 5 s. */
+const opcionesCumplido = (objetivo, actual) => {
+  const valores = new Set([actual]);
+  for (let s = 0; s <= objetivo; s += 5) {
+    valores.add(s);
+  }
+  valores.add(objetivo);
+  return [...valores]
+    .sort((a, b) => a - b)
+    .map(s => ({ etiqueta: s === objetivo ? `${formatearReloj(s)} (completo)` : formatearReloj(s), valor: String(s) }));
+};
+
+/**
+ * Un funcional del dia: bloques agrupados por vuelta, con el tiempo cumplido
+ * contra el planificado. El cumplido se puede corregir (el estado se
+ * recalcula) y el registro se puede borrar.
+ */
+const RegistroFuncional = ({ registro }) => {
+  const dispatch = useDispatch();
+  const completo = registroCompleto(registro);
+  const porVuelta = new Map();
+  (registro.bloques || []).forEach((bloque, indice) => {
+    if (!porVuelta.has(bloque.vuelta)) {
+      porVuelta.set(bloque.vuelta, []);
+    }
+    porVuelta.get(bloque.vuelta).push({ bloque, indice });
+  });
+
+  const confirmarBorrar = () => {
+    Alert.alert('Borrar funcional', `¿Querés borrar "${registro.nombreRutina}" de este día?`, [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Borrar',
+        style: 'destructive',
+        onPress: () => {
+          dispatch(eliminarRegistro(registro.id));
+          avisoExito('Funcional borrado del historial');
+        },
+      },
+    ]);
+  };
+
+  return (
+    <View style={[styles.ejercicio, styles.ejercicioSeparado]}>
+      <View style={styles.ejercicioEncabezado}>
+        <Text style={styles.ejercicioNombre} maxFontSizeMultiplier={maxEscalaFuente}>
+          {formatearReloj(registro.segundosTotales)} · {etiquetaModo(registro.modo)}
+        </Text>
+        <Text style={styles.hora} maxFontSizeMultiplier={maxEscalaFuente}>{horaLocal(registro.creadoEn)}</Text>
+      </View>
+
+      <View style={[styles.badge, completo ? styles.badgeCompleto : styles.badgeIncompleto]}>
+        <Icon
+          name={completo ? 'checkmark-circle' : 'ellipse-outline'}
+          size={13}
+          color={completo ? colores.exito : colores.aviso}
+        />
+        <Text
+          style={[styles.badgeTexto, completo ? styles.badgeTextoCompleto : styles.badgeTextoIncompleto]}
+          maxFontSizeMultiplier={maxEscalaFuente}
+        >
+          {`${registro.vueltasCompletadas} de ${registro.vueltasObjetivo} ${registro.vueltasObjetivo === 1 ? 'vuelta' : 'vueltas'}`}
+        </Text>
+      </View>
+
+      {[...porVuelta.entries()].map(([vuelta, items]) => (
+        <View key={vuelta}>
+          {registro.vueltasObjetivo > 1 ? (
+            <Text style={styles.vueltaTitulo} maxFontSizeMultiplier={maxEscalaFuente}>Vuelta {vuelta}</Text>
+          ) : null}
+          {items.map(({ bloque, indice }) => (
+            <View key={indice} style={styles.bloqueFuncional}>
+              <View style={styles.bloqueFuncionalFila}>
+                <Text style={styles.bloqueFuncionalNombre} maxFontSizeMultiplier={maxEscalaFuente}>
+                  {bloque.nombreEjercicio}
+                </Text>
+                <Text
+                  style={[styles.bloqueFuncionalEstado, { color: COLOR_ESTADO[bloque.estado] }]}
+                  maxFontSizeMultiplier={maxEscalaFuente}
+                >
+                  {TEXTO_ESTADO[bloque.estado]}
+                </Text>
+              </View>
+              <Selector
+                titulo={`Tiempo hecho de ${bloque.nombreEjercicio}`}
+                opciones={opcionesCumplido(bloque.segundosObjetivo, bloque.segundosCumplidos)}
+                valor={String(bloque.segundosCumplidos)}
+                onChange={valor => dispatch(corregirBloqueFuncional({
+                  idRegistro: registro.id,
+                  indiceBloque: indice,
+                  segundosCumplidos: Number(valor),
+                }))}
+              />
+            </View>
+          ))}
+        </View>
+      ))}
+
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={`Borrar ${registro.nombreRutina} de este día`}
+        style={({ pressed }) => [styles.editar, pressed && styles.presionado]}
+        onPress={confirmarBorrar}
+      >
+        <Icon name="trash-outline" size={18} color={colores.peligro} />
+        <Text style={[styles.editarTexto, { color: colores.peligro }]} maxFontSizeMultiplier={maxEscalaFuente}>
+          Borrar este funcional
+        </Text>
+      </Pressable>
+    </View>
+  );
+};
+
+/** Detalle de un dia del historial: ejercicios agrupados por rutina y funcionales. */
 const DiaHistorial = ({ fecha, onClose }) => {
   const dispatch = useDispatch();
   const registros = useSelector(state => state.historial.registros);
@@ -28,8 +161,11 @@ const DiaHistorial = ({ fecha, onClose }) => {
 
     const porRutina = new Map();
     for (const r of delDia) {
-      const clave = `${r.idRutina}`;
-      if (!porRutina.has(clave)) porRutina.set(clave, { nombre: r.nombreRutina, registros: [] });
+      // Cada sesion de un funcional es su propio grupo: si se hizo dos veces
+      // en el dia, son dos entrenamientos.
+      const funcional = esRegistroFuncional(r);
+      const clave = funcional ? `funcional-${r.id}` : `${r.idRutina}`;
+      if (!porRutina.has(clave)) porRutina.set(clave, { nombre: r.nombreRutina, funcional, registros: [] });
       porRutina.get(clave).registros.push(r);
     }
     return [...porRutina.values()];
@@ -88,9 +224,11 @@ const DiaHistorial = ({ fecha, onClose }) => {
 
           {grupos.map(grupo => (
             <View key={grupo.nombre + grupo.registros[0].id}>
-              <Text style={styles.seccionRutina} maxFontSizeMultiplier={maxEscalaFuente}>{grupo.nombre}</Text>
+              <Text style={styles.seccionRutina} maxFontSizeMultiplier={maxEscalaFuente}>
+                {grupo.funcional ? `${grupo.nombre} · Funcional` : grupo.nombre}
+              </Text>
 
-              {grupo.registros.map(r => {
+              {grupo.funcional ? <RegistroFuncional registro={grupo.registros[0]} /> : grupo.registros.map(r => {
                 const completo = registroCompleto(r);
                 return (
                   <View key={r.id} style={[styles.ejercicio, styles.ejercicioSeparado]}>

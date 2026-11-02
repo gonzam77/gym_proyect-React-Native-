@@ -159,6 +159,10 @@ const ListaOrdenable = ({
   onReordenar,
   separacion = 0,
   vacio = null,
+  // Contenido fijo arriba de las filas que scrollea con ellas (la cabecera del
+  // detalle de un funcional). No entra en el calculo del arrastre: las
+  // posiciones de las filas son relativas entre si.
+  encabezado = null,
   style,
   contentContainerStyle,
   ...restoScroll
@@ -363,6 +367,7 @@ const ListaOrdenable = ({
       scrollEnabled={!idArrastrado}
       {...restoScroll}
     >
+      {encabezado}
       {lista.length === 0 ? vacio : lista.map((item, indice) => {
         const id = claveItem(item);
 

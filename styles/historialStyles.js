@@ -85,6 +85,38 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colores.bordeSuave,
   },
+  // Funcional: icono de reloj y borde de acento, para distinguirlo de fuerza.
+  chipFuncional: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    borderColor: colores.acento,
+  },
+  vueltaTitulo: {
+    ...tipografia.micro,
+    color: colores.textoTenue,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    marginTop: espaciado.sm,
+  },
+  bloqueFuncional: {
+    gap: espaciado.xs,
+    paddingVertical: espaciado.xs,
+  },
+  bloqueFuncionalFila: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: espaciado.sm,
+  },
+  bloqueFuncionalNombre: {
+    ...tipografia.auxiliar,
+    flex: 1,
+    color: colores.textoPrimario,
+  },
+  bloqueFuncionalEstado: {
+    ...tipografia.micro,
+  },
   chipTexto: {
     ...tipografia.micro,
     color: colores.textoPrimario,

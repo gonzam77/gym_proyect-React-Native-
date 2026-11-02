@@ -45,6 +45,10 @@ export const apiFetch = async (
   const { requiresAuth = true, retryOn401 = true, onAuthFailure } = config;
   const headers = {
     "Content-Type": "application/json",
+    // Avisa que esta version sabe mostrar entrenamientos funcionales. Sin este
+    // header el servidor no le manda funcionales asignados a una app vieja y no
+    // le deja importar uno compartido (rutina360_server/middleware/clienteFuncional.js).
+    "X-Rutina360-Funcional": "1",
     ...(options.headers || {}),
   };
 

@@ -11,6 +11,8 @@ import { maxEscalaFuente } from "../../styles/theme";
 import { agregarRutina } from "../../store/rutinasSlice";
 import { avisoExito } from "../../helpers/avisos";
 import { formatearDescanso } from "../../helpers/descanso";
+import { esFuncional, formatearReloj, formatearSegundos, duracionTotal } from "../../helpers/funcional";
+import { esCompartidaFuncional } from "../../helpers/funcionalBackend";
 import {
   buscarRutinaCompartida,
   codigoCompleto,
@@ -66,11 +68,18 @@ const ImportarRutina = ({ onClose }) => {
     if (!compartida) return;
     const rutina = convertirCompartidaEnRutinaLocal(compartida);
     dispatch(agregarRutina(rutina));
-    avisoExito('Rutina importada', `"${rutina.nombre}" ya está en Mis rutinas.`);
+    // La copia va a la pestaña de su tipo, aunque se haya importado desde la otra.
+    if (esFuncional(rutina)) {
+      avisoExito('Funcional importado', `"${rutina.nombre}" ya está en la pestaña Funcional.`);
+    } else {
+      avisoExito('Rutina importada', `"${rutina.nombre}" ya está en Mis rutinas.`);
+    }
     onClose();
   };
 
   const ejercicios = compartida?.exercises || [];
+  const funcional = esCompartidaFuncional(compartida);
+  const vistaFuncional = funcional ? convertirCompartidaEnRutinaLocal(compartida) : null;
 
   return (
     <PantallaModal>
@@ -172,7 +181,11 @@ const ImportarRutina = ({ onClose }) => {
                 {compartida.isOwn
                   ? 'La compartiste vos'
                   : `Compartida por ${compartida.owner?.username || 'otro usuario'}`}
-                {` · ${ejercicios.length} ${ejercicios.length === 1 ? 'ejercicio' : 'ejercicios'}`}
+                {funcional
+                  ? ` · Funcional · ${ejercicios.length} ${ejercicios.length === 1 ? 'bloque' : 'bloques'}` +
+                    ` · ${vistaFuncional.vueltas} ${vistaFuncional.vueltas === 1 ? 'vuelta' : 'vueltas'}` +
+                    ` · ${formatearReloj(duracionTotal(vistaFuncional))}`
+                  : ` · ${ejercicios.length} ${ejercicios.length === 1 ? 'ejercicio' : 'ejercicios'}`}
               </Text>
               {ejercicios.map((e, indice) => (
                 <View key={`${e.name}-${indice}`} style={styles.previaEjercicio}>
@@ -180,7 +193,9 @@ const ImportarRutina = ({ onClose }) => {
                     {e.name}
                   </Text>
                   <Text style={styles.previaEjercicioDato} maxFontSizeMultiplier={maxEscalaFuente}>
-                    {e.series} series · {formatearDescanso(e.restSeconds)}
+                    {funcional
+                      ? `Trabajo ${formatearSegundos(e.workSeconds)} · ${formatearSegundos(e.restSeconds)}`
+                      : `${e.series} series · ${formatearDescanso(e.restSeconds)}`}
                   </Text>
                 </View>
               ))}
@@ -188,13 +203,13 @@ const ImportarRutina = ({ onClose }) => {
 
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="Agregar la rutina a Mis rutinas"
+              accessibilityLabel={funcional ? 'Agregar el funcional a Mis funcionales' : 'Agregar la rutina a Mis rutinas'}
               style={({ pressed }) => [styles.botonPrincipal, pressed && styles.presionado]}
               onPress={importar}
             >
               <Icon name="download-outline" size={20} color={colores.sobreRelleno} />
               <Text style={styles.botonPrincipalTexto} maxFontSizeMultiplier={maxEscalaFuente}>
-                Agregar a Mis rutinas
+                {funcional ? 'Agregar a Mis funcionales' : 'Agregar a Mis rutinas'}
               </Text>
             </Pressable>
           </>

@@ -4,9 +4,19 @@ import { useSelector } from "react-redux";
 import Icon from "react-native-vector-icons/Ionicons";
 import {
   CATALOG_REFRESH_MS,
+  TIPO_CATALOGO_FUERZA,
+  TIPO_CATALOGO_FUNCIONAL,
   getCatalogoLocalConRefresh,
+  nombreCategoria,
   refrescarCatalogoRemoto,
 } from "../../helpers/catalogoEjercicios";
+
+// El catalogo tiene dos grandes grupos: los grupos musculares de siempre y las
+// categorias de los entrenamientos funcionales.
+const GRUPOS = [
+  { valor: TIPO_CATALOGO_FUERZA, texto: "Fuerza" },
+  { valor: TIPO_CATALOGO_FUNCIONAL, texto: "Funcional" },
+];
 import { colores } from "../../styles/colores";
 import { maxEscalaFuente } from "../../styles/theme";
 import styles from "../../styles/catalogoStyles";
@@ -32,21 +42,22 @@ const CatalogoEjercicios = () => {
   const [abiertas, setAbiertas] = useState({});
   // Ejercicio desplegado para ver su ilustracion (uno por vez).
   const [ejercicioAbierto, setEjercicioAbierto] = useState(null);
+  const [tipo, setTipo] = useState(TIPO_CATALOGO_FUERZA);
 
   const cargarLocal = useCallback(async () => {
     setError("");
-    const local = await getCatalogoLocalConRefresh({ usuarioBackend, refreshMs: CATALOG_REFRESH_MS });
+    const local = await getCatalogoLocalConRefresh({ usuarioBackend, refreshMs: CATALOG_REFRESH_MS, tipo });
     setCatalogo(local.catalogo);
     setCategorias(local.categorias);
     setUpdatedAt(local.updatedAt);
     return local;
-  }, [usuarioBackend]);
+  }, [tipo, usuarioBackend]);
 
   const refrescarManual = useCallback(async () => {
     setRefreshing(true);
     setError("");
     try {
-      const remoto = await refrescarCatalogoRemoto(usuarioBackend);
+      const remoto = await refrescarCatalogoRemoto(usuarioBackend, { tipo });
       setCatalogo(remoto.catalogo);
       setCategorias(remoto.categorias);
       setUpdatedAt(remoto.updatedAt);
@@ -55,7 +66,7 @@ const CatalogoEjercicios = () => {
     } finally {
       setRefreshing(false);
     }
-  }, [usuarioBackend]);
+  }, [tipo, usuarioBackend]);
 
   useEffect(() => {
     const init = async () => {
@@ -118,6 +129,29 @@ const CatalogoEjercicios = () => {
           </Text>
         </Pressable>
 
+        <View style={styles.grupos} accessibilityRole="tablist">
+          {GRUPOS.map(grupo => {
+            const activo = tipo === grupo.valor;
+            return (
+              <Pressable
+                key={grupo.valor}
+                accessibilityRole="tab"
+                accessibilityState={{ selected: activo }}
+                style={({ pressed }) => [styles.grupo, activo && styles.grupoActivo, pressed && styles.botonPresionado]}
+                onPress={() => {
+                  setTipo(grupo.valor);
+                  setAbiertas({});
+                  setEjercicioAbierto(null);
+                }}
+              >
+                <Text style={[styles.grupoTexto, activo && styles.grupoTextoActivo]} maxFontSizeMultiplier={maxEscalaFuente}>
+                  {grupo.texto}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+
         {error ? (
           <View style={styles.errorCaja}>
             <Icon name="alert-circle-outline" size={20} color={colores.peligro} />
@@ -136,7 +170,7 @@ const CatalogoEjercicios = () => {
             <View key={categoria} style={styles.categoria}>
               <Pressable
                 accessibilityRole="button"
-                accessibilityLabel={`${categoria}, ${ejercicios.length} ejercicios`}
+                accessibilityLabel={`${nombreCategoria(catalogo, categoria)}, ${ejercicios.length} ejercicios`}
                 accessibilityState={{ expanded: abierta }}
                 style={({ pressed }) => [
                   styles.categoriaEncabezado,
@@ -145,7 +179,7 @@ const CatalogoEjercicios = () => {
                 onPress={() => alternar(categoria)}
               >
                 <Text style={styles.categoriaNombre} maxFontSizeMultiplier={maxEscalaFuente}>
-                  {categoria.charAt(0).toUpperCase() + categoria.slice(1)}
+                  {nombreCategoria(catalogo, categoria)}
                 </Text>
                 <Text style={styles.contador} maxFontSizeMultiplier={maxEscalaFuente}>
                   {ejercicios.length}

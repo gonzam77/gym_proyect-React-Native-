@@ -124,7 +124,7 @@ export const prepararNotificacionesDescanso = async () => {
  * requiere el permiso SCHEDULE_EXACT_ALARM; si el usuario lo revoco, se cae a
  * una alarma inexacta que no necesita permiso.
  */
-const obtenerTipoAlarma = async () => {
+export const obtenerTipoAlarma = async () => {
   try {
     const ajustes = await notifee.getNotificationSettings();
 

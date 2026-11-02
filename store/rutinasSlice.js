@@ -1,4 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSelector, createSlice } from '@reduxjs/toolkit';
+import { TIPO_FUERZA, TIPO_FUNCIONAL, esDelTipo } from '../helpers/funcional';
 
 const initialState = {
   rutinas: [],
@@ -64,6 +65,55 @@ const rutinasSlice = createSlice({
 
             const [movida] = state.rutinas.splice(desde, 1);
             state.rutinas.splice(hacia, 0, movida);
+        },
+        /**
+         * Como reubicarRutina, pero con los indices de la lista de un solo
+         * tipo. Fuerza y funcionales comparten el arreglo; cada pestaña ve
+         * solo los suyos, asi que un indice visible no es el indice real.
+         */
+        reubicarRutinaDelTipo: (state, action) => {
+            const { tipo, desde, hacia } = action.payload;
+            const globales = state.rutinas
+                .map((rutina, indice) => (esDelTipo(rutina, tipo) ? indice : -1))
+                .filter(indice => indice >= 0);
+
+            if (
+                desde === hacia
+                || desde < 0
+                || hacia < 0
+                || desde >= globales.length
+                || hacia >= globales.length
+            ) {
+                return;
+            }
+
+            // Se inserta en el lugar que ocupaba la de destino: si venia de
+            // antes, queda despues de ella; si venia de despues, antes.
+            const [movida] = state.rutinas.splice(globales[desde], 1);
+            state.rutinas.splice(globales[hacia], 0, movida);
+        },
+        /** Mueve un bloque dentro de un funcional (arrastrar en el detalle). */
+        reubicarBloque: (state, action) => {
+            const { idRutina, desde, hacia } = action.payload;
+            const rutina = state.rutinas.find(r => r.id === idRutina);
+
+            if (!rutina || !Array.isArray(rutina.bloques)) {
+                return;
+            }
+
+            const cantidad = rutina.bloques.length;
+            if (
+                desde === hacia
+                || desde < 0
+                || hacia < 0
+                || desde >= cantidad
+                || hacia >= cantidad
+            ) {
+                return;
+            }
+
+            const [movido] = rutina.bloques.splice(desde, 1);
+            rutina.bloques.splice(hacia, 0, movido);
         },
         sincronizarEstadoRutinasAsignadas: (state, action) => {
             const asignaciones = Array.isArray(action.payload) ? action.payload : [];
@@ -172,6 +222,8 @@ export const {
   actualizarRutinaAsignadaLocal,
   eliminarRutina,
   reubicarRutina,
+  reubicarRutinaDelTipo,
+  reubicarBloque,
   sincronizarEstadoRutinasAsignadas,
   agregarEjercicio,
   reubicarEjercicio,
@@ -179,5 +231,19 @@ export const {
   eliminarEjercicio,
   reiniciarRutina
 } = rutinasSlice.actions;
+
+const seleccionarTodas = state => state.rutinas.rutinas;
+
+/** Rutinas de fuerza (incluye las viejas, que no tienen tipo). */
+export const seleccionarRutinasFuerza = createSelector(seleccionarTodas, rutinas =>
+  rutinas.filter(rutina => esDelTipo(rutina, TIPO_FUERZA))
+);
+
+export const seleccionarFuncionales = createSelector(seleccionarTodas, rutinas =>
+  rutinas.filter(rutina => esDelTipo(rutina, TIPO_FUNCIONAL))
+);
+
+export const seleccionarRutinasDelTipo = tipo =>
+  tipo === TIPO_FUNCIONAL ? seleccionarFuncionales : seleccionarRutinasFuerza;
 
 export default rutinasSlice.reducer;

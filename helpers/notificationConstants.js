@@ -29,3 +29,24 @@ export const IOS_INTERVALO_REPETICION_MS = 3000;
 // .mp3 en notificaciones y corta a los 30s). El archivo esta en ios/MiApp y se
 // copia al bundle desde el proyecto de Xcode.
 export const IOS_SONIDO_ALARMA = 'alarm2.caf';
+
+// --- Funcional (ejecucion por tiempo) ---
+// Canal propio: los cambios de fase suenan con un pitido corto, no con la
+// alarma del descanso. Como todo canal de Android, el id no se puede cambiar
+// una vez publicado.
+export const FUNCIONAL_CHANNEL_ID = 'funcional-fases-channel';
+
+// Prefijo de los ids de las notificaciones de cada cambio de fase. App.jsx lo
+// usa para no confundirlas con las del descanso.
+export const FUNCIONAL_PREFIJO_ID = 'funcional-fase-';
+
+// Sonido del cambio de fase: el pitido largo de assets/sounds/beep.mp3.
+// Android: android/app/src/main/res/raw/funcional_cambio.mp3 (se nombra sin
+// extension). iOS: ios/MiApp/funcional_cambio.caf, copiado al bundle.
+export const FUNCIONAL_SONIDO_ANDROID = 'funcional_cambio';
+export const FUNCIONAL_SONIDO_IOS = 'funcional_cambio.caf';
+
+// iOS deja 64 notificaciones pendientes por app. Se programan como mucho 40 y
+// se reponen al volver a la app; quedan cupos para la alarma del descanso.
+export const FUNCIONAL_MAX_IOS = 40;
+export const FUNCIONAL_MAX_ANDROID = 200;

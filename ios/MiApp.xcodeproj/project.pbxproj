@@ -14,6 +14,7 @@
 		CEFAE9C73E1C42EB907A04FA /* Caprasimo-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D6537CFAC32A48FAB181D2FC /* Caprasimo-Regular.ttf */; };
 		A1B2C3D4E5F60718293A4B01 /* PantallaEncendida.m in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B02 /* PantallaEncendida.m */; };
 		A1B2C3D4E5F60718293A4B03 /* alarm2.caf in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B04 /* alarm2.caf */; };
+		A1B2C3D4E5F60718293A4B07 /* funcional_cambio.caf in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B08 /* funcional_cambio.caf */; };
 		A1B2C3D4E5F60718293A4B05 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
@@ -42,6 +43,7 @@
 		D6537CFAC32A48FAB181D2FC /* Caprasimo-Regular.ttf */ = {isa = PBXFileReference; name = "Caprasimo-Regular.ttf"; path = "../assets/fonts/Caprasimo-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		A1B2C3D4E5F60718293A4B02 /* PantallaEncendida.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PantallaEncendida.m; path = MiApp/PantallaEncendida.m; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4B04 /* alarm2.caf */ = {isa = PBXFileReference; lastKnownFileType = file; name = alarm2.caf; path = MiApp/alarm2.caf; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4B08 /* funcional_cambio.caf */ = {isa = PBXFileReference; lastKnownFileType = file; name = funcional_cambio.caf; path = MiApp/funcional_cambio.caf; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4B06 /* MiApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = MiApp.entitlements; path = MiApp/MiApp.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -75,6 +77,7 @@
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
 				A1B2C3D4E5F60718293A4B02 /* PantallaEncendida.m */,
 				A1B2C3D4E5F60718293A4B04 /* alarm2.caf */,
+				A1B2C3D4E5F60718293A4B08 /* funcional_cambio.caf */,
 				A1B2C3D4E5F60718293A4B06 /* MiApp.entitlements */,
 			);
 			name = MiApp;
@@ -208,6 +211,7 @@
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				CEFAE9C73E1C42EB907A04FA /* Caprasimo-Regular.ttf in Resources */,
 				A1B2C3D4E5F60718293A4B03 /* alarm2.caf in Resources */,
+				A1B2C3D4E5F60718293A4B07 /* funcional_cambio.caf in Resources */,
 				A1B2C3D4E5F60718293A4B05 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

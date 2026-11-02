@@ -9,19 +9,34 @@ import DiaHistorial from "./diaHistorial";
 import { styles } from "../../styles/historialStyles";
 import { colores } from "../../styles/colores";
 import { maxEscalaFuente } from "../../styles/theme";
-import { eliminarDiaHistorial, eliminarHistorial, registroCompleto } from "../../store/historialSlice";
+import { eliminarDiaHistorial, eliminarHistorial, esRegistroFuncional, registroCompleto } from "../../store/historialSlice";
+import { formatearReloj } from "../../helpers/funcional";
 import { etiquetaDia, formatearFecha } from "../../helpers/fechas";
 import { avisoExito } from "../../helpers/avisos";
 
-/** Arma el resumen por dia, del mas reciente al mas viejo. */
+/**
+ * Arma el resumen por dia, del mas reciente al mas viejo. Los dias mezclan
+ * fuerza y funcional: el conteo de ejercicios y series es solo de fuerza, y
+ * los funcionales suman su cantidad y su tiempo aparte.
+ */
 const agruparPorDia = registros => {
   const dias = new Map();
   for (const r of registros) {
     if (!dias.has(r.fecha)) {
-      dias.set(r.fecha, { fecha: r.fecha, rutinas: [], ejercicios: 0, completos: 0, series: 0 });
+      dias.set(r.fecha, {
+        fecha: r.fecha, rutinas: [], ejercicios: 0, completos: 0, series: 0, funcionales: 0, segundosFuncional: 0,
+      });
     }
     const dia = dias.get(r.fecha);
-    if (!dia.rutinas.includes(r.nombreRutina)) dia.rutinas.push(r.nombreRutina);
+    const funcional = esRegistroFuncional(r);
+    if (!dia.rutinas.some(x => x.nombre === r.nombreRutina && x.funcional === funcional)) {
+      dia.rutinas.push({ nombre: r.nombreRutina, funcional });
+    }
+    if (funcional) {
+      dia.funcionales += 1;
+      dia.segundosFuncional += Number(r.segundosTotales) || 0;
+      continue;
+    }
     dia.ejercicios += 1;
     dia.series += r.series.length;
     if (registroCompleto(r)) dia.completos += 1;
@@ -73,10 +88,21 @@ const Historial = () => {
     );
   };
 
+  const resumenDia = dia => [
+    ...(dia.ejercicios > 0 ? [
+      `${dia.ejercicios} ${dia.ejercicios === 1 ? 'ejercicio' : 'ejercicios'}`,
+      `${dia.completos} ${dia.completos === 1 ? 'completo' : 'completos'}`,
+      `${dia.series} ${dia.series === 1 ? 'serie' : 'series'}`,
+    ] : []),
+    ...(dia.funcionales > 0 ? [
+      `${dia.funcionales} ${dia.funcionales === 1 ? 'funcional' : 'funcionales'} (${formatearReloj(dia.segundosFuncional)})`,
+    ] : []),
+  ].join(' · ');
+
   const renderDia = ({ item: dia }) => (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`${etiquetaDia(dia.fecha)} ${formatearFecha(dia.fecha)}. ${dia.ejercicios} ejercicios. Ver detalle`}
+      accessibilityLabel={`${etiquetaDia(dia.fecha)} ${formatearFecha(dia.fecha)}. ${resumenDia(dia)}. Ver detalle`}
       style={({ pressed }) => [styles.dia, pressed && styles.diaPresionado]}
       onPress={() => setDiaAbierto(dia.fecha)}
       onLongPress={() => setMenuDia(dia.fecha)}
@@ -99,17 +125,16 @@ const Historial = () => {
       </View>
 
       <View style={styles.chips}>
-        {dia.rutinas.map(nombre => (
-          <View key={nombre} style={styles.chip}>
+        {dia.rutinas.map(({ nombre, funcional }) => (
+          <View key={`${funcional ? 'f' : 'r'}-${nombre}`} style={[styles.chip, funcional && styles.chipFuncional]}>
+            {funcional ? <Icon name="timer-outline" size={13} color={colores.acento} /> : null}
             <Text style={styles.chipTexto} numberOfLines={1} maxFontSizeMultiplier={maxEscalaFuente}>{nombre}</Text>
           </View>
         ))}
       </View>
 
       <Text style={styles.meta} maxFontSizeMultiplier={maxEscalaFuente}>
-        {dia.ejercicios} {dia.ejercicios === 1 ? 'ejercicio' : 'ejercicios'}
-        {` · ${dia.completos} ${dia.completos === 1 ? 'completo' : 'completos'}`}
-        {` · ${dia.series} ${dia.series === 1 ? 'serie' : 'series'}`}
+        {resumenDia(dia)}
       </Text>
     </Pressable>
   );
@@ -144,7 +169,7 @@ const Historial = () => {
           <EstadoVacio
             icono="calendar-outline"
             titulo="Todavía no hay entrenamientos"
-            descripcion="Cada serie que termines queda anotada acá, agrupada por día."
+            descripcion="Cada serie y cada funcional que termines quedan anotados acá, agrupados por día."
           />
         }
       />

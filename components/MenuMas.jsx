@@ -11,8 +11,11 @@ import { espaciado, maxEscalaFuente, radios, tipografia, toqueMinimo } from '../
 /**
  * Menu del boton "Más" (⋮) de la barra de pestañas. No es una pantalla: abre
  * una hoja de opciones encima de la pestaña en la que se esté.
+ *
+ * Historial y Notas viven aca desde que entro la pestaña Funcional: abren su
+ * pantalla en el stack raiz (onNavegar), con encabezado y boton de volver.
  */
-const MenuMas = ({ visible, onClose }) => {
+const MenuMas = ({ visible, onClose, onNavegar }) => {
   const [catalogoVisible, setCatalogoVisible] = useState(false);
 
   return (
@@ -22,6 +25,16 @@ const MenuMas = ({ visible, onClose }) => {
         titulo="Más opciones"
         onClose={onClose}
         opciones={[
+          {
+            texto: 'Historial',
+            icono: 'calendar-outline',
+            onPress: () => onNavegar?.('Historial'),
+          },
+          {
+            texto: 'Notas',
+            icono: 'create-outline',
+            onPress: () => onNavegar?.('Notas'),
+          },
           {
             texto: 'Catálogo de ejercicios',
             icono: 'barbell-outline',

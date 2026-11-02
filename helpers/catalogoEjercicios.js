@@ -4,7 +4,16 @@ import { apiJson } from '../services/apiClient';
 import listadoEjercicios from "./ejercicios";
 
 const DEFAULT_EXERCISE_SECONDS = 40;
-const CATALOG_CACHE_KEY = "@rutina360/catalogo_ejercicios_v1";
+// v2: cada ejercicio guarda su tipo (fuerza / funcional). La clave cambia para
+// que la primera apertura despues de actualizar baje el catalogo con los tipos
+// en vez de leer el cache viejo, que no los tiene.
+const CATALOG_CACHE_KEY = "@rutina360/catalogo_ejercicios_v2";
+
+export const TIPO_CATALOGO_FUERZA = "fuerza";
+export const TIPO_CATALOGO_FUNCIONAL = "funcional";
+
+/** Un ejercicio sin tipo es de fuerza (cache o respaldo de antes de los funcionales). */
+const tipoDe = item => (item?.tipo === TIPO_CATALOGO_FUNCIONAL ? TIPO_CATALOGO_FUNCIONAL : TIPO_CATALOGO_FUERZA);
 export const CATALOG_REFRESH_MS = 12 * 60 * 60 * 1000;
 
 const normalizarTexto = texto =>
@@ -44,23 +53,48 @@ const mapearCatalogoRemoto = (groups, exercises, allowedOwnerIds) => {
 
   return aplicarFiltroOwner(exercises, allowedOwnerIds).map(item => {
     const grupo = groupsMap.get(item?.idMuscleGroup);
+    const funcional = grupo?.kind === "functional";
+    const trabajoSugerido = Number(item?.defaultWorkSeconds) || null;
     return {
       idEjercicio: item.id,
       categoria: grupo?.categoriaNormalizada || "",
       nombre: item.name || "Ejercicio",
-      tiempoEjecucion: DEFAULT_EXERCISE_SECONDS,
+      tiempoEjecucion: funcional && trabajoSugerido ? trabajoSugerido : DEFAULT_EXERCISE_SECONDS,
       idOwner: item.idOwner,
       idMuscleGroup: item.idMuscleGroup,
+      tipo: funcional ? TIPO_CATALOGO_FUNCIONAL : TIPO_CATALOGO_FUERZA,
+      // Nombre tal cual lo cargo el super admin ("Pliometría"): la categoria
+      // normalizada pierde los acentos y sirve para comparar, no para mostrar.
+      grupo: grupo?.name || "",
+      ...(funcional ? { trabajoSugerido } : {}),
     };
   });
 };
 
-export const getCatalogoFallback = () => ({
+/**
+ * Deja solo los ejercicios de un tipo. El formulario de fuerza ofrece solo
+ * Fuerza y el de funcional solo Funcional; por defecto es fuerza, asi que lo
+ * que ya llamaba a estas funciones sin tipo sigue viendo lo mismo de siempre.
+ */
+const filtrarPorTipo = (resultado, tipo = TIPO_CATALOGO_FUERZA) => {
+  const catalogo = (resultado?.catalogo || []).filter(item => tipoDe(item) === tipo);
+  return { ...resultado, catalogo, categorias: construirCategorias(catalogo) };
+};
+
+/** Nombre para mostrar de una categoria ("pliometria" -> "Pliometría"). */
+export const nombreCategoria = (catalogo, categoria) => {
+  const conGrupo = (catalogo || []).find(item => item.categoria === categoria && item.grupo);
+  if (conGrupo) {
+    return conGrupo.grupo;
+  }
+  return categoria ? categoria.charAt(0).toUpperCase() + categoria.slice(1) : "";
+};
+
+export const getCatalogoFallback = (tipo = TIPO_CATALOGO_FUERZA) => filtrarPorTipo({
   catalogo: listadoEjercicios,
-  categorias: construirCategorias(listadoEjercicios),
   source: "fallback",
   updatedAt: null,
-});
+}, tipo);
 
 export const cargarCatalogoCache = async () => {
   try {
@@ -93,7 +127,7 @@ export const guardarCatalogoCache = async ({ catalogo, categorias }) => {
   );
 };
 
-export const refrescarCatalogoRemoto = async (usuarioBackend) => {
+export const refrescarCatalogoRemoto = async (usuarioBackend, { tipo = TIPO_CATALOGO_FUERZA } = {}) => {
   const [groupsBody, exercisesBody] = await Promise.all([
     apiJson(API_ENDPOINTS.muscleGroups),
     apiJson(API_ENDPOINTS.exercises),
@@ -108,25 +142,27 @@ export const refrescarCatalogoRemoto = async (usuarioBackend) => {
     throw new Error("No se encontraron ejercicios remotos para el usuario.");
   }
 
+  // El cache guarda los dos tipos juntos; cada pantalla filtra el suyo.
   const categorias = construirCategorias(catalogo);
   await guardarCatalogoCache({ catalogo, categorias });
 
-  return {
+  return filtrarPorTipo({
     catalogo,
-    categorias,
     source: "remote",
     updatedAt: new Date().toISOString(),
-  };
+  }, tipo);
 };
 
 export const getCatalogoLocalConRefresh = async ({
   usuarioBackend,
   refreshMs = CATALOG_REFRESH_MS,
+  tipo = TIPO_CATALOGO_FUERZA,
 }) => {
-  const cache = await cargarCatalogoCache();
-  if (!cache) {
-    return { ...getCatalogoFallback(), needsRefresh: true };
+  const cacheCompleto = await cargarCatalogoCache();
+  if (!cacheCompleto) {
+    return { ...getCatalogoFallback(tipo), needsRefresh: true };
   }
+  const cache = filtrarPorTipo(cacheCompleto, tipo);
 
   const lastUpdateMs = cache.updatedAt ? new Date(cache.updatedAt).getTime() : 0;
   const now = Date.now();

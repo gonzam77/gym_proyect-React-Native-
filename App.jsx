@@ -18,12 +18,14 @@ import { useEffect, useState } from 'react';
 
 import { DarkTheme, NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import notifee, { EventType } from '@notifee/react-native';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import Rutinas from './views/rutinas/rutinas';
+import Funcional from './views/funcional/funcional';
 import Perfil from './views/usuario/perfil';
 import Notas from './views/notas/notas';
 import Historial from './views/historial/historial';
@@ -43,8 +45,12 @@ import {
   esNotificacionDeDescanso,
   prepararNotificacionesDescanso,
 } from './services/descansoAlarma';
+import { esNotificacionFuncional, prepararNotificacionesFuncional } from './services/fasesFuncional';
 
 const RootTabs = createBottomTabNavigator();
+// Historial y Notas salieron de la barra (quedo Rutinas · Funcional · Perfil ·
+// Más) y se abren desde Más como pantallas completas con su boton de volver.
+const RootStack = createNativeStackNavigator();
 
 /** Tema de navegacion, para que no se vea el flash blanco entre pantallas. */
 const temaNavegacion = {
@@ -62,8 +68,7 @@ const temaNavegacion = {
 
 const ICONOS_TABS = {
   MisRutinas: ['fitness', 'fitness-outline'],
-  Historial: ['calendar', 'calendar-outline'],
-  Notas: ['create', 'create-outline'],
+  Funcional: ['timer', 'timer-outline'],
   Perfil: ['person', 'person-outline'],
   Mas: ['ellipsis-horizontal', 'ellipsis-horizontal'],
 };
@@ -78,6 +83,12 @@ const ICONOS_TABS = {
 const manejarEventoNotificacion = async ({ type, detail }) => {
   const idNotificacion = detail?.notification?.id;
   const idAccion = detail?.pressAction?.id;
+
+  // Los avisos de cambio de fase de un funcional no se apagan desde aca: tocar
+  // uno solo abre la app, y la pantalla de ejecucion los cancela al volver.
+  if (esNotificacionFuncional(idNotificacion)) {
+    return;
+  }
 
   if (!esNotificacionDeDescanso(idNotificacion, idAccion)) {
     return;
@@ -101,9 +112,91 @@ notifee.onBackgroundEvent(manejarEventoNotificacion);
 // La pestaña "Más" no tiene pantalla propia: al tocarla se abre un menu.
 const SinPantalla = () => null;
 
+const opcionesPantalla = {
+  headerTitleAlign: 'center',
+  headerStyle: { backgroundColor: colores.fondo },
+  headerShadowVisible: false,
+  headerTintColor: colores.textoPrimario,
+};
+
+/** Barra de pestañas. Es la primera pantalla del stack raiz. */
+const Pestanas = ({ navigation }) => {
+  const [menuMas, setMenuMas] = useState(false);
+
+  return (
+    <>
+    <RootTabs.Navigator
+      initialRouteName='MisRutinas'
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          const [activo, inactivo] = ICONOS_TABS[route.name] || [];
+          return <Ionicons name={focused ? activo : inactivo} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: colores.principal,
+        tabBarInactiveTintColor: colores.textoSecundario,
+        tabBarStyle: styles.tabBar,
+        tabBarLabelStyle: styles.tabBarLabel,
+        tabBarItemStyle: styles.tabBarItem,
+        headerTitleAlign: 'center',
+        headerStyle: styles.header,
+        headerShadowVisible: false,
+        headerTintColor: colores.textoPrimario,
+        headerTitleStyle: styles.headerTitle,
+      })}
+    >
+      <RootTabs.Screen
+        name='MisRutinas'
+        component={Rutinas}
+        options={{
+          tabBarLabel: 'Rutinas',
+          // La pantalla ya trae su propio encabezado con el saludo; un header
+          // del navegador arriba de eso serian dos titulos para lo mismo.
+          headerShown: false,
+        }}
+      />
+      <RootTabs.Screen
+        name='Funcional'
+        component={Funcional}
+        options={{
+          tabBarLabel: 'Funcional',
+          headerShown: false,
+        }}
+      />
+      <RootTabs.Screen
+        name='Perfil'
+        component={Perfil}
+        options={{
+          tabBarLabel: 'Perfil',
+          headerTitle: 'Mi perfil',
+        }}
+      />
+      <RootTabs.Screen
+        name='Mas'
+        component={SinPantalla}
+        options={{
+          tabBarLabel: 'Más',
+          tabBarAccessibilityLabel: 'Más opciones',
+        }}
+        listeners={{
+          tabPress: evento => {
+            // No navega: deja la pestaña actual y abre el menu encima.
+            evento.preventDefault();
+            setMenuMas(true);
+          },
+        }}
+      />
+    </RootTabs.Navigator>
+    <MenuMas
+      visible={menuMas}
+      onClose={() => setMenuMas(false)}
+      onNavegar={pantalla => navigation.navigate(pantalla)}
+    />
+    </>
+  );
+};
+
 const AppContent = () => {
   const dispatch = useDispatch();
-  const [menuMas, setMenuMas] = useState(false);
   const token = useSelector(state => state.usuario.sesion?.token);
   const usuarioSesion = useSelector(state => state.usuario.sesion?.user);
   const usuarioLocal = useSelector(state => state.usuario.usuario);
@@ -181,78 +274,19 @@ const AppContent = () => {
   }
 
   return (
-    <>
-    <RootTabs.Navigator
-      initialRouteName='MisRutinas'
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
-          const [activo, inactivo] = ICONOS_TABS[route.name] || [];
-          return <Ionicons name={focused ? activo : inactivo} size={size} color={color} />;
-        },
-        tabBarActiveTintColor: colores.principal,
-        tabBarInactiveTintColor: colores.textoSecundario,
-        tabBarStyle: styles.tabBar,
-        tabBarLabelStyle: styles.tabBarLabel,
-        tabBarItemStyle: styles.tabBarItem,
-        headerTitleAlign: 'center',
-        headerStyle: styles.header,
-        headerShadowVisible: false,
-        headerTintColor: colores.textoPrimario,
-        headerTitleStyle: styles.headerTitle,
-      })}
-    >
-      <RootTabs.Screen
-        name='MisRutinas'
-        component={Rutinas}
-        options={{
-          tabBarLabel: 'Rutinas',
-          // La pantalla ya trae su propio encabezado con el saludo; un header
-          // del navegador arriba de eso serian dos titulos para lo mismo.
-          headerShown: false,
-        }}
-      />
-      <RootTabs.Screen
+    <RootStack.Navigator screenOptions={opcionesPantalla}>
+      <RootStack.Screen name='Pestanas' component={Pestanas} options={{ headerShown: false }} />
+      <RootStack.Screen
         name='Historial'
         component={Historial}
-        options={{
-          tabBarLabel: 'Historial',
-          headerTitle: 'Historial',
-        }}
+        options={{ headerTitle: 'Historial', headerTitleStyle: styles.headerTitle, headerBackTitle: 'Volver' }}
       />
-      <RootTabs.Screen
+      <RootStack.Screen
         name='Notas'
         component={Notas}
-        options={{
-          tabBarLabel: 'Notas',
-          headerTitle: 'Mis notas',
-        }}
+        options={{ headerTitle: 'Mis notas', headerTitleStyle: styles.headerTitle, headerBackTitle: 'Volver' }}
       />
-      <RootTabs.Screen
-        name='Perfil'
-        component={Perfil}
-        options={{
-          tabBarLabel: 'Perfil',
-          headerTitle: 'Mi perfil',
-        }}
-      />
-      <RootTabs.Screen
-        name='Mas'
-        component={SinPantalla}
-        options={{
-          tabBarLabel: 'Más',
-          tabBarAccessibilityLabel: 'Más opciones',
-        }}
-        listeners={{
-          tabPress: evento => {
-            // No navega: deja la pestaña actual y abre el menu encima.
-            evento.preventDefault();
-            setMenuMas(true);
-          },
-        }}
-      />
-    </RootTabs.Navigator>
-    <MenuMas visible={menuMas} onClose={() => setMenuMas(false)} />
-    </>
+    </RootStack.Navigator>
   );
 };
 
@@ -261,6 +295,7 @@ const App = () => {
     const unsubscribeForeground = notifee.onForegroundEvent(manejarEventoNotificacion);
 
     prepararNotificacionesDescanso();
+    prepararNotificacionesFuncional();
     return unsubscribeForeground;
   }, []);
 

@@ -44,7 +44,9 @@ const usuarioTransform = createTransform(
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['rutinas', 'usuario', 'notasHistoricas', 'historial'],
+  // sesionFuncional se agrega sin migracion: es una clave nueva y, si no esta
+  // guardada, redux-persist usa su estado inicial (sin sesion).
+  whitelist: ['rutinas', 'usuario', 'notasHistoricas', 'historial', 'sesionFuncional'],
   transforms: [usuarioTransform],
 };
 

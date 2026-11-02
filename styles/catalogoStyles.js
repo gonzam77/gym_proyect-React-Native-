@@ -3,6 +3,34 @@ import { colores } from "./colores";
 import { espaciado, radios, sombras, tipografia, toqueMinimo } from "./theme";
 
 export const styles = StyleSheet.create({
+  // Selector Fuerza / Funcional (mismo aspecto que los segmentos de Rutinas).
+  grupos: {
+    flexDirection: "row",
+    padding: 4,
+    borderRadius: radios.completo,
+    backgroundColor: colores.fondo,
+    borderWidth: 1,
+    borderColor: colores.bordeSuave,
+  },
+  grupo: {
+    flex: 1,
+    minHeight: toqueMinimo - 4,
+    borderRadius: radios.completo,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  grupoActivo: {
+    backgroundColor: colores.superficieAlta,
+    borderWidth: 1,
+    borderColor: colores.borde,
+  },
+  grupoTexto: {
+    ...tipografia.auxiliar,
+    color: colores.textoSecundario,
+  },
+  grupoTextoActivo: {
+    color: colores.textoPrimario,
+  },
   container: {
     flex: 1,
     backgroundColor: colores.fondo,

@@ -1,5 +1,11 @@
 import { apiJson } from './apiClient';
 import { camposDescanso, segundosDescanso } from '../helpers/descanso';
+import { esFuncional } from '../helpers/funcional';
+import {
+  aPayloadFuncional,
+  convertirCompartidaFuncional,
+  esCompartidaFuncional,
+} from '../helpers/funcionalBackend';
 
 /**
  * Compartir rutinas entre usuarios con un codigo.
@@ -45,8 +51,10 @@ export const codigoDesdeQR = texto => {
   return normalizarCodigo(sinPrefijo);
 };
 
-/** Rutina local -> payload del servidor. */
-const aPayload = rutina => ({
+/** Rutina local -> payload del servidor. Los funcionales tienen el suyo. */
+const aPayload = rutina => (esFuncional(rutina) ? aPayloadFuncional(rutina) : aPayloadFuerza(rutina));
+
+const aPayloadFuerza = rutina => ({
   name: (rutina?.nombre || '').trim(),
   exercises: (rutina?.ejercicios || []).map(e => ({
     idEjercice: e.ejercicio?.idEjercicio ?? null,
@@ -89,8 +97,15 @@ export const buscarRutinaCompartida = async codigo => {
   return body?.data;
 };
 
-/** Rutina compartida (del servidor) -> rutina local nueva, lista para guardar. */
+/**
+ * Rutina compartida (del servidor) -> rutina local nueva, lista para guardar.
+ * Un funcional vuelve como funcional, asi aparece en la pestaña Funcional.
+ */
 export const convertirCompartidaEnRutinaLocal = compartida => {
+  if (esCompartidaFuncional(compartida)) {
+    return convertirCompartidaFuncional(compartida);
+  }
+
   const ejercicios = (compartida?.exercises || []).map(item => ({
     id: generarId(),
     ejercicio: {

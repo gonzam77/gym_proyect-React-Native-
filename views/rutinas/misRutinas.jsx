@@ -14,7 +14,8 @@ import ImportarRutina from "./importarRutina";
 import BarraProgreso from "../../components/BarraProgreso";
 import EstadoVacio from "../../components/EstadoVacio";
 import ListaOrdenable from "../../components/ListaOrdenable";
-import { reubicarRutina } from "../../store/rutinasSlice";
+import { reubicarRutinaDelTipo, seleccionarRutinasFuerza } from "../../store/rutinasSlice";
+import { TIPO_FUERZA } from "../../helpers/funcional";
 
 async function requestNotificationPermission() {
 
@@ -143,7 +144,8 @@ const EntrenamientoItem = ({
 const MisRutinas = ({ embebido = false, activo = true }) => {
 
   const dispatch = useDispatch();
-  const rutinas = useSelector(state => state.rutinas.rutinas);
+  // Solo fuerza: los funcionales comparten el arreglo pero tienen su pestaña.
+  const rutinas = useSelector(seleccionarRutinasFuerza);
   const usuario = useSelector(state => state.usuario.usuario);
   const usuarioBackend = useSelector(state => state.usuario.sesion?.user);
 
@@ -190,7 +192,7 @@ const MisRutinas = ({ embebido = false, activo = true }) => {
   }, [activo, cerrarDetalle, modalDetalle, navigation]);
 
   const reubicar = useCallback((desde, hacia) => {
-    dispatch(reubicarRutina({ desde, hacia }));
+    dispatch(reubicarRutinaDelTipo({ tipo: TIPO_FUERZA, desde, hacia }));
   }, [dispatch]);
 
   const abrirRutina = useCallback((id) => {

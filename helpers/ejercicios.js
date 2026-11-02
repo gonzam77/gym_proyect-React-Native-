@@ -110,6 +110,113 @@ const ejercicios = [
   { idEjercicio: 85, categoria: "lumbares", nombre: "Extensiones lumbares en banco romano", tiempoEjecucion: 30 },
   { idEjercicio: 86, categoria: "lumbares", nombre: "Supermans", tiempoEjecucion: 30 },
   { idEjercicio: 87, categoria: "lumbares", nombre: "Buenos días (Good mornings)", tiempoEjecucion: 40 },
+
+  // --- Funcional (ejercicios por tiempo) ---
+  // Respaldo sin conexion del catalogo funcional del servidor (ids 1001+,
+  // rutina360_server/src/seeders/ejerciciosFuncionales.js). Van al final y con
+  // tipo "funcional": hay nombres repetidos con Fuerza (Crunch abdominal,
+  // V-ups...) y quien busca por nombre tiene que encontrar primero el de fuerza.
+  // tiempoEjecucion = trabajoSugerido, el tiempo que se propone al elegirlo.
+  // Funcional: Core
+  { idEjercicio: 1001, tipo: "funcional", categoria: "core", grupo: "Core", nombre: "Plancha frontal", tiempoEjecucion: 40, trabajoSugerido: 40 },
+  { idEjercicio: 1002, tipo: "funcional", categoria: "core", grupo: "Core", nombre: "Plancha alta (brazos extendidos)", tiempoEjecucion: 40, trabajoSugerido: 40 },
+  { idEjercicio: 1003, tipo: "funcional", categoria: "core", grupo: "Core", nombre: "Plancha lateral izquierda", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1004, tipo: "funcional", categoria: "core", grupo: "Core", nombre: "Plancha lateral derecha", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1005, tipo: "funcional", categoria: "core", grupo: "Core", nombre: "Plancha con toque de hombros", tiempoEjecucion: 40, trabajoSugerido: 40 },
+  { idEjercicio: 1006, tipo: "funcional", categoria: "core", grupo: "Core", nombre: "Crunch abdominal", tiempoEjecucion: 40, trabajoSugerido: 40 },
+  { idEjercicio: 1007, tipo: "funcional", categoria: "core", grupo: "Core", nombre: "Crunch inverso", tiempoEjecucion: 40, trabajoSugerido: 40 },
+  { idEjercicio: 1008, tipo: "funcional", categoria: "core", grupo: "Core", nombre: "Crunch bicicleta", tiempoEjecucion: 40, trabajoSugerido: 40 },
+  { idEjercicio: 1009, tipo: "funcional", categoria: "core", grupo: "Core", nombre: "Hollow hold", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1010, tipo: "funcional", categoria: "core", grupo: "Core", nombre: "Bicho muerto (dead bug)", tiempoEjecucion: 40, trabajoSugerido: 40 },
+  { idEjercicio: 1011, tipo: "funcional", categoria: "core", grupo: "Core", nombre: "Elevación de piernas acostado", tiempoEjecucion: 40, trabajoSugerido: 40 },
+  { idEjercicio: 1012, tipo: "funcional", categoria: "core", grupo: "Core", nombre: "Tijeras (flutter kicks)", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1013, tipo: "funcional", categoria: "core", grupo: "Core", nombre: "Russian twist", tiempoEjecucion: 40, trabajoSugerido: 40 },
+  { idEjercicio: 1014, tipo: "funcional", categoria: "core", grupo: "Core", nombre: "V-ups", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1015, tipo: "funcional", categoria: "core", grupo: "Core", nombre: "Superman", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1016, tipo: "funcional", categoria: "core", grupo: "Core", nombre: "Bird dog", tiempoEjecucion: 40, trabajoSugerido: 40 },
+
+  // Funcional: Cardio
+  { idEjercicio: 1017, tipo: "funcional", categoria: "cardio", grupo: "Cardio", nombre: "Jumping jacks", tiempoEjecucion: 40, trabajoSugerido: 40 },
+  { idEjercicio: 1018, tipo: "funcional", categoria: "cardio", grupo: "Cardio", nombre: "Trote en el lugar", tiempoEjecucion: 40, trabajoSugerido: 40 },
+  { idEjercicio: 1019, tipo: "funcional", categoria: "cardio", grupo: "Cardio", nombre: "Skipping alto", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1020, tipo: "funcional", categoria: "cardio", grupo: "Cardio", nombre: "Talones a glúteos", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1021, tipo: "funcional", categoria: "cardio", grupo: "Cardio", nombre: "Mountain climbers", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1022, tipo: "funcional", categoria: "cardio", grupo: "Cardio", nombre: "Escaladores cruzados", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1023, tipo: "funcional", categoria: "cardio", grupo: "Cardio", nombre: "Saltar la soga", tiempoEjecucion: 40, trabajoSugerido: 40 },
+  { idEjercicio: 1024, tipo: "funcional", categoria: "cardio", grupo: "Cardio", nombre: "Patinador (skater)", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1025, tipo: "funcional", categoria: "cardio", grupo: "Cardio", nombre: "Shadow boxing", tiempoEjecucion: 45, trabajoSugerido: 45 },
+  { idEjercicio: 1026, tipo: "funcional", categoria: "cardio", grupo: "Cardio", nombre: "Jumping jacks cruzados", tiempoEjecucion: 40, trabajoSugerido: 40 },
+
+  // Funcional: Pliometría
+  { idEjercicio: 1027, tipo: "funcional", categoria: "pliometria", grupo: "Pliometría", nombre: "Burpees", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1028, tipo: "funcional", categoria: "pliometria", grupo: "Pliometría", nombre: "Sentadilla con salto", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1029, tipo: "funcional", categoria: "pliometria", grupo: "Pliometría", nombre: "Estocada con salto alternada", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1030, tipo: "funcional", categoria: "pliometria", grupo: "Pliometría", nombre: "Saltos al cajón", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1031, tipo: "funcional", categoria: "pliometria", grupo: "Pliometría", nombre: "Saltos laterales", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1032, tipo: "funcional", categoria: "pliometria", grupo: "Pliometría", nombre: "Rodillas al pecho (tuck jumps)", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1033, tipo: "funcional", categoria: "pliometria", grupo: "Pliometría", nombre: "Salto de rana (salto largo)", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1034, tipo: "funcional", categoria: "pliometria", grupo: "Pliometría", nombre: "Saltos en estrella", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1035, tipo: "funcional", categoria: "pliometria", grupo: "Pliometría", nombre: "Flexiones pliométricas", tiempoEjecucion: 30, trabajoSugerido: 30 },
+
+  // Funcional: Tren inferior
+  { idEjercicio: 1036, tipo: "funcional", categoria: "tren inferior", grupo: "Tren inferior", nombre: "Sentadilla con peso corporal", tiempoEjecucion: 40, trabajoSugerido: 40 },
+  { idEjercicio: 1037, tipo: "funcional", categoria: "tren inferior", grupo: "Tren inferior", nombre: "Sentadilla isométrica en pared", tiempoEjecucion: 45, trabajoSugerido: 45 },
+  { idEjercicio: 1038, tipo: "funcional", categoria: "tren inferior", grupo: "Tren inferior", nombre: "Sentadilla sumo", tiempoEjecucion: 40, trabajoSugerido: 40 },
+  { idEjercicio: 1039, tipo: "funcional", categoria: "tren inferior", grupo: "Tren inferior", nombre: "Estocadas alternadas", tiempoEjecucion: 40, trabajoSugerido: 40 },
+  { idEjercicio: 1040, tipo: "funcional", categoria: "tren inferior", grupo: "Tren inferior", nombre: "Estocadas hacia atrás", tiempoEjecucion: 40, trabajoSugerido: 40 },
+  { idEjercicio: 1041, tipo: "funcional", categoria: "tren inferior", grupo: "Tren inferior", nombre: "Sentadilla búlgara", tiempoEjecucion: 40, trabajoSugerido: 40 },
+  { idEjercicio: 1042, tipo: "funcional", categoria: "tren inferior", grupo: "Tren inferior", nombre: "Puente de glúteos", tiempoEjecucion: 40, trabajoSugerido: 40 },
+  { idEjercicio: 1043, tipo: "funcional", categoria: "tren inferior", grupo: "Tren inferior", nombre: "Puente de glúteos a una pierna", tiempoEjecucion: 40, trabajoSugerido: 40 },
+  { idEjercicio: 1044, tipo: "funcional", categoria: "tren inferior", grupo: "Tren inferior", nombre: "Step-ups al banco", tiempoEjecucion: 40, trabajoSugerido: 40 },
+  { idEjercicio: 1045, tipo: "funcional", categoria: "tren inferior", grupo: "Tren inferior", nombre: "Elevación de talones", tiempoEjecucion: 40, trabajoSugerido: 40 },
+  { idEjercicio: 1046, tipo: "funcional", categoria: "tren inferior", grupo: "Tren inferior", nombre: "Patada de glúteo en cuadrupedia", tiempoEjecucion: 40, trabajoSugerido: 40 },
+  { idEjercicio: 1047, tipo: "funcional", categoria: "tren inferior", grupo: "Tren inferior", nombre: "Sentadilla goblet con kettlebell", tiempoEjecucion: 40, trabajoSugerido: 40 },
+
+  // Funcional: Tren superior
+  { idEjercicio: 1048, tipo: "funcional", categoria: "tren superior", grupo: "Tren superior", nombre: "Flexiones de brazos", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1049, tipo: "funcional", categoria: "tren superior", grupo: "Tren superior", nombre: "Flexiones con rodillas apoyadas", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1050, tipo: "funcional", categoria: "tren superior", grupo: "Tren superior", nombre: "Flexiones diamante", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1051, tipo: "funcional", categoria: "tren superior", grupo: "Tren superior", nombre: "Flexiones abiertas", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1052, tipo: "funcional", categoria: "tren superior", grupo: "Tren superior", nombre: "Pike push-ups", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1053, tipo: "funcional", categoria: "tren superior", grupo: "Tren superior", nombre: "Fondos en banco", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1054, tipo: "funcional", categoria: "tren superior", grupo: "Tren superior", nombre: "Plancha a flexión (up-down)", tiempoEjecucion: 40, trabajoSugerido: 40 },
+  { idEjercicio: 1055, tipo: "funcional", categoria: "tren superior", grupo: "Tren superior", nombre: "Inchworm (gusano)", tiempoEjecucion: 40, trabajoSugerido: 40 },
+
+  // Funcional: Cuerpo completo
+  { idEjercicio: 1056, tipo: "funcional", categoria: "cuerpo completo", grupo: "Cuerpo completo", nombre: "Kettlebell swing", tiempoEjecucion: 40, trabajoSugerido: 40 },
+  { idEjercicio: 1057, tipo: "funcional", categoria: "cuerpo completo", grupo: "Cuerpo completo", nombre: "Thrusters", tiempoEjecucion: 40, trabajoSugerido: 40 },
+  { idEjercicio: 1058, tipo: "funcional", categoria: "cuerpo completo", grupo: "Cuerpo completo", nombre: "Wall balls", tiempoEjecucion: 40, trabajoSugerido: 40 },
+  { idEjercicio: 1059, tipo: "funcional", categoria: "cuerpo completo", grupo: "Cuerpo completo", nombre: "Battle ropes", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1060, tipo: "funcional", categoria: "cuerpo completo", grupo: "Cuerpo completo", nombre: "Bear crawl (oso)", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1061, tipo: "funcional", categoria: "cuerpo completo", grupo: "Cuerpo completo", nombre: "Sprawl", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1062, tipo: "funcional", categoria: "cuerpo completo", grupo: "Cuerpo completo", nombre: "Golpe de balón medicinal (slam)", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1063, tipo: "funcional", categoria: "cuerpo completo", grupo: "Cuerpo completo", nombre: "Clean con kettlebell", tiempoEjecucion: 40, trabajoSugerido: 40 },
+  { idEjercicio: 1064, tipo: "funcional", categoria: "cuerpo completo", grupo: "Cuerpo completo", nombre: "Turkish get-up", tiempoEjecucion: 60, trabajoSugerido: 60 },
+  { idEjercicio: 1065, tipo: "funcional", categoria: "cuerpo completo", grupo: "Cuerpo completo", nombre: "Man makers", tiempoEjecucion: 40, trabajoSugerido: 40 },
+  { idEjercicio: 1066, tipo: "funcional", categoria: "cuerpo completo", grupo: "Cuerpo completo", nombre: "Remo ergómetro", tiempoEjecucion: 60, trabajoSugerido: 60 },
+  { idEjercicio: 1067, tipo: "funcional", categoria: "cuerpo completo", grupo: "Cuerpo completo", nombre: "Air bike", tiempoEjecucion: 60, trabajoSugerido: 60 },
+
+  // Funcional: Movilidad
+  { idEjercicio: 1068, tipo: "funcional", categoria: "movilidad", grupo: "Movilidad", nombre: "Círculos de brazos", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1069, tipo: "funcional", categoria: "movilidad", grupo: "Movilidad", nombre: "Círculos de cadera", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1070, tipo: "funcional", categoria: "movilidad", grupo: "Movilidad", nombre: "Gato-camello", tiempoEjecucion: 45, trabajoSugerido: 45 },
+  { idEjercicio: 1071, tipo: "funcional", categoria: "movilidad", grupo: "Movilidad", nombre: "Rotaciones torácicas", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1072, tipo: "funcional", categoria: "movilidad", grupo: "Movilidad", nombre: "Sentadilla profunda sostenida", tiempoEjecucion: 45, trabajoSugerido: 45 },
+  { idEjercicio: 1073, tipo: "funcional", categoria: "movilidad", grupo: "Movilidad", nombre: "World's greatest stretch", tiempoEjecucion: 45, trabajoSugerido: 45 },
+  { idEjercicio: 1074, tipo: "funcional", categoria: "movilidad", grupo: "Movilidad", nombre: "Movilidad de tobillos", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1075, tipo: "funcional", categoria: "movilidad", grupo: "Movilidad", nombre: "90/90 de cadera", tiempoEjecucion: 45, trabajoSugerido: 45 },
+
+  // Funcional: Elongación
+  { idEjercicio: 1076, tipo: "funcional", categoria: "elongacion", grupo: "Elongación", nombre: "Isquiotibiales", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1077, tipo: "funcional", categoria: "elongacion", grupo: "Elongación", nombre: "Cuádriceps", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1078, tipo: "funcional", categoria: "elongacion", grupo: "Elongación", nombre: "Pectorales", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1079, tipo: "funcional", categoria: "elongacion", grupo: "Elongación", nombre: "Hombros", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1080, tipo: "funcional", categoria: "elongacion", grupo: "Elongación", nombre: "Tríceps", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1081, tipo: "funcional", categoria: "elongacion", grupo: "Elongación", nombre: "Gemelos", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1082, tipo: "funcional", categoria: "elongacion", grupo: "Elongación", nombre: "Postura del niño", tiempoEjecucion: 45, trabajoSugerido: 45 },
+  { idEjercicio: 1083, tipo: "funcional", categoria: "elongacion", grupo: "Elongación", nombre: "Cobra", tiempoEjecucion: 30, trabajoSugerido: 30 },
+  { idEjercicio: 1084, tipo: "funcional", categoria: "elongacion", grupo: "Elongación", nombre: "Mariposa (aductores)", tiempoEjecucion: 45, trabajoSugerido: 45 },
+  { idEjercicio: 1085, tipo: "funcional", categoria: "elongacion", grupo: "Elongación", nombre: "Figura 4 (glúteo)", tiempoEjecucion: 30, trabajoSugerido: 30 },
 ];
 
 export default ejercicios;

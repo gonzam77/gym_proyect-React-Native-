@@ -26,6 +26,50 @@ import {
 import listadoEjercicios from "../../helpers/ejercicios";
 import { formatearDescanso, segundosDescansoBackend } from "../../helpers/descanso";
 import { apiJson } from "../../services/apiClient";
+import {
+  TIPO_FUERZA,
+  TIPO_FUNCIONAL,
+  duracionTotal,
+  esDelTipo,
+  formatearReloj,
+  formatearSegundos,
+} from "../../helpers/funcional";
+import {
+  construirHuellaFuncional,
+  convertirAsignacionFuncional,
+  esAsignacionFuncional,
+} from "../../helpers/funcionalBackend";
+
+/**
+ * Textos de cada pestaña. Las asignaciones llegan todas juntas del servidor:
+ * Rutinas muestra las de fuerza y Funcional, los funcionales.
+ */
+const TEXTOS = {
+  [TIPO_FUERZA]: {
+    titulo: "Rutinas asignadas",
+    destino: "mis rutinas",
+    destinoTitulo: "Mis Rutinas",
+    singular: "rutina",
+    plural: "rutinas",
+    vacioTitulo: "No tenés rutinas asignadas",
+    vacioDescripcion: "Cuando tu coach te asigne una, va a aparecer acá. Desliza hacia abajo para actualizar.",
+  },
+  [TIPO_FUNCIONAL]: {
+    titulo: "Funcionales asignados",
+    destino: "mis funcionales",
+    destinoTitulo: "Mis funcionales",
+    singular: "funcional",
+    plural: "funcionales",
+    vacioTitulo: "No tenés funcionales asignados",
+    vacioDescripcion: "Cuando tu coach te asigne un entrenamiento funcional, va a aparecer acá. Desliza hacia abajo para actualizar.",
+  },
+};
+
+/** Datos de un funcional asignado para el detalle (vueltas, duracion, bloques en orden). */
+const resumenFuncionalAsignado = asignacion => {
+  const local = convertirAsignacionFuncional(asignacion);
+  return { local, duracion: duracionTotal(local) };
+};
 
 const DEFAULT_EXERCISE_SECONDS = 40;
 
@@ -69,8 +113,11 @@ const buscarEjercicioLocal = ejercicioBackend => {
   const nombre = normalizarTexto(ejercicioBackend?.name);
   const idBackend = ejercicioBackend?.id;
 
-  return listadoEjercicios.find(e => normalizarTexto(e.nombre) === nombre)
-    || listadoEjercicios.find(e => e.idEjercicio === idBackend);
+  // Solo el respaldo de fuerza: los funcionales comparten algunos nombres
+  // ("Crunch abdominal") y una rutina de fuerza no tiene que tomar esos datos.
+  const deFuerza = listadoEjercicios.filter(e => e.tipo !== "funcional");
+  return deFuerza.find(e => normalizarTexto(e.nombre) === nombre)
+    || deFuerza.find(e => e.idEjercicio === idBackend);
 };
 
 const construirHuellaAsignacion = asignacion => {
@@ -150,13 +197,14 @@ const convertirAsignacionEnRutinaLocal = asignacion => {
 };
 
 /** Boton de agregar / actualizar, con los tres estados posibles. */
-const BotonAgregar = ({ yaAgregada, tieneCambios, onAgregar, onActualizar, extra, compacto }) => {
+const BotonAgregar = ({ yaAgregada, tieneCambios, onAgregar, onActualizar, extra, compacto, destino = "mis rutinas", femenino = true }) => {
   const deshabilitado = yaAgregada && !tieneCambios;
+  const agregada = femenino ? "Agregada" : "Agregado";
   const texto = tieneCambios
-    ? (compacto ? "Actualizar" : "Actualizar en mis rutinas")
+    ? (compacto ? "Actualizar" : `Actualizar en ${destino}`)
     : yaAgregada
-      ? (compacto ? "Agregada" : "Agregada a mis rutinas")
-      : "Agregar a mis rutinas";
+      ? (compacto ? agregada : `${agregada} a ${destino}`)
+      : `Agregar a ${destino}`;
 
   return (
     <Pressable
@@ -212,9 +260,14 @@ const RutinaAsignadaDetalle = ({
   onActualizar,
   yaAgregada,
   tieneCambios,
+  tipo = TIPO_FUERZA,
 }) => {
   const rutina = asignacion?.Routine;
   const ejercicios = rutina?.Routine_Ejercices || [];
+  const funcional = tipo === TIPO_FUNCIONAL;
+  const textos = TEXTOS[tipo];
+  // El modal se monta cerrado (sin asignacion): se arma igual, vacio.
+  const datosFuncional = funcional ? resumenFuncionalAsignado(asignacion || {}) : null;
 
   return (
     <Modal
@@ -228,7 +281,7 @@ const RutinaAsignadaDetalle = ({
         <View style={styles.detailHeader}>
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Volver a las rutinas asignadas"
+            accessibilityLabel={`Volver a ${textos.titulo.toLowerCase()}`}
             hitSlop={8}
             style={({ pressed }) => [styles.botonIcono, pressed && styles.botonIconoPresionado]}
             onPress={onClose}
@@ -236,7 +289,7 @@ const RutinaAsignadaDetalle = ({
             <Icon name="chevron-back-outline" color={colores.textoPrimario} size={30} />
           </Pressable>
           <Text style={styles.detailTitle} numberOfLines={2} maxFontSizeMultiplier={maxEscalaFuente}>
-            {rutina?.name || "Rutina asignada"}
+            {rutina?.name || (funcional ? "Funcional asignado" : "Rutina asignada")}
           </Text>
         </View>
 
@@ -244,12 +297,21 @@ const RutinaAsignadaDetalle = ({
           <View style={styles.metaRow}>
             <View style={styles.pill}>
               <Text style={styles.pillText} maxFontSizeMultiplier={maxEscalaFuente}>
-                {ejercicios.length} {ejercicios.length === 1 ? 'ejercicio' : 'ejercicios'}
+                {funcional
+                  ? `${ejercicios.length} ${ejercicios.length === 1 ? 'bloque' : 'bloques'}`
+                  : `${ejercicios.length} ${ejercicios.length === 1 ? 'ejercicio' : 'ejercicios'}`}
               </Text>
             </View>
+            {funcional ? (
+              <View style={styles.pill}>
+                <Text style={styles.pillText} maxFontSizeMultiplier={maxEscalaFuente}>
+                  {datosFuncional.local.vueltas} {datosFuncional.local.vueltas === 1 ? 'vuelta' : 'vueltas'}
+                </Text>
+              </View>
+            ) : null}
             <View style={styles.pill}>
               <Text style={styles.pillText} maxFontSizeMultiplier={maxEscalaFuente}>
-                {rutina?.time || 0} min
+                {funcional ? formatearReloj(datosFuncional.duracion) : `${rutina?.time || 0} min`}
               </Text>
             </View>
             {asignacion?.isActive ? (
@@ -265,11 +327,36 @@ const RutinaAsignadaDetalle = ({
             onAgregar={() => onAgregar(asignacion)}
             onActualizar={() => onActualizar(asignacion)}
             extra={styles.detailAddButton}
+            destino={textos.destino}
+            femenino={!funcional}
           />
 
-          <Text style={styles.sectionTitle} maxFontSizeMultiplier={maxEscalaFuente}>Ejercicios</Text>
+          <Text style={styles.sectionTitle} maxFontSizeMultiplier={maxEscalaFuente}>
+            {funcional ? 'Bloques' : 'Ejercicios'}
+          </Text>
 
-          {ejercicios.length ? (
+          {funcional && datosFuncional.local.bloques.length ? (
+            datosFuncional.local.bloques.map((bloque, indice) => (
+              <View key={bloque.idBackend ?? indice} style={styles.exerciseCard}>
+                <Text style={styles.exerciseName} maxFontSizeMultiplier={maxEscalaFuente}>
+                  {indice + 1}. {bloque.ejercicio.nombre}
+                </Text>
+                <Text style={styles.exerciseInfo} maxFontSizeMultiplier={maxEscalaFuente}>
+                  Trabajo {formatearSegundos(bloque.trabajoSegundos)}
+                  {indice < datosFuncional.local.bloques.length - 1
+                    ? ` · ${formatearSegundos(bloque.descansoSegundos)}${bloque.descansoSegundos ? ' de descanso' : ''}`
+                    : datosFuncional.local.vueltas > 1
+                      ? ` · después, ${formatearSegundos(datosFuncional.local.descansoEntreVueltasSegundos)} entre vueltas`
+                      : ''}
+                </Text>
+                {bloque.nota ? (
+                  <Text style={styles.comments} maxFontSizeMultiplier={maxEscalaFuente}>
+                    {bloque.nota}
+                  </Text>
+                ) : null}
+              </View>
+            ))
+          ) : !funcional && ejercicios.length ? (
             ejercicios.map(item => (
               <View key={item.id} style={styles.exerciseCard}>
                 <Text style={styles.exerciseName} maxFontSizeMultiplier={maxEscalaFuente}>
@@ -291,7 +378,7 @@ const RutinaAsignadaDetalle = ({
             ))
           ) : (
             <Text style={styles.emptyText} maxFontSizeMultiplier={maxEscalaFuente}>
-              Esta rutina no tiene ejercicios cargados.
+              {funcional ? 'Este funcional no tiene bloques cargados.' : 'Esta rutina no tiene ejercicios cargados.'}
             </Text>
           )}
         </ScrollView>
@@ -301,9 +388,13 @@ const RutinaAsignadaDetalle = ({
 };
 
 // embebido: se muestra dentro de la pantalla "Rutinas", que ya maneja el area
-// segura de arriba.
-const RutinasAsignadas = ({ embebido = false }) => {
+// segura de arriba. tipo: la pestaña donde esta (fuerza o funcional).
+const RutinasAsignadas = ({ embebido = false, tipo = TIPO_FUERZA }) => {
   const dispatch = useDispatch();
+  const funcional = tipo === TIPO_FUNCIONAL;
+  const textos = TEXTOS[tipo];
+  const huellaDe = funcional ? construirHuellaFuncional : construirHuellaAsignacion;
+  const convertir = funcional ? convertirAsignacionFuncional : convertirAsignacionEnRutinaLocal;
   const sesion = useSelector(state => state.usuario.sesion);
   const rutinasLocales = useSelector(state => state.rutinas.rutinas);
   const usuarioBackend = sesion?.user;
@@ -341,14 +432,17 @@ const RutinasAsignadas = ({ embebido = false }) => {
         method: "GET",
       });
 
-      setAsignaciones(Array.isArray(body?.data) ? body.data : []);
+      // El servidor manda fuerza y funcionales juntos (la app avisa que sabe
+      // mostrarlos); cada pestaña se queda con los de su tipo.
+      const todas = Array.isArray(body?.data) ? body.data : [];
+      setAsignaciones(todas.filter(asignacion => esAsignacionFuncional(asignacion) === funcional));
     } catch (err) {
       setError(err.message || "No se pudieron cargar las rutinas.");
     } finally {
       setCargando(false);
       setRefrescando(false);
     }
-  }, [athleteId]);
+  }, [athleteId, funcional]);
 
   const obtenerCoach = useCallback(async () => {
     if (!athleteId) {
@@ -408,13 +502,13 @@ const RutinasAsignadas = ({ embebido = false }) => {
     const estadoAsignaciones = asignaciones.map(asignacion => ({
       idAsignacionBackend: asignacion?.id,
       idRoutineBackend: asignacion?.Routine?.id,
-      huellaAsignacion: construirHuellaAsignacion(asignacion),
+      huellaAsignacion: huellaDe(asignacion),
     }));
 
     dispatch(sincronizarEstadoRutinasAsignadas(estadoAsignaciones));
-  }, [asignaciones, dispatch]);
+  }, [asignaciones, dispatch, huellaDe]);
 
-  const totalCambios = rutinasLocales.filter(r => r.tieneCambiosAsignados).length;
+  const totalCambios = rutinasLocales.filter(r => r.tieneCambiosAsignados && esDelTipo(r, tipo)).length;
 
   /**
    * Los cambios del coach se avisan con un banner en la pantalla, no con un
@@ -451,13 +545,16 @@ const RutinasAsignadas = ({ embebido = false }) => {
     }
 
     if (rutinaYaAgregada(asignacion)) {
-      avisoError("Esa rutina ya está en Mis Rutinas");
+      avisoError(funcional ? "Ese funcional ya está en Mis funcionales" : "Esa rutina ya está en Mis Rutinas");
       return;
     }
 
-    const rutinaLocal = convertirAsignacionEnRutinaLocal(asignacion);
+    const rutinaLocal = convertir(asignacion);
     dispatch(agregarRutina(rutinaLocal));
-    avisoExito("Rutina agregada", "Ya la tenés disponible en Mis Rutinas.");
+    avisoExito(
+      funcional ? "Funcional agregado" : "Rutina agregada",
+      funcional ? "Ya lo tenés disponible en Mis funcionales." : "Ya la tenés disponible en Mis Rutinas.",
+    );
   };
 
   const actualizarRutinaLocal = asignacion => {
@@ -466,9 +563,9 @@ const RutinasAsignadas = ({ embebido = false }) => {
       return;
     }
 
-    const rutinaLocal = convertirAsignacionEnRutinaLocal(asignacion);
+    const rutinaLocal = convertir(asignacion);
     dispatch(actualizarRutinaAsignadaLocal({ rutinaActualizada: rutinaLocal }));
-    avisoExito("Rutina actualizada", "Se aplicaron los cambios del coach.");
+    avisoExito(funcional ? "Funcional actualizado" : "Rutina actualizada", "Se aplicaron los cambios del coach.");
   };
 
   const renderRutina = ({ item }) => {
@@ -485,25 +582,34 @@ const RutinasAsignadas = ({ embebido = false }) => {
       <View style={styles.card}>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel={`Ver la rutina ${rutina?.name || 'asignada'}`}
+          accessibilityLabel={`Ver ${funcional ? 'el funcional' : 'la rutina'} ${rutina?.name || 'asignada'}`}
           style={({ pressed }) => [pressed && styles.cardPresionada]}
           onPress={() => setAsignacionSeleccionada(item)}
         >
           <View style={styles.cardTop}>
             <Text style={styles.routineName} numberOfLines={2} maxFontSizeMultiplier={maxEscalaFuente}>
-              {rutina?.name || "Rutina asignada"}
+              {rutina?.name || (funcional ? "Funcional asignado" : "Rutina asignada")}
             </Text>
             <Icon name="chevron-forward-outline" color={colores.textoSecundario} size={24} />
           </View>
           <View style={styles.metaRow}>
             <View style={styles.pill}>
               <Text style={styles.pillText} maxFontSizeMultiplier={maxEscalaFuente}>
-                {ejercicios.length} {ejercicios.length === 1 ? 'ejercicio' : 'ejercicios'}
+                {funcional
+                  ? `${ejercicios.length} ${ejercicios.length === 1 ? 'bloque' : 'bloques'}`
+                  : `${ejercicios.length} ${ejercicios.length === 1 ? 'ejercicio' : 'ejercicios'}`}
               </Text>
             </View>
+            {funcional ? (
+              <View style={styles.pill}>
+                <Text style={styles.pillText} maxFontSizeMultiplier={maxEscalaFuente}>
+                  {Number(rutina?.rounds) || 1} {(Number(rutina?.rounds) || 1) === 1 ? 'vuelta' : 'vueltas'}
+                </Text>
+              </View>
+            ) : null}
             <View style={styles.pill}>
               <Text style={styles.pillText} maxFontSizeMultiplier={maxEscalaFuente}>
-                {rutina?.time || 0} min
+                {funcional ? formatearReloj(duracionTotal(convertirAsignacionFuncional(item))) : `${rutina?.time || 0} min`}
               </Text>
             </View>
             <View style={[styles.pill, !item.isActive && styles.pillInactiva]}>
@@ -519,6 +625,8 @@ const RutinasAsignadas = ({ embebido = false }) => {
 
         <BotonAgregar
           compacto
+          destino={textos.destino}
+          femenino={!funcional}
           yaAgregada={yaAgregada}
           tieneCambios={tieneCambios}
           onAgregar={() => agregarAMisRutinas(item)}
@@ -537,13 +645,13 @@ const RutinasAsignadas = ({ embebido = false }) => {
               Plan del entrenador
             </Text>
             <Text style={styles.title} numberOfLines={1} maxFontSizeMultiplier={maxEscalaFuente}>
-              Rutinas asignadas
+              {textos.titulo}
             </Text>
           </View>
 
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Actualizar las rutinas asignadas"
+            accessibilityLabel={`Actualizar ${textos.titulo.toLowerCase()}`}
             accessibilityState={{ busy: cargando || refrescando || cargandoCoach }}
             style={({ pressed }) => [
               styles.refreshButton,
@@ -591,7 +699,7 @@ const RutinasAsignadas = ({ embebido = false }) => {
         <View style={styles.banner}>
           <Icon name="sync-circle-outline" size={22} color={colores.acento} />
           <Text style={styles.bannerTexto} maxFontSizeMultiplier={maxEscalaFuente}>
-            Tenés {totalCambios} {totalCambios > 1 ? 'rutinas' : 'rutina'} en Mis Rutinas con
+            Tenés {totalCambios} {totalCambios > 1 ? textos.plural : textos.singular} en {textos.destinoTitulo} con
             cambios del coach. Tocá "Actualizar" para aplicarlos.
           </Text>
           <Pressable
@@ -646,14 +754,14 @@ const RutinasAsignadas = ({ embebido = false }) => {
             athleteId ? (
               <EstadoVacio
                 icono="clipboard-outline"
-                titulo="No tenés rutinas asignadas"
-                descripcion="Cuando tu coach te asigne una, va a aparecer acá. Desliza hacia abajo para actualizar."
+                titulo={textos.vacioTitulo}
+                descripcion={textos.vacioDescripcion}
               />
             ) : (
               <EstadoVacio
                 icono="person-circle-outline"
                 titulo="No pudimos identificar tu usuario"
-                descripcion="Volvé a iniciar sesión para ver las rutinas que te asignaron."
+                descripcion={`Volvé a iniciar sesión para ver ${funcional ? 'los funcionales que te asignaron' : 'las rutinas que te asignaron'}.`}
               />
             )
           )}
@@ -666,6 +774,7 @@ const RutinasAsignadas = ({ embebido = false }) => {
         onClose={() => setAsignacionSeleccionada(null)}
         onAgregar={agregarAMisRutinas}
         onActualizar={actualizarRutinaLocal}
+        tipo={tipo}
         yaAgregada={rutinaYaAgregada(asignacionSeleccionada)}
         tieneCambios={Boolean(rutinasLocales.find(r =>
           (asignacionSeleccionada?.id && r.idAsignacionBackend === asignacionSeleccionada.id)
