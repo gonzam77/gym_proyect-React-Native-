@@ -7,6 +7,10 @@ buildscript {
         ndkVersion = "27.1.12297006"
         kotlinVersion = "2.0.21"
         hermesEnabled = true
+        // Lector de QR de VisionCamera (importar rutinas compartidas). En true
+        // incluye el modelo de ML Kit en la app (~2.4 MB): funciona sin Google
+        // Play Services y sin descargarlo la primera vez que se escanea.
+        VisionCamera_enableCodeScanner = true
     }
     repositories {
         google()

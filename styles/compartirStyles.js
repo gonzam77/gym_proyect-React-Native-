@@ -7,6 +7,9 @@ export const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: espaciado.xl,
   },
+  contenidoScroll: {
+    paddingBottom: espaciado.xxxl,
+  },
   botonera: {
     flexDirection: "row",
     alignItems: "center",
@@ -48,6 +51,15 @@ export const styles = StyleSheet.create({
     textTransform: "uppercase",
     letterSpacing: 2,
   },
+  etiquetaSeparada: {
+    marginTop: espaciado.sm,
+  },
+  qrMarco: {
+    // El margen blanco alrededor ("quiet zone") es necesario para que se lea.
+    padding: espaciado.md,
+    borderRadius: radios.md,
+    backgroundColor: "#FFFFFF",
+  },
   codigo: {
     fontSize: 38,
     fontWeight: "900",
@@ -75,6 +87,22 @@ export const styles = StyleSheet.create({
   botonPrincipalTexto: {
     ...tipografia.cuerpoFuerte,
     color: colores.sobreRelleno,
+  },
+  botonSecundario: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: espaciado.sm,
+    minHeight: toqueMinimo + 8,
+    marginTop: espaciado.md,
+    paddingHorizontal: espaciado.xl,
+    borderRadius: radios.completo,
+    borderWidth: 1,
+    borderColor: colores.borde,
+  },
+  botonSecundarioTexto: {
+    ...tipografia.cuerpoFuerte,
+    color: colores.textoPrimario,
   },
   botonDeshabilitado: {
     opacity: 0.45,

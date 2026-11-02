@@ -1,12 +1,17 @@
 import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Pressable, Share, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, ScrollView, Share, Text, View } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
+import QRCode from "react-native-qrcode-svg";
 
 import PantallaModal from "../../components/PantallaModal";
 import { styles } from "../../styles/compartirStyles";
 import { colores } from "../../styles/colores";
 import { maxEscalaFuente } from "../../styles/theme";
-import { compartirRutina } from "../../services/rutinasCompartidas";
+import { compartirRutina, textoQR } from "../../services/rutinasCompartidas";
+
+// Negro sobre blanco y con margen: es lo que mejor leen las camaras, aunque la
+// app sea oscura.
+const TAMANO_QR = 200;
 
 const formatearVencimiento = valor => {
   const fecha = new Date(valor);
@@ -15,8 +20,10 @@ const formatearVencimiento = valor => {
 };
 
 /**
- * Genera el codigo para compartir una rutina y abre el menu nativo de
- * compartir (WhatsApp, Telegram, mail...). Quien lo recibe se lleva una copia.
+ * Genera el codigo para compartir una rutina. Se muestra como texto y como QR
+ * (para escanearlo desde "Importar" en otro telefono), y se puede enviar con el
+ * menu nativo de compartir (WhatsApp, Telegram, mail...). Quien lo recibe se
+ * lleva una copia.
  */
 const CompartirRutina = ({ rutina, onClose }) => {
   const [estado, setEstado] = useState('cargando');
@@ -57,7 +64,11 @@ const CompartirRutina = ({ rutina, onClose }) => {
 
   return (
     <PantallaModal>
-      <View style={styles.cuerpo}>
+      <ScrollView
+        style={styles.cuerpo}
+        contentContainerStyle={styles.contenidoScroll}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.botonera}>
           <Pressable
             accessibilityRole="button"
@@ -103,7 +114,27 @@ const CompartirRutina = ({ rutina, onClose }) => {
         {estado === 'listo' ? (
           <>
             <View style={styles.tarjeta}>
-              <Text style={styles.etiqueta} maxFontSizeMultiplier={maxEscalaFuente}>Código</Text>
+              <View
+                style={styles.qrMarco}
+                accessible
+                accessibilityRole="image"
+                accessibilityLabel="Código QR de la rutina. Se escanea desde Importar, en otro teléfono."
+              >
+                <QRCode
+                  value={textoQR(resultado.code)}
+                  size={TAMANO_QR}
+                  color="#000000"
+                  backgroundColor="#FFFFFF"
+                  ecl="M"
+                />
+              </View>
+              <Text style={styles.ayuda} maxFontSizeMultiplier={maxEscalaFuente}>
+                Escanealo desde Importar → Escanear QR, en el otro teléfono.
+              </Text>
+
+              <Text style={[styles.etiqueta, styles.etiquetaSeparada]} maxFontSizeMultiplier={maxEscalaFuente}>
+                O ingresá el código
+              </Text>
               {/* selectable: mantener apretado para copiarlo. */}
               <Text
                 selectable
@@ -133,7 +164,7 @@ const CompartirRutina = ({ rutina, onClose }) => {
             </Pressable>
           </>
         ) : null}
-      </View>
+      </ScrollView>
     </PantallaModal>
   );
 };

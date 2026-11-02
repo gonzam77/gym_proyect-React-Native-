@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { ActivityIndicator, Keyboard, Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Keyboard, Modal, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { useDispatch } from "react-redux";
 import Icon from "react-native-vector-icons/Ionicons";
 
 import PantallaModal from "../../components/PantallaModal";
+import EscanerQR from "../../components/EscanerQR";
 import { styles } from "../../styles/compartirStyles";
 import { colores } from "../../styles/colores";
 import { maxEscalaFuente } from "../../styles/theme";
@@ -18,8 +19,9 @@ import {
 } from "../../services/rutinasCompartidas";
 
 /**
- * Importar una rutina que otro usuario compartio con un codigo. Primero se
- * muestra una vista previa y recien al confirmar se guarda la copia.
+ * Importar una rutina que otro usuario compartio con un codigo, tipeandolo o
+ * escaneando su QR. Primero se muestra una vista previa y recien al confirmar
+ * se guarda la copia.
  */
 const ImportarRutina = ({ onClose }) => {
   const dispatch = useDispatch();
@@ -28,21 +30,36 @@ const ImportarRutina = ({ onClose }) => {
   const [buscando, setBuscando] = useState(false);
   const [error, setError] = useState('');
   const [compartida, setCompartida] = useState(null);
+  const [escaneando, setEscaneando] = useState(false);
 
-  const buscar = async () => {
-    if (!codigoCompleto(codigo) || buscando) return;
+  // valor: el codigo leido del QR. Sin el (o con el evento del boton) usa lo tipeado.
+  const buscar = async valor => {
+    const codigoBuscado = typeof valor === 'string' ? valor : codigo;
+    if (!codigoCompleto(codigoBuscado) || buscando) return;
 
     Keyboard.dismiss();
     setBuscando(true);
     setError('');
     setCompartida(null);
     try {
-      setCompartida(await buscarRutinaCompartida(codigo));
+      setCompartida(await buscarRutinaCompartida(codigoBuscado));
     } catch (e) {
       setError(e?.message || 'No pudimos buscar la rutina. Revisá tu conexión.');
     } finally {
       setBuscando(false);
     }
+  };
+
+  const abrirEscaner = () => {
+    Keyboard.dismiss();
+    setError('');
+    setEscaneando(true);
+  };
+
+  const alLeerQR = codigoLeido => {
+    setEscaneando(false);
+    setCodigo(codigoLeido);
+    buscar(codigoLeido);
   };
 
   const importar = () => {
@@ -76,7 +93,8 @@ const ImportarRutina = ({ onClose }) => {
 
         <Text style={styles.titulo} maxFontSizeMultiplier={maxEscalaFuente}>Importar rutina</Text>
         <Text style={styles.subtitulo} maxFontSizeMultiplier={maxEscalaFuente}>
-          Ingresá el código que te pasaron. Vas a recibir una copia que podés modificar como quieras.
+          Ingresá el código que te pasaron o escaneá su QR. Vas a recibir una copia que podés modificar
+          como quieras.
         </Text>
 
         <TextInput
@@ -116,6 +134,24 @@ const ImportarRutina = ({ onClose }) => {
           )}
           <Text style={styles.botonPrincipalTexto} maxFontSizeMultiplier={maxEscalaFuente}>
             Buscar rutina
+          </Text>
+        </Pressable>
+
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Escanear el código QR de la rutina"
+          accessibilityState={{ disabled: buscando }}
+          disabled={buscando}
+          style={({ pressed }) => [
+            styles.botonSecundario,
+            buscando && styles.botonDeshabilitado,
+            pressed && styles.presionado,
+          ]}
+          onPress={abrirEscaner}
+        >
+          <Icon name="qr-code-outline" size={20} color={colores.textoPrimario} />
+          <Text style={styles.botonSecundarioTexto} maxFontSizeMultiplier={maxEscalaFuente}>
+            Escanear QR
           </Text>
         </Pressable>
 
@@ -164,6 +200,18 @@ const ImportarRutina = ({ onClose }) => {
           </>
         ) : null}
       </ScrollView>
+
+      <Modal
+        visible={escaneando}
+        animationType="slide"
+        statusBarTranslucent
+        navigationBarTranslucent
+        onRequestClose={() => setEscaneando(false)}
+      >
+        <PantallaModal edges={[]}>
+          <EscanerQR onLeido={alLeerQR} onCancelar={() => setEscaneando(false)} />
+        </PantallaModal>
+      </Modal>
     </PantallaModal>
   );
 };

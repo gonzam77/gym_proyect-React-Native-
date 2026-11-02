@@ -18,6 +18,7 @@ import PantallaModal from "../../components/PantallaModal";
 import ListaOrdenable from "../../components/ListaOrdenable";
 import { avisoError, avisoExito } from "../../helpers/avisos";
 import { formatearDescanso, segundosDescanso } from "../../helpers/descanso";
+import { esRutinaAsignada, MENSAJE_ASIGNADA_NO_COMPARTIBLE } from "../../services/rutinasCompartidas";
 
 const estaFinalizado = ejercicio => {
   const series = Number(ejercicio?.series) || 0;
@@ -101,7 +102,13 @@ const DetalleRutina = (
     );
   };
 
+  const esAsignada = esRutinaAsignada(copiaRutinaActualizada);
+
   const abrirCompartir = () => {
+    if (esAsignada) {
+      avisoError('No se puede compartir', MENSAJE_ASIGNADA_NO_COMPARTIBLE);
+      return;
+    }
     if (!copiaRutinaActualizada?.ejercicios?.length) {
       avisoError('Rutina vacía', 'Agregale al menos un ejercicio antes de compartirla.');
       return;
@@ -308,11 +315,12 @@ const DetalleRutina = (
         titulo={copiaRutinaActualizada?.nombre}
         onClose={() => setMenuVisible(false)}
         opciones={[
-          {
+          // Las rutinas asignadas por el coach no se comparten: ni aparece la opcion.
+          ...(esAsignada ? [] : [{
             texto: 'Compartir rutina',
             icono: 'share-social-outline',
             onPress: abrirCompartir,
-          },
+          }]),
           {
             texto: 'Reiniciar series',
             icono: 'refresh-outline',

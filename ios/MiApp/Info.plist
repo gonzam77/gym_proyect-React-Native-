@@ -27,6 +27,8 @@
 	<!-- Solo usa HTTPS estandar: evita la pregunta de cumplimiento de exportacion en cada build. -->
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>NSCameraUsageDescription</key>
+	<string>Rutina360 usa la cámara para escanear el código QR de una rutina compartida.</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>

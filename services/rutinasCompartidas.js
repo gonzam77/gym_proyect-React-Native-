@@ -23,6 +23,28 @@ export const normalizarCodigo = texto => {
 
 export const codigoCompleto = codigo => normalizarCodigo(codigo).replace('-', '').length === 8;
 
+/**
+ * El QR de una rutina compartida lleva solo el codigo, con un prefijo para
+ * reconocer que es de Rutina360. Si alguien lo escanea con la camara del
+ * telefono ve el texto y igual puede tipear el codigo.
+ */
+const PREFIJO_QR = 'RUTINA360:';
+
+export const textoQR = codigo => `${PREFIJO_QR}${normalizarCodigo(codigo)}`;
+
+/**
+ * Texto leido de un QR -> codigo "ABCD-EFGH", o null si no es de Rutina360.
+ * Tambien acepta un QR que tenga solo el codigo.
+ */
+export const codigoDesdeQR = texto => {
+  const valor = String(texto || '').trim();
+  const sinPrefijo = valor.toUpperCase().startsWith(PREFIJO_QR)
+    ? valor.slice(PREFIJO_QR.length).trim()
+    : valor;
+  if (!/^[A-Z0-9]{4}-?[A-Z0-9]{4}$/i.test(sinPrefijo)) return null;
+  return normalizarCodigo(sinPrefijo);
+};
+
 /** Rutina local -> payload del servidor. */
 const aPayload = rutina => ({
   name: (rutina?.nombre || '').trim(),
@@ -37,8 +59,22 @@ const aPayload = rutina => ({
   })),
 });
 
+/**
+ * Las rutinas que asigna el coach (o el gimnasio) no se comparten: son trabajo
+ * suyo. En el telefono se reconocen por origen "asignada", que tienen desde que
+ * se agregan a Mis rutinas, o por el id de la asignacion.
+ */
+export const esRutinaAsignada = rutina =>
+  rutina?.origen === 'asignada' || Boolean(rutina?.idAsignacionBackend);
+
+export const MENSAJE_ASIGNADA_NO_COMPARTIBLE =
+  'Las rutinas asignadas por tu coach no se pueden compartir.';
+
 /** Sube la copia de la rutina y devuelve { code, expiresAt }. */
 export const compartirRutina = async rutina => {
+  if (esRutinaAsignada(rutina)) {
+    throw new Error(MENSAJE_ASIGNADA_NO_COMPARTIBLE);
+  }
   const body = await apiJson('/routine/share', {
     method: 'POST',
     body: JSON.stringify(aPayload(rutina)),

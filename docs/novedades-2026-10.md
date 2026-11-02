@@ -57,6 +57,29 @@ Cambios en los tres sistemas (app, servidor y dashboard). **Nada está commitead
   - `GET /routine/share/:code`
   - `DELETE /routine/share/:code`: solo el autor; anula el código.
 - Límite: 30 rutinas compartidas por usuario por día.
+- Las rutinas **asignadas por el coach** no se pueden compartir: en su detalle no
+  aparece la opción (se reconocen por `origen: "asignada"`). Es solo de la app.
+
+### QR (segunda opción)
+
+- La pantalla de compartir muestra además un **QR** con el código. El QR lleva el
+  texto `RUTINA360:ABCD-EF23`; no cambia nada en el servidor.
+- En **Importar** hay un botón **Escanear QR**: abre la cámara, lee el QR y busca la
+  rutina solo (misma vista previa de siempre). Un QR que no es de Rutina360 se
+  avisa y la cámara sigue buscando. Tiene linterna para gimnasios con poca luz.
+- El permiso de cámara se pide recién al tocar **Escanear QR**. Si se niega, la
+  pantalla ofrece pedirlo de nuevo o abrir Ajustes; siempre queda ingresar el
+  código a mano.
+- Librerías nuevas (nativas, **hay que recompilar**): `react-native-vision-camera`
+  4.x (la 5 exige la nueva arquitectura, que está apagada), `react-native-svg`
+  15.15.x (la 15.16 pide RN 0.80) y `react-native-qrcode-svg`.
+- Android: permiso `CAMERA` (con la cámara como opcional) y
+  `VisionCamera_enableCodeScanner = true` en `android/build.gradle`, que incluye el
+  lector de ML Kit en la app (~2.4 MB) para que funcione sin descargarlo.
+- iOS: `NSCameraUsageDescription` en `Info.plist` (sin eso Apple rechaza la app).
+- Código: `components/EscanerQR.jsx`, `views/rutinas/importarRutina.jsx`,
+  `views/rutinas/compartirRutina.jsx` y `textoQR` / `codigoDesdeQR` en
+  `services/rutinasCompartidas.js`.
 
 ## 4. Catálogo solo del administrador general
 
